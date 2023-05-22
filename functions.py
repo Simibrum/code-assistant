@@ -3,6 +3,94 @@ from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 import tiktoken
 
+import logging
+from logging import Logger
+import openai
+import time
+import random
+import re
+
+import os
+import sys
+
+
+def load_env_vars(path: str = ".env"):
+    """Load environment variables from a file."""
+    with open(path) as f:
+        for line in f:
+            if "=" in line and not line.startswith("#"):
+                # Split the line into the variable name and value
+                var, value = line.split("=")
+
+                # Strip leading and trailing whitespace from the variable name and value
+                var = var.strip()
+                value = value.strip()
+
+                if var and value:
+                    # Set the environment variable
+                    os.environ[var] = value
+
+                    
+def init_logger():
+    """Initialise logger."""
+    # Define module logger
+    logger = logging.getLogger(__name__)
+    # Initially set to log all - change this in production
+    logger.setLevel(logging.DEBUG)
+    # create console handler and set level to debug
+    # best for development or debugging
+    consoleHandler = logging.StreamHandler(stream=sys.stderr)
+    # create formatter - can also use %(lineno)d -
+    # see https://stackoverflow.com/questions/533048/how-to-log-source-file-name-and-line-number-in-python/44401529
+    formatter = logging.Formatter(
+        '%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s | %(filename)s > %(module)s > %(funcName)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    # add formatter to ch and jh
+    consoleHandler.setFormatter(formatter)
+    # add ch to logger
+    logger.addHandler(consoleHandler)
+    # Get logging level from environment variable - tweak to convert to boolean
+    DEBUG_MODE = (os.environ.get('DEBUG_MODE', 'False') == 'True')
+    if DEBUG_MODE:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+    return logger, consoleHandler
+
+# Initialise the logger
+logger, consoleHandler = init_logger()
+
+
+# Wrapper for API requests to allow exponential backoff
+def api_request(messages: list[dict], temperature: int = 0.7, gen_logger: Logger = logger):
+    """Make a request to the openai api."""
+    max_tries = 5
+    initial_delay = 1
+    backoff_factor = 2
+    max_delay = 16
+    jitter_range = (1, 3)
+
+    for attempt in range(1, max_tries + 1):
+        try:
+            response = openai.ChatCompletion.create(
+                model=MODEL,
+                messages=messages,
+                temperature=temperature
+            )
+            return response
+        except Exception as e:
+            if attempt == max_tries:
+                gen_logger.error(f"API request failed after {attempt} attempts with final error {e}.")
+                results = {"choices": [{"message": {"content": "ERROR: API request failed."}}]}
+                return results
+
+            delay = min(initial_delay * (backoff_factor ** (attempt - 1)), max_delay)
+            jitter = random.uniform(jitter_range[0], jitter_range[1])
+            sleep_time = delay + jitter
+            gen_logger.error(f"API request failed with error: {e}. Retrying in {sleep_time:.2f} seconds.")
+            time.sleep(sleep_time)
+
 
 def read_gitignore(gitignore_path):
     with open(gitignore_path, "r") as file:
@@ -61,3 +149,14 @@ def read_requirements_txt(file_path):
     with open(file_path, "r") as file:
         contents = file.read()
     return contents
+
+def build_messages(prompt, messages = None) -> list[dict]:
+    """Build a set of chat messages based around the prompt as the last message."""
+    if not messages:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": directory_prompt},
+            {"role": "user", "content": requirements_prompt},
+        ]
+    messages += [{"role": "user", "content": prompt}]
+    return messages
