@@ -13,6 +13,8 @@ import re
 import os
 import sys
 
+MODEL = "gpt-3.5-turbo"
+
 
 def load_env_vars(path: str = ".env"):
     """Load environment variables from a file."""
