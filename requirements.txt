@@ -1,0 +1,6 @@
+# Code Generation Library
+openai
+
+# Tools
+tiktoken
+pathspec
