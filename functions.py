@@ -13,7 +13,7 @@ import re
 import os
 import sys
 
-MODEL = "gpt-3.5-turbo"
+
 
 
 def load_env_vars(path: str = ".env"):
@@ -62,37 +62,6 @@ def init_logger():
 
 # Initialise the logger
 logger, consoleHandler = init_logger()
-
-
-# Wrapper for API requests to allow exponential backoff
-def api_request(messages: list[dict], temperature: int = 0.7, gen_logger: Logger = logger):
-    """Make a request to the openai api."""
-    max_tries = 5
-    initial_delay = 1
-    backoff_factor = 2
-    max_delay = 16
-    jitter_range = (1, 3)
-
-    for attempt in range(1, max_tries + 1):
-        try:
-            response = openai.ChatCompletion.create(
-                model=MODEL,
-                messages=messages,
-                temperature=temperature
-            )
-            return response
-        except Exception as e:
-            if attempt == max_tries:
-                gen_logger.error(f"API request failed after {attempt} attempts with final error {e}.")
-                results = {"choices": [{"message": {"content": "ERROR: API request failed."}}]}
-                return results
-
-            delay = min(initial_delay * (backoff_factor ** (attempt - 1)), max_delay)
-            jitter = random.uniform(jitter_range[0], jitter_range[1])
-            sleep_time = delay + jitter
-            gen_logger.error(f"API request failed with error: {e}. Retrying in {sleep_time:.2f} seconds.")
-            time.sleep(sleep_time)
-
 
 def read_gitignore(gitignore_path):
     with open(gitignore_path, "r") as file:
