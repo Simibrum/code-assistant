@@ -10,11 +10,11 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"ms-python.python",
 				"ms-python.pylint",
 				"ms-toolsai.jupyter",
 				"ms-vsliveshare.vsliveshare",
 				"ms-python.vscode-pylance",
-				"ms-python.python"
 			]
 		}
 	},
