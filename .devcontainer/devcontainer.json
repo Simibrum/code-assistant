@@ -14,7 +14,7 @@
 				"ms-python.pylint",
 				"ms-toolsai.jupyter",
 				"ms-vsliveshare.vsliveshare",
-				"ms-python.vscode-pylance",
+				"ms-python.vscode-pylance"
 			]
 		}
 	},
@@ -26,7 +26,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements.txt",
+	"postCreateCommand": "pip3 install --user -r requirements.txt"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
