@@ -4,7 +4,8 @@ A tool to help code with ChatGPT.
 ## Project Description
 
 The aim is to build an agent that can code itself using an LLM. The LLM will return clear and concise Python code.
-Simplicity is key. Functions will be returnred with docstrings summarising the function. Python typing is to be used.
+Simplicity is key. Functions will be returned with docstrings summarising the function. Python typing is to be used.
+A test driven development strategy will be used. Testing is with pytest.
 
 ## Agent Structure
 

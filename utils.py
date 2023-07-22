@@ -4,16 +4,19 @@
 This module provides utility functions for the Agent.
 
 It contains the following functions:
-- `extract_project_description(readme_path: str) -> str`: Extracts the Project Description section from a README file.
+- `extract_project_description(readme_path: str) -> str`: Extracts the Project Description section 
+from a README file.
 
-This module is part of the Agent project, which uses a Language Learning Model (LLM) to generate code, tests, and manage a GitHub repository.
+This module is part of the Agent project, which uses a Language Learning Model (LLM) to generate 
+code, tests, and manage a GitHub repository.
 """
 
 import re
 
-def extract_project_description(readme_path: str) -> str:
+def extract_project_description(readme_path: str = "README.md") -> str:
     """
-    Extracts the Project Description section from a README file.
+    Extracts the Project Description section from a README file
+    for use as a system prompt.
 
     Args:
         readme_path (str): The path to the README file.
@@ -21,7 +24,7 @@ def extract_project_description(readme_path: str) -> str:
     Returns:
         str: The text of the Project Description section.
     """
-    with open(readme_path, 'r') as file:
+    with open(readme_path, 'r', encoding='utf-8') as file:
         readme = file.read()
 
     # Use regex to find the Project Description section.

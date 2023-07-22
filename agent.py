@@ -6,3 +6,4 @@ performs the task, evaluates the result, and repeats.
 from utils import extract_project_description
 
 description = extract_project_description('README.md')
+print(description)
