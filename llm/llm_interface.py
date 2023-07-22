@@ -58,7 +58,7 @@ def api_request(
             delay = min(initial_delay * (backoff_factor ** (attempt - 1)), max_delay)
             jitter = random.uniform(jitter_range[0], jitter_range[1])
             sleep_time = delay + jitter
-            gen_logger.error("API request failed. Error: %s.", str(err)) 
+            gen_logger.error("API request failed. Error: %s.", str(err))
             gen_logger.error("Retrying in %s seconds.", sleep_time)
             time.sleep(sleep_time)
 
@@ -93,11 +93,10 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
     """
     prompt = prepare_prompt_func(**prepare_prompt_args)
     messages = prompts.build_messages(prompt)
-    
     function_call = {"name": "add_function_to_file"}
     response = api_request(
         messages=messages,
-        functions=CODE_FUNCTIONS, 
+        functions=CODE_FUNCTIONS,
         function_call=function_call
     )
     response_message = response['choices'][0]['message']

@@ -4,3 +4,6 @@ openai
 # Tools
 tiktoken
 pathspec
+
+# Testing
+pytest
