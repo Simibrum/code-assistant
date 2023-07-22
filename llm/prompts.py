@@ -59,18 +59,21 @@ def build_messages(prompt, messages = None) -> list[dict]:
     messages += [{"role": "user", "content": prompt}]
     return messages
 
-def create_test_prompt(function_code: str) -> str:
+def create_test_prompt(function_code: str, function_file: str) -> str:
     """
     Create a prompt for the LLM to generate a test based on the provided function code.
 
     Args:
         function_code (str): The source code of the function to test.
+        function_file (str): The file containing the function to test.
 
     Returns:
         str: The generated prompt.
     """
     # Include the function code in the prompt.
     prompt = "Here is some code for a function:\n\n" + function_code + "\n\n"
+    prompt += "The function is in the file " + function_file + "\n\n"
+    prompt += "Import the function using the [function_file].[function_name] syntax.\n\n"
 
     # Add the message setting the task.
     prompt += "Please write a pytest unit test for the above function."

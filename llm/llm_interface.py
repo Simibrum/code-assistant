@@ -74,8 +74,12 @@ CODE_FUNCTIONS = [
                     "type": "string",
                     "description": "Python code for the function to add.",
                 },
+                "import_statements": {
+                    "type": "string",
+                    "description": "Python import statements for the function to add.",
+                }
             },
-            "required": ["function_code"],
+            "required": ["function_code", "import_statements"],
         },
     }
 ]
@@ -118,14 +122,18 @@ def generate_code(prompt: str):
     """
     return generate_from_prompt(lambda prompt: prompt, {"prompt": prompt})
 
-def generate_test(function_code: str):
+def generate_test(function_code: str, function_file: str):
     """
     Use the LLM to generate a Python test based on a given prompt.
 
     Args:
         function_code (str): Code of function to build a test for.
+        function_file (str): File containing the function to build a test for.
 
     Returns:
         str: The generated Python test.
     """
-    return generate_from_prompt(prompts.create_test_prompt, {"function_code": function_code})
+    return generate_from_prompt(
+        prompts.create_test_prompt, 
+        {"function_code": function_code, "function_file": function_file}
+    )
