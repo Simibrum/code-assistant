@@ -30,13 +30,13 @@ def test_init_logger():
     # Test if logger is initialised correctly
     logger = functions.init_logger()
     assert isinstance(logger, logging.Logger)
-    assert logger.level == logging.INFO
     assert len(logger.handlers) == 2
     assert isinstance(logger.handlers[0], logging.StreamHandler)
     assert logger.handlers[0].stream == sys.stderr
     assert isinstance(logger.handlers[0].formatter, logging.Formatter)
     assert logger.handlers[0].formatter.datefmt == '%Y-%m-%d %H:%M:%S'
-    if os.environ.get('DEBUG_MODE') is True:
+    debug_mode = os.environ.get('DEBUG_MODE', 'False') == 'True'
+    if debug_mode:
         assert logger.level == logging.DEBUG
     else:
         assert logger.level == logging.INFO

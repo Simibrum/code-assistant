@@ -15,6 +15,7 @@ import re
 import ast
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
+from functions import logger
 
 def extract_project_description(readme_path: str = "README.md") -> str:
     """
@@ -179,7 +180,7 @@ def add_imports(file_path: str, new_imports: list[str]):
     # Parse the existing code.
     with open(file_path, 'r', encoding="utf-8") as file:
         module = ast.parse(file.read())
-    
+    logger.debug("Parsed module: %s", ast.dump(module)) 
     # Find the last import statement in the module.
     last_import_index = -1
     for i, stmt in enumerate(module.body):
@@ -190,8 +191,11 @@ def add_imports(file_path: str, new_imports: list[str]):
     new_import_nodes = []
     for new_import in new_imports:
         parsed_import = ast.parse(new_import)
-        if len(parsed_import.body) > 1:
+        logger.debug("Parsed import: %s", ast.dump(parsed_import))
+        if len(parsed_import.body) >= 1:
             new_import_nodes.extend(parsed_import.body)
+
+    logger.debug("New import nodes: %s", new_import_nodes)
 
     # Add the new imports, avoiding duplicates.
     for new_import_node in new_import_nodes:
@@ -203,6 +207,8 @@ def add_imports(file_path: str, new_imports: list[str]):
     
     # Unparse the modified AST back to code.
     new_code = ast.unparse(module)
+
+    logger.debug("New code: %s", new_code)
 
     # Write the modified code back to the file.
     with open(file_path, 'w', encoding="utf-8") as file:
