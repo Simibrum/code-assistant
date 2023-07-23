@@ -80,3 +80,41 @@ def create_test_prompt(function_code: str, function_file: str) -> str:
     prompt += "Only return the code. Use comments in the code to describe functionality."
 
     return prompt
+
+def create_function_prompt(task_description: str, function_file: str) -> str:
+    """
+    Create a prompt for the LLM to generate a function based on the provided task description.
+
+    Args:
+        task_description (str): The description of the task for the new function.
+        function_file (str): The file containing the function to test.
+
+    Returns:
+        str: The generated prompt.
+    """
+    
+    # Create a prompt for the LLM.
+    prompt = f"Please write a Python function to {task_description}."
+
+    prompt += "The function is to be added to the file " + function_file + "\n\n"
+
+    return prompt
+
+def create_module_docstring_prompt(module_code: str) -> str:
+    """
+    Create a prompt for the LLM to generate a docstring for a Python module.
+
+    Args:
+        module_code (str): The source code of the module.
+
+    Returns:
+        str: The generated prompt.
+    """
+    # Include the module code in the prompt.
+    prompt = "Here is some code for a module:\n\n" + module_code + "\n\n"
+
+    # Add the message setting the task.
+    prompt += "Please write a docstring for the above module."
+    prompt += "Only return the docstring. Limit to less than 250 words."
+
+    return prompt

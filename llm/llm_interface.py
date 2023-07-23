@@ -6,13 +6,15 @@ import time
 import random
 from logging import Logger
 import json
+from typing import Tuple
 import openai
 
 from functions import logger
 import llm.prompts as prompts
 
 
-MODEL = "gpt-3.5-turbo-0613"  # or whatever model you are using
+GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
+QUICK_MODEL = "gpt-3.5-turbo-0613"
 
 
 def api_request(
@@ -20,6 +22,8 @@ def api_request(
     functions: list[dict],
     function_call: str | dict = "auto",
     temperature: int = 0.7,
+    model: str = GOOD_MODEL,
+    max_tokens: int = None,
     gen_logger: Logger = logger
 ):
     """
@@ -42,11 +46,12 @@ def api_request(
     for attempt in range(1, max_tries + 1):
         try:
             response = openai.ChatCompletion.create(
-                model=MODEL,
+                model=model,
                 messages=messages,
                 temperature=temperature,
                 functions=functions,
                 function_call=function_call,
+                max_tokens=max_tokens
             )
             return response
         except Exception as err:
@@ -104,25 +109,30 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
         function_call=function_call
     )
     response_message = response['choices'][0]['message']
+    logger.debug("Response message: %s", response_message)
     if response_message.get('function_call'):
         function_args = json.loads(response_message["function_call"]["arguments"])
-        return function_args.get("function_code")
+        return function_args.get("function_code"), function_args.get("import_statements")
     else:
         return response_message['content']
 
-def generate_code(prompt: str):
+def generate_code(task_description: str, function_file: str) -> Tuple[str, str]:
     """
-    Use the LLM to generate Python code based on a given prompt.
+    Use the LLM to generate Python code for a given task.
 
     Args:
-        prompt (str): The prompt to send to the LLM.
+        task_description (str): A description of the task.
 
     Returns:
         str: The generated Python code.
+        str: The generated import statements.
     """
-    return generate_from_prompt(lambda prompt: prompt, {"prompt": prompt})
+    return generate_from_prompt(
+        prompts.create_function_prompt,
+        {"task_description": task_description, "function_file": function_file}
+    )
 
-def generate_test(function_code: str, function_file: str):
+def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
     """
     Use the LLM to generate a Python test based on a given prompt.
 
@@ -131,9 +141,31 @@ def generate_test(function_code: str, function_file: str):
         function_file (str): File containing the function to build a test for.
 
     Returns:
-        str: The generated Python test.
+        Tuple[str, str]: A tuple containing the generated 
+        Python test and import statements.
     """
     return generate_from_prompt(
-        prompts.create_test_prompt, 
+        prompts.create_test_prompt,
         {"function_code": function_code, "function_file": function_file}
     )
+
+def generate_module_docstring(module_code: str) -> str:
+    """
+    Use the LLM to generate a docstring for a Python module.
+
+    Args:
+        module_code (str): The source code of the module.
+
+    Returns:
+        str: The generated docstring.
+    """
+    prompt = prompts.create_module_docstring_prompt(module_code)
+    messages = prompts.build_messages(prompt)
+    response = api_request(
+        messages=messages,
+        functions=[],  # no functions required for this prompt
+        function_call=None,
+        model=QUICK_MODEL, 
+        max_tokens=300
+    )
+    return response['choices'][0]['message']['content']

@@ -16,7 +16,7 @@ def add_function_to_file(file_path: str, task_description: str):
     prompt = f"Please write a Python function to {task_description}."
 
     # Generate code using the LLM.
-    function_code = generate_code(prompt)
+    function_code = generate_code(prompt, function_file=file_path)
 
     if not function_code:
         print("No code generated.")

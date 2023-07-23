@@ -84,7 +84,7 @@ def should_use_file(file_path: str, ignore_patterns=None):
     # Check if the file matches any of the ignore patterns.
     if not ignore_patterns:
         ignore_patterns = read_gitignore(".gitignore")
-    
+
     pathspec = PathSpec.from_lines(GitWildMatchPattern, ignore_patterns)
     if pathspec.match_file(file_path):
         return False
@@ -96,10 +96,10 @@ def should_use_file(file_path: str, ignore_patterns=None):
     return True
 
 def build_directory_structure(
-        start_path: str, 
+        start_path: str,
         gitignore_patterns: list[str] = None,
-        level: int=0, 
-        max_levels: int=None, 
+        level: int=0,
+        max_levels: int=None,
         indent:str="  "
     ):
     """
@@ -161,3 +161,38 @@ def extract_functions_from_file(file_path: str):
 
     return function_data
 
+def add_imports(file_path: str, new_imports: list[str]):
+    """
+    Add import statements to a Python file, avoiding duplicates.
+
+    Args:
+        file_path (str): The path to the Python file.
+        new_imports (list[str]): The new import statements to add.
+    """
+    # Parse the existing code.
+    with open(file_path, 'r', encoding="utf-8") as file:
+        module = ast.parse(file.read())
+    
+    # Find the last import statement in the module.
+    last_import_index = -1
+    for i, stmt in enumerate(module.body):
+        if isinstance(stmt, (ast.Import, ast.ImportFrom)):
+            last_import_index = i
+
+    # Parse the new import statements.
+    new_import_nodes = [ast.parse(new_import).body[0] for new_import in new_imports]
+
+    # Add the new imports, avoiding duplicates.
+    for new_import_node in new_import_nodes:
+        if not any(
+            ast.dump(new_import_node) == ast.dump(existing_node) for existing_node in module.body
+            ):
+            module.body.insert(last_import_index + 1, new_import_node)
+            last_import_index += 1
+    
+    # Unparse the modified AST back to code.
+    new_code = ast.unparse(module)
+
+    # Write the modified code back to the file.
+    with open(file_path, 'w', encoding="utf-8") as file:
+        file.write(new_code)

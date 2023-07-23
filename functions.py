@@ -7,8 +7,8 @@ import tiktoken
 
 def load_env_vars(path: str = ".env"):
     """Load environment variables from a file."""
-    with open(path, encoding="utf-8") as f:
-        for line in f:
+    with open(path, encoding="utf-8") as file:
+        for line in file:
             if "=" in line and not line.startswith("#"):
                 # Split the line into the variable name and value
                 var, value = line.split("=")
@@ -44,10 +44,8 @@ def init_logger():
     # add ch to logger
     loggerx.addHandler(console_handler)
     # Get logging level from environment variable - tweak to convert to boolean
-    debug_mode = (os.environ.get('DEBUG_MODE', 'False') == 'True')
-    if debug_mode:
-        loggerx.setLevel(logging.DEBUG)
-    else:
+    debug_mode = os.environ.get('DEBUG_MODE', 'False') == 'True'
+    if not debug_mode:
         loggerx.setLevel(logging.INFO)
     return loggerx
 

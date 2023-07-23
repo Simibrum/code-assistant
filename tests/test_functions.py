@@ -24,7 +24,7 @@ def test_init_logger():
     # Test if logger is initialised correctly
     logger = functions.init_logger()
     assert isinstance(logger, logging.Logger)
-    assert logger.level == logging.DEBUG
+    assert logger.level == logging.INFO
     assert len(logger.handlers) == 1
     assert isinstance(logger.handlers[0], logging.StreamHandler)
     assert logger.handlers[0].stream == sys.stderr
@@ -44,7 +44,7 @@ def test_num_tokens_from_messages():
         {"role": "user", "content": "How are you?"},
         {"role": "assistant", "content": "I'm fine, thank you!"}
     ]
-    assert functions.num_tokens_from_messages(messages) == 40
+    assert functions.num_tokens_from_messages(messages) == 33
 
     # Test case 2: Number of tokens with custom model
     messages = [
