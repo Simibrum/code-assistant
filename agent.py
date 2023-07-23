@@ -122,10 +122,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--generate_tests', action='store_true')
     args = parser.parse_args()
-    
+
     if args.generate_tests:
         generate_tests()
 
     if args.generate_module_docstrings:
         generate_module_docstrings()
-

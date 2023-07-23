@@ -20,10 +20,10 @@ def test_add_function_to_file():
                  'import_statements': 'import json'}
                 )}}}]}
             # Call the function
-            add_function_to_file(temp_file.path, task_description)
+            add_function_to_file(temp_file.name, task_description)
 
         # Verify the content of the file
-        with open(temp_file.path, 'r', encoding="utf-8") as file:
+        with open(temp_file.name, 'r', encoding="utf-8") as file:
             content = file.read()
-        assert 'add two numbers' in content
+        assert 'add_two_numbers' in content
         assert 'def ' in content

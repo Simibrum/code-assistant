@@ -1,14 +1,15 @@
 from unittest import mock
+from unittest.mock import patch
 import llm.prompts as prompts
 
-def test_generate_system_prompt(mocker):
+def test_generate_system_prompt():
     """
     Test the function generate_system_prompt from the prompts module.
     """
-    mocker.patch(
+    with patch(
         'llm.prompts.utils.extract_project_description', 
-        return_value='Project Description')
-    result = prompts.generate_system_prompt()
+        return_value='Project Description'):
+        result = prompts.generate_system_prompt()
     assert result.startswith('You are a helpful coding assistant.')
     assert 'Project Description' in result
     assert 'Python version is' in result

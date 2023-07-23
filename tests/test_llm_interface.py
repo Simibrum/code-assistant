@@ -16,8 +16,8 @@ def test_load_json_string():
         pass
     else:
         assert False, 'Expected a JSONDecodeError'
-    json_with_newline = '{"key": "value\n"}'
-    assert llm_interface.load_json_string(json_with_newline) == {'key': 'value\n'}
+    json_with_newline = '{"key": "value\\nmore value"}'
+    assert llm_interface.load_json_string(json_with_newline) == {'key': 'value\nmore value'}
 
 def test_api_request():
     """
@@ -31,7 +31,7 @@ def test_api_request():
     function_call = None
     temperature = 0.5
     model = 'gpt-3.5-turbo-0613'
-    max_tokens = 100
+    max_tokens = 10
     result = llm_interface.api_request(
         messages, functions, function_call, temperature, model, max_tokens)
     assert isinstance(result, dict)
