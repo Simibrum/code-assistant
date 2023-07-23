@@ -5,5 +5,8 @@ openai
 tiktoken
 pathspec
 
+# Code formatting
+black
+
 # Testing
 pytest

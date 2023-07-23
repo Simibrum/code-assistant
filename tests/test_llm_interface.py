@@ -1,3 +1,10 @@
+"""
+This module provides a set of test functions to validate the functionality of the
+`llm_interface` module in the `llm` package. The module includes tests for various
+functions such as `load_json_string`, `api_request`, `generate_from_prompt`,
+`generate_code`, `generate_test`, and `generate_module_docstring`. Each test function
+is documented with clear and concise explanations of what it is testing.
+"""
 import json
 from unittest.mock import MagicMock, patch
 from llm import llm_interface
@@ -23,21 +30,16 @@ def test_api_request():
     """
     Test the function api_request.
     """
-    messages = [
-        {'role': 'system', 'content': 'You are a helpful assistant.'},
-        {'role': 'user', 'content': 'Translate this document into French.'}
-    ]
+    messages = [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': 'Translate this document into French.'}]
     functions = []
     function_call = None
     temperature = 0.5
     model = 'gpt-3.5-turbo-0613'
     max_tokens = 10
-    result = llm_interface.api_request(
-        messages, functions, function_call, temperature, model, max_tokens)
+    result = llm_interface.api_request(messages, functions, function_call, temperature, model, max_tokens)
     assert isinstance(result, dict)
     assert 'choices' in result
     assert isinstance(result['choices'], list)
-
 
 def test_generate_from_prompt():
     """Test the generate_from_prompt function."""
@@ -45,13 +47,8 @@ def test_generate_from_prompt():
     prepare_prompt_args = {'arg1': 'value1', 'arg2': 'value2'}
     prepare_prompt_func.return_value = 'Test prompt'
     with patch('llm.llm_interface.api_request') as mock_api_request:
-        mock_api_request.return_value = {
-            'choices': [
-                {'message': {'function_call': {'arguments': json.dumps(
-            {'function_code': 'print("Hello World")', 'import_statements': 'import json'}
-            )}}}]}
-        function_code, imports = llm_interface.generate_from_prompt(
-            prepare_prompt_func, prepare_prompt_args)
+        mock_api_request.return_value = {'choices': [{'message': {'function_call': {'arguments': json.dumps({'function_code': 'print("Hello World")', 'import_statements': 'import json'})}}}]}
+        function_code, imports = llm_interface.generate_from_prompt(prepare_prompt_func, prepare_prompt_args)
         prepare_prompt_func.assert_called_once_with(arg1='value1', arg2='value2')
         assert function_code == 'print("Hello World")'
         assert imports == ['import json']
@@ -63,11 +60,7 @@ def test_generate_code():
     task_description = 'Test task'
     function_file = './llm/llm_interface.py'
     with patch('llm.llm_interface.api_request') as mock_api_request:
-        mock_api_request.return_value = {
-            'choices': [
-                {'message': {'function_call': {'arguments': json.dumps(
-            {'function_code': 'print("Hello World")', 'import_statements': 'import json'}
-            )}}}]}
+        mock_api_request.return_value = {'choices': [{'message': {'function_call': {'arguments': json.dumps({'function_code': 'print("Hello World")', 'import_statements': 'import json'})}}}]}
         code, imports = llm_interface.generate_code(task_description, function_file)
     assert isinstance(code, str), f'Expected str, got {type(code).__name__}'
     assert isinstance(imports, list), f'Expected str, got {type(imports).__name__}'
@@ -81,11 +74,7 @@ def test_generate_test():
     function_code = 'def hello_world():\n    print("Hello, world!")'
     function_file = './llm/llm_interface.py'
     with patch('llm.llm_interface.api_request') as mock_api_request:
-        mock_api_request.return_value = {
-            'choices': [
-                {'message': {'function_call': {'arguments': json.dumps(
-            {'function_code': 'print("Testing Hello World")', 'import_statements': 'import json'}
-            )}}}]}
+        mock_api_request.return_value = {'choices': [{'message': {'function_call': {'arguments': json.dumps({'function_code': 'print("Testing Hello World")', 'import_statements': 'import json'})}}}]}
         test_code, imports = llm_interface.generate_test(function_code, function_file)
     assert isinstance(test_code, str), f'Expected str, got {type(test_code).__name__}'
     assert isinstance(imports, list), f'Expected str, got {type(imports).__name__}'
@@ -96,28 +85,9 @@ def test_generate_module_docstring():
     """
     Test the generate_module_docstring function.
     """
-    # Arrange
     module_code = 'import os\n\ndef hello_world():\n    print("Hello, world!")\n'
-    expected_docstring = (
-        'A module that contains a hello_world function which prints "Hello, world!".'
-    )
-
+    expected_docstring = 'A module that contains a hello_world function which prints "Hello, world!".'
     with patch('llm.llm_interface.api_request') as mock_api_request:
-        mock_api_request.return_value = {
-            'choices': [
-                {
-                    'message': {
-                    'content': (
-                        "A module that contains a hello_world "
-                        "function which prints \"Hello, world!\"."
-                    )
-                }}
-            ]
-        }
-        # Act
+        mock_api_request.return_value = {'choices': [{'message': {'content': 'A module that contains a hello_world function which prints "Hello, world!".'}}]}
         actual_docstring = llm_interface.generate_module_docstring(module_code)
-
-    # Assert
-    assert actual_docstring == expected_docstring, (
-        f'Expected: {expected_docstring}, but got: {actual_docstring}'
-    )
+    assert actual_docstring == expected_docstring, f'Expected: {expected_docstring}, but got: {actual_docstring}'

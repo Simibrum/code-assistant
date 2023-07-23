@@ -6,6 +6,7 @@ performs the task, evaluates the result, and repeats.
 import os
 import ast
 import argparse
+import black
 import utils
 from functions import logger
 import llm.llm_interface as llm
@@ -108,7 +109,7 @@ def generate_module_docstrings():
             continue
         docstring = llm.generate_module_docstring(file_contents)
         logger.debug("Generated docstring: %s", docstring)
-        
+
         # Add the docstring to the module.
         docstring_node = ast.Expr(value=ast.Str(s=docstring))
         module.body.insert(0, docstring_node)
@@ -116,16 +117,44 @@ def generate_module_docstrings():
         # Unparse the modified AST back to code.
         new_code = ast.unparse(module)
         logger.debug("New code: %s", new_code)
+        # Format code with black
+        fmt_code = utils.format_code(new_code)
+        logger.debug("Formatted code: %s", fmt_code)
         logger.info("Writing docstring to file %s", file_path)
         # Write the modified code back to the file.
         with open(file_path, 'w', encoding="utf-8") as file:
-            file.write(new_code)
+            file.write(fmt_code)
+
+def format_modules():
+    """
+    Format all Python files in the current directory.
+    """
+    # Get the Python files in the directory.
+    python_files = get_python_files(skip_tests=False)
+
+    # Process each file.
+    for file_path in python_files:
+        # Parse the existing code.
+        logger.info("Formatting module %s", file_path)
+        with open(file_path, 'r', encoding="utf-8") as file:
+            original_code = file.read()
+        try:
+            # Format code with black
+            fmt_code = utils.format_code(original_code)
+            logger.debug("Formatted code: %s", fmt_code)
+            logger.info("Writing formatted code to file %s", file_path)
+            # Write the modified code back to the file.
+            with open(file_path, 'w', encoding="utf-8") as file:
+                file.write(fmt_code)
+        except black.NothingChanged:
+            logger.info("No changes to file %s", file_path)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--generate_tests', action='store_true')
-    parser.add_argument('--generate_module_docstrings', action='store_true') 
+    parser.add_argument('--generate_module_docstrings', action='store_true')
+    parser.add_argument('--format_modules', action='store_true')
     args = parser.parse_args()
 
     if args.generate_tests:
@@ -133,3 +162,6 @@ if __name__ == "__main__":
 
     if args.generate_module_docstrings:
         generate_module_docstrings()
+
+    if args.format_modules:
+        format_modules()

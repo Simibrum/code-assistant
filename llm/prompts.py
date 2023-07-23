@@ -116,6 +116,13 @@ def create_module_docstring_prompt(module_code: str) -> str:
 
     # Add the message setting the task.
     prompt += "Please write a docstring for the above module. "
-    prompt += "Only return the docstring. Limit to less than 250 words."
+    prompt += "Do NOT include the module code in the docstring."
+    prompt += "Do NOT describe individual functions - just the module as a whole."
+    prompt += "Documentation for individual functions will be provided in function docstrings."
+    prompt += "Only return the docstring."
+    prompt += "Limit the total description to less than 250 words."
+    prompt += "Limit lines to a maximum of 90 characters.\n\n"
+    prompt += "The docstring should be in the following format:\n\n"
+    prompt += '"""\n[docstring]\n"""\n\n'
 
     return prompt

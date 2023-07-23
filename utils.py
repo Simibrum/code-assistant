@@ -13,6 +13,7 @@ code, tests, and manage a GitHub repository.
 import os
 import re
 import ast
+import black
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from functions import logger
@@ -210,6 +211,26 @@ def add_imports(file_path: str, new_imports: list[str]):
 
     logger.debug("New code: %s", new_code)
 
+    # Format code
+    new_code = format_code(new_code)
+
+    logger.debug("Formatted code: %s", new_code)
+
     # Write the modified code back to the file.
     with open(file_path, 'w', encoding="utf-8") as file:
         file.write(new_code)
+
+def format_code(code: str) -> str:
+    """
+    Format Python code using Black.
+
+    Args:
+        code (str): The code to format.
+
+    Returns:
+        str: The formatted code.
+    """
+    return black.format_str(
+        code,
+        mode=black.FileMode(line_length=90)
+    )
