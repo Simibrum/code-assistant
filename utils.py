@@ -31,7 +31,7 @@ def extract_project_description(readme_path: str = "README.md") -> str:
     # Check the readme file exists.
     if not os.path.exists(readme_path):
         return ""
-    
+
     with open(readme_path, 'r', encoding='utf-8') as file:
         readme = file.read()
 
@@ -121,10 +121,10 @@ def build_directory_structure(
     """
     if not gitignore_patterns:
         gitignore_patterns = read_gitignore(".gitignore")
-        
+
     if max_levels is not None and level > max_levels:
         return ""
-    
+
     structure = ""
     for entry in os.listdir(start_path):
         path = os.path.join(start_path, entry)
@@ -136,7 +136,7 @@ def build_directory_structure(
                     path, gitignore_patterns,
                     level+1, max_levels, indent
                 )
-            
+
     return structure
 
 def extract_functions_from_file(file_path: str):
@@ -180,7 +180,7 @@ def add_imports(file_path: str, new_imports: list[str]):
     # Parse the existing code.
     with open(file_path, 'r', encoding="utf-8") as file:
         module = ast.parse(file.read())
-    logger.debug("Parsed module: %s", ast.dump(module)) 
+    logger.debug("Parsed module: %s", ast.dump(module))
     # Find the last import statement in the module.
     last_import_index = -1
     for i, stmt in enumerate(module.body):
@@ -204,7 +204,7 @@ def add_imports(file_path: str, new_imports: list[str]):
             ):
             module.body.insert(last_import_index + 1, new_import_node)
             last_import_index += 1
-    
+
     # Unparse the modified AST back to code.
     new_code = ast.unparse(module)
 

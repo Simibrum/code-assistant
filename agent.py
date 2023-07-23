@@ -52,7 +52,7 @@ def generate_tests():
 
         # Write the test to a file.
         test_file_name = f"tests/test_{python_file.split('/')[-1]}"
-        
+
         # If the test file exists, extract the function names from it.
         existing_test_functions = set()
         if os.path.exists(test_file_name):
@@ -92,11 +92,11 @@ def generate_module_docstrings():
         # Parse the existing code.
         with open(file_path, 'r', encoding="utf-8") as file:
             module = ast.parse(file.read())
-        
+
         # Check if the module has a docstring.
         if ast.get_docstring(module) is not None:
             continue  # Skip this file if it has a docstring.
-        
+
         # Generate a docstring for the module.
         with open(file_path, 'r', encoding="utf-8") as file:
             file_contents = file.read()
@@ -104,7 +104,7 @@ def generate_module_docstrings():
         if not file_contents:
             continue
         docstring = llm.generate_module_docstring(file_contents)
-        
+
         # Add the docstring to the module.
         docstring_node = ast.Expr(value=ast.Str(s=docstring))
         module.body.insert(0, docstring_node)

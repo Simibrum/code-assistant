@@ -93,7 +93,7 @@ def create_function_prompt(task_description: str, function_file: str) -> str:
     Returns:
         str: The generated prompt.
     """
-    
+
     # Create a prompt for the LLM.
     prompt = f"Please write a Python function to {task_description}."
 

@@ -192,7 +192,7 @@ def generate_module_docstring(module_code: str) -> str:
         messages=messages,
         functions=[],  # no functions required for this prompt
         function_call=None,
-        model=QUICK_MODEL, 
+        model=QUICK_MODEL,
         max_tokens=300
     )
     return response['choices'][0]['message']['content']
