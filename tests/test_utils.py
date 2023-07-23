@@ -133,16 +133,13 @@ def test_add_imports():
     finally:
         os.remove(file_path)
 
-
-test_add_imports()
-
-
 def test_format_code():
-    from utils import format_code
-
+    """
+    Test the format_code function.
+    """
     code = """def test():\n    return 1"""
 
     expected_result = """def test():\n    return 1\n"""
 
-    assert format_code(code) == expected_result
+    assert utils.format_code(code) == expected_result
 
