@@ -77,7 +77,7 @@ def generate_tests():
                 utils.add_imports(test_file_name, imports)
                 logger.info("Writing test to file %s", test_file_name)
                 with open(test_file_name, "a", encoding="utf-8") as file:
-                    file.write(test_code + "\n\n")
+                    file.write("\n\n" + test_code + "\n\n")
 
 
 def generate_module_docstrings():
