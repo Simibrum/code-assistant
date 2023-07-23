@@ -71,7 +71,11 @@ def api_request(
                 max_tokens=max_tokens
             )
             return response
-        except Exception as err:
+        except (
+            openai.error.APIError, openai.error.Timeout,
+            openai.error.RateLimitError, openai.error.APIConnectionError,
+            openai.error.ServiceUnavailableError
+        ) as err:
             if attempt == max_tries:
                 gen_logger.error(f"API request failed - {attempt} attempts with final error {err}.")
                 results = {"choices": [{"message": {"content": "ERROR: API request failed."}}]}
