@@ -130,7 +130,7 @@ def test_create_module_docstring_prompt():
         + "Only return the docstring. "
         + "Limit the total description to less than 250 words. "
         + "Limit lines to a maximum of 90 characters.\n\n"
-        + "The docstring should be in the following format:\n\n\"\"\"\n[docstring]\n\"\"\"\n\n"
+        + 'The docstring should be in the following format:\n\n"""\n[docstring]\n"""\n\n'
     )
     assert prompt == expected_prompt
 

@@ -146,3 +146,17 @@ def test_format_code():
     expected_result = """def test():\n    return 1\n"""
 
     assert utils.format_code(code) == expected_result
+
+
+def test_get_python_files():
+    """
+    Test the get_python_files function.
+
+    This test checks if the get_python_files function correctly returns the paths of all
+    Python files in the current directory, excluding the 'tests' directory.
+    """
+    python_files = utils.get_python_files()
+    assert isinstance(python_files, list)
+    for file in python_files:
+        assert file.endswith(".py")
+        assert "tests" not in file

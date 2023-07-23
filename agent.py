@@ -12,33 +12,7 @@ from functions import logger
 import llm.llm_interface as llm
 
 
-def get_python_files(directory: str = ".", skip_tests: bool = True):
-    """
-    Get the paths of all the Python files in the present directory.
 
-    Args:
-        directory (str): The directory to search for Python files.
-        skip_tests (bool): Whether to skip the 'tests' directory.
-
-    Returns:
-        list[str]: A list of paths to Python files.
-    """
-    python_files = []
-    for root, dirs, files in os.walk(directory):
-        # Skip 'tests' directory.
-        if "tests" in dirs and skip_tests:
-            dirs.remove("tests")
-
-        # Add the Python files that should be used.
-        for file in files:
-            if file.endswith(".py"):
-                file_path = os.path.join(root, file)
-                if utils.should_use_file(file_path):
-                    python_files.append(file_path)
-
-    logger.info("Found %s Python files.", len(python_files))
-    logger.debug("Python files: %s", python_files)
-    return python_files
 
 
 def generate_tests():
@@ -46,7 +20,7 @@ def generate_tests():
     Generate tests for the functions in the codebase.
     """
     # Get the paths of all the python files in the present directory.
-    python_files = get_python_files()
+    python_files = utils.get_python_files()
 
     # Iterate through the files
     for python_file in python_files:
@@ -91,7 +65,7 @@ def generate_module_docstrings():
     Generate module docstrings for all Python files that don't have one.
     """
     # Get the Python files in the directory.
-    python_files = get_python_files(skip_tests=False)
+    python_files = utils.get_python_files(skip_tests=False)
 
     # Process each file.
     for file_path in python_files:
@@ -135,7 +109,7 @@ def format_modules():
     Format all Python files in the current directory.
     """
     # Get the Python files in the directory.
-    python_files = get_python_files(skip_tests=False)
+    python_files = utils.get_python_files(skip_tests=False)
 
     # Process each file.
     for file_path in python_files:

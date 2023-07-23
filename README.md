@@ -37,7 +37,10 @@ A test driven development strategy will be used. Testing is with pytest. Lines a
 
 ## To do
 
-[ ] - Build minimum agent structure
+[X] - Build minimum agent structure
+[ ] - Add function to add function docstrings
+[ ] - Add function to read module docstrings for summary
+[ ] - Add function to extract functions and their descriptions as a dict
 
 ## Contributing
 

@@ -239,3 +239,49 @@ def format_code(code: str) -> str:
         str: The formatted code.
     """
     return black.format_str(code, mode=black.FileMode(line_length=90))
+
+def get_python_files(directory: str = ".", skip_tests: bool = True):
+    """
+    Get the paths of all the Python files in the present directory.
+
+    Args:
+        directory (str): The directory to search for Python files.
+        skip_tests (bool): Whether to skip the 'tests' directory.
+
+    Returns:
+        list[str]: A list of paths to Python files.
+    """
+    python_files = []
+    for root, dirs, files in os.walk(directory):
+        # Skip 'tests' directory.
+        if "tests" in dirs and skip_tests:
+            dirs.remove("tests")
+
+        # Add the Python files that should be used.
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                if should_use_file(file_path):
+                    python_files.append(file_path)
+
+    logger.info("Found %s Python files.", len(python_files))
+    logger.debug("Python files: %s", python_files)
+    return python_files
+
+def read_file_descriptions(file_path: str) -> str:
+    """
+    Read the module docstring from a Python file.
+
+    Args:
+        file_path (str): The path to the Python file.
+
+    Returns:
+        str: The module docstring.
+    """
+    with open(file_path, "r", encoding="utf-8") as file:
+        contents = file.read()
+    # Parse the source code to an AST.
+    module = ast.parse(contents)
+    # Extract the module docstring.
+    docstring = ast.get_docstring(module)
+    return docstring
