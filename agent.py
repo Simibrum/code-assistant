@@ -86,7 +86,7 @@ def generate_module_docstrings():
     Generate module docstrings for all Python files that don't have one.
     """
     # Get the Python files in the directory.
-    python_files = get_python_files()
+    python_files = get_python_files(skip_tests=False)
 
     # Process each file.
     for file_path in python_files:
@@ -96,8 +96,10 @@ def generate_module_docstrings():
 
         # Check if the module has a docstring.
         if ast.get_docstring(module) is not None:
+            logger.info("Module %s already has a docstring.", file_path)
             continue  # Skip this file if it has a docstring.
 
+        logger.info("Generating docstring for module %s", file_path)
         # Generate a docstring for the module.
         with open(file_path, 'r', encoding="utf-8") as file:
             file_contents = file.read()
@@ -106,14 +108,15 @@ def generate_module_docstrings():
             continue
         docstring = llm.generate_module_docstring(file_contents)
         logger.debug("Generated docstring: %s", docstring)
-
+        
         # Add the docstring to the module.
         docstring_node = ast.Expr(value=ast.Str(s=docstring))
         module.body.insert(0, docstring_node)
 
         # Unparse the modified AST back to code.
         new_code = ast.unparse(module)
-
+        logger.debug("New code: %s", new_code)
+        logger.info("Writing docstring to file %s", file_path)
         # Write the modified code back to the file.
         with open(file_path, 'w', encoding="utf-8") as file:
             file.write(new_code)
@@ -122,6 +125,7 @@ def generate_module_docstrings():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--generate_tests', action='store_true')
+    parser.add_argument('--generate_module_docstrings', action='store_true') 
     args = parser.parse_args()
 
     if args.generate_tests:
