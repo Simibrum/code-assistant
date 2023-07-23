@@ -59,17 +59,24 @@ def api_request(
     backoff_factor = 2
     max_delay = 16
     jitter_range = (1, 3)
+    params = {
+        'model': model,
+        'messages': messages,
+        'temperature': temperature,
+    }
+
+    if functions:
+        params['functions'] = functions
+
+    if function_call:
+        params['function_call'] = function_call
+
+    if max_tokens:
+        params['max_tokens'] = max_tokens
 
     for attempt in range(1, max_tries + 1):
         try:
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                functions=functions,
-                function_call=function_call,
-                max_tokens=max_tokens
-            )
+            response = openai.ChatCompletion.create(**params)
             return response
         except (
             openai.error.APIError, openai.error.Timeout,

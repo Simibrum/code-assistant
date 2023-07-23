@@ -72,7 +72,7 @@ def create_test_prompt(function_code: str, function_file: str) -> str:
     """
     # Include the function code in the prompt.
     prompt = "I would like you to write a pytest unit test.\n\n"
-    prompt = "Here is code for the function to test:\n\n" + function_code + "\n\n"
+    prompt += "Here is code for the function to test:\n\n" + function_code + "\n\n"
     prompt += "The function to test is in the file " + function_file + "\n\n"
     prompt += (
         "Import the function in the test file using the"

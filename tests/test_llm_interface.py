@@ -9,7 +9,7 @@ def test_load_json_string():
     """
     correct_json = '{"key": "value"}'
     assert llm_interface.load_json_string(correct_json) == {'key': 'value'}
-    incorrect_json = '{"key": "value"}'
+    incorrect_json = '{"key": "\nvalue\n"}'
     try:
         llm_interface.load_json_string(incorrect_json)
     except json.JSONDecodeError:
@@ -28,7 +28,7 @@ def test_api_request():
         {'role': 'user', 'content': 'Translate this document into French.'}
     ]
     functions = []
-    function_call = 'auto'
+    function_call = None
     temperature = 0.5
     model = 'gpt-3.5-turbo-0613'
     max_tokens = 100
@@ -106,11 +106,12 @@ def test_generate_module_docstring():
         mock_api_request.return_value = {
             'choices': [
                 {
+                    'message': {
                     'content': (
                         "A module that contains a hello_world "
                         "function which prints \"Hello, world!\"."
                     )
-                }
+                }}
             ]
         }
         # Act
