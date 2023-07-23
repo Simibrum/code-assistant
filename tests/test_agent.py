@@ -1,5 +1,4 @@
 import os
-import ast
 import tempfile
 from unittest import mock
 import agent
@@ -38,19 +37,17 @@ def test_generate_module_docstrings():
         temp_path2 = temp.name
     # Mock the function get_python_files to return a list of python files
     with mock.patch('agent.get_python_files', return_value=[temp_path1, temp_path2]):
-        # Mock the function ast.parse to return a parsed module without docstring
-        with mock.patch('ast.parse', return_value=ast.Module(body=[], docstring=None)):
-            # Mock the function llm.generate_module_docstring to return a docstring
-            with mock.patch(
-                'llm.llm_interface.generate_module_docstring', 
-                return_value='This is a docstring.'):
-                # Call the function generate_module_docstrings
-                agent.generate_module_docstrings()
+        # Mock the function llm.generate_module_docstring to return a docstring
+        with mock.patch(
+            'llm.llm_interface.generate_module_docstring', 
+            return_value='This is a docstring.'):
+            # Call the function generate_module_docstrings
+            agent.generate_module_docstrings()
 
-                # Assert that the file contents have been modified
-                # This is a simplified assertion. In a real test case, read the file
-                # and check its contents.
-                with open('file1.py', 'r', encoding='utf-8') as file:
-                    assert 'This is a docstring.' in file.read()
-                with open('file2.py', 'r', encoding='utf-8') as file:
-                    assert 'This is a docstring.' in file.read()
+            # Assert that the file contents have been modified
+            # This is a simplified assertion. In a real test case, read the file
+            # and check its contents.
+            with open(temp_path1, 'r', encoding='utf-8') as file:
+                assert 'This is a docstring.' in file.read()
+            with open(temp_path2, 'r', encoding='utf-8') as file:
+                assert 'This is a docstring.' in file.read()

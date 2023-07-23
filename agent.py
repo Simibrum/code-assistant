@@ -105,6 +105,7 @@ def generate_module_docstrings():
         if not file_contents:
             continue
         docstring = llm.generate_module_docstring(file_contents)
+        logger.debug("Generated docstring: %s", docstring)
 
         # Add the docstring to the module.
         docstring_node = ast.Expr(value=ast.Str(s=docstring))
