@@ -69,6 +69,9 @@ def generate_tests():
                 # Generate a test for the function.
                 logger.info("Generating test for function %s", function_name)
                 test_code, imports = llm.generate_test(function_code, function_file=python_file)
+                if test_code is None:
+                    logger.info("Failed to generate test for function %s", function_name)
+                    continue
                 logger.debug("Test code: %s", test_code)
                 logger.info("Writing imports to file: %s", imports)
                 utils.add_imports(test_file_name, imports)

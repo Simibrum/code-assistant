@@ -16,6 +16,23 @@ import llm.prompts as prompts
 GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
 
+def load_json_string(s: str) -> dict:
+    """
+    Load a JSON string into a dictionary.
+
+    Args:
+        s (str): The JSON string to load.
+
+    Returns:
+        dict: The JSON string as a dictionary.
+    """
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError as err:
+        logger.debug("JSONDecodeError: %s", str(err))
+        # Fix triple escaped newlines
+        s = s.replace('\\\n', '\\n')
+        return json.loads(s)
 
 def api_request(
     messages: list[dict],
@@ -77,11 +94,14 @@ CODE_FUNCTIONS = [
             "properties": {
                 "function_code": {
                     "type": "string",
-                    "description": "Python code for the function to add.",
+                    "description": (
+                        "Python code for the function to add, escaped. "
+                        "Without imports - these are returned separately."
+                    ),
                 },
                 "import_statements": {
                     "type": "string",
-                    "description": "Python import statements for the function to add.",
+                    "description": "Python import statements for the function to add, escaped.",
                 }
             },
             "required": ["function_code", "import_statements"],
@@ -111,11 +131,15 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
     response_message = response['choices'][0]['message']
     logger.debug("Response message: %s", response_message)
     if response_message.get('function_call'):
-        function_args = json.loads(
-            response_message["function_call"]["arguments"],
-            strict=False
-            )
-        return function_args.get("function_code"), function_args.get("import_statements")
+        arguments_string = response_message["function_call"]["arguments"]
+        # Tweak to prevent malformed escape sequences
+        try:
+            function_args = load_json_string(arguments_string)
+        except json.JSONDecodeError as err:
+            logger.debug("JSONDecodeError: %s", str(err))
+            return None, None
+        imports = function_args.get("import_statements").split("\n")
+        return function_args.get("function_code"), imports
     else:
         return response_message['content']
 
