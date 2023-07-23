@@ -30,7 +30,7 @@ def test_api_request():
     functions = []
     function_call = 'auto'
     temperature = 0.5
-    model = 'text-davinci-002'
+    model = 'gpt-3.5-turbo-0613'
     max_tokens = 100
     result = llm_interface.api_request(
         messages, functions, function_call, temperature, model, max_tokens)
@@ -62,9 +62,17 @@ def test_generate_code():
     """
     task_description = 'Test task'
     function_file = './llm/llm_interface.py'
-    code, imports = llm_interface.generate_code(task_description, function_file)
+    with patch('llm.llm_interface.api_request') as mock_api_request:
+        mock_api_request.return_value = {
+            'choices': [
+                {'message': {'function_call': {'arguments': json.dumps(
+            {'function_code': 'print("Hello World")', 'import_statements': 'import json'}
+            )}}}]}
+        code, imports = llm_interface.generate_code(task_description, function_file)
     assert isinstance(code, str), f'Expected str, got {type(code).__name__}'
-    assert isinstance(imports, str), f'Expected str, got {type(imports).__name__}'
+    assert isinstance(imports, list), f'Expected str, got {type(imports).__name__}'
+    assert code == 'print("Hello World")'
+    assert imports == ['import json']
 
 def test_generate_test():
     """
@@ -72,8 +80,17 @@ def test_generate_test():
     """
     function_code = 'def hello_world():\n    print("Hello, world!")'
     function_file = './llm/llm_interface.py'
-    expected_output = ('', '')
-    assert llm_interface.generate_test(function_code, function_file) == expected_output
+    with patch('llm.llm_interface.api_request') as mock_api_request:
+        mock_api_request.return_value = {
+            'choices': [
+                {'message': {'function_call': {'arguments': json.dumps(
+            {'function_code': 'print("Testing Hello World")', 'import_statements': 'import json'}
+            )}}}]}
+        test_code, imports = llm_interface.generate_test(function_code, function_file)
+    assert isinstance(test_code, str), f'Expected str, got {type(test_code).__name__}'
+    assert isinstance(imports, list), f'Expected str, got {type(imports).__name__}'
+    assert test_code == 'print("Testing Hello World")'
+    assert imports == ['import json']
 
 def test_generate_module_docstring():
     """
@@ -85,8 +102,19 @@ def test_generate_module_docstring():
         'A module that contains a hello_world function which prints "Hello, world!".'
     )
 
-    # Act
-    actual_docstring = llm_interface.generate_module_docstring(module_code)
+    with patch('llm.llm_interface.api_request') as mock_api_request:
+        mock_api_request.return_value = {
+            'choices': [
+                {
+                    'content': (
+                        "A module that contains a hello_world "
+                        "function which prints \"Hello, world!\"."
+                    )
+                }
+            ]
+        }
+        # Act
+        actual_docstring = llm_interface.generate_module_docstring(module_code)
 
     # Assert
     assert actual_docstring == expected_docstring, (

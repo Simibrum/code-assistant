@@ -115,7 +115,7 @@ def create_module_docstring_prompt(module_code: str) -> str:
     prompt = "Here is some code for a module:\n\n" + module_code + "\n\n"
 
     # Add the message setting the task.
-    prompt += "Please write a docstring for the above module."
+    prompt += "Please write a docstring for the above module. "
     prompt += "Only return the docstring. Limit to less than 250 words."
 
     return prompt
