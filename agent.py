@@ -11,6 +11,7 @@ import utils
 from functions import logger
 import llm.llm_interface as llm
 
+
 def get_python_files(directory: str = ".", skip_tests: bool = True):
     """
     Get the paths of all the Python files in the present directory.
@@ -25,8 +26,8 @@ def get_python_files(directory: str = ".", skip_tests: bool = True):
     python_files = []
     for root, dirs, files in os.walk(directory):
         # Skip 'tests' directory.
-        if 'tests' in dirs and skip_tests:
-            dirs.remove('tests')
+        if "tests" in dirs and skip_tests:
+            dirs.remove("tests")
 
         # Add the Python files that should be used.
         for file in files:
@@ -60,7 +61,8 @@ def generate_tests():
         if os.path.exists(test_file_name):
             logger.info("Test file %s already exists.", test_file_name)
             existing_test_functions = set(
-                name for name, _ in utils.extract_functions_from_file(test_file_name))
+                name for name, _ in utils.extract_functions_from_file(test_file_name)
+            )
             logger.info("Found %s existing test functions.", len(existing_test_functions))
             logger.debug("Existing test functions: %s", existing_test_functions)
 
@@ -70,7 +72,9 @@ def generate_tests():
             if f"test_{function_name}" not in existing_test_functions:
                 # Generate a test for the function.
                 logger.info("Generating test for function %s", function_name)
-                test_code, imports = llm.generate_test(function_code, function_file=python_file)
+                test_code, imports = llm.generate_test(
+                    function_code, function_file=python_file
+                )
                 if test_code is None:
                     logger.info("Failed to generate test for function %s", function_name)
                     continue
@@ -92,7 +96,7 @@ def generate_module_docstrings():
     # Process each file.
     for file_path in python_files:
         # Parse the existing code.
-        with open(file_path, 'r', encoding="utf-8") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             module = ast.parse(file.read())
 
         # Check if the module has a docstring.
@@ -102,7 +106,7 @@ def generate_module_docstrings():
 
         logger.info("Generating docstring for module %s", file_path)
         # Generate a docstring for the module.
-        with open(file_path, 'r', encoding="utf-8") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             file_contents = file.read()
         # Skip if the file is empty.
         if not file_contents:
@@ -122,8 +126,9 @@ def generate_module_docstrings():
         logger.debug("Formatted code: %s", fmt_code)
         logger.info("Writing docstring to file %s", file_path)
         # Write the modified code back to the file.
-        with open(file_path, 'w', encoding="utf-8") as file:
+        with open(file_path, "w", encoding="utf-8") as file:
             file.write(fmt_code)
+
 
 def format_modules():
     """
@@ -136,7 +141,7 @@ def format_modules():
     for file_path in python_files:
         # Parse the existing code.
         logger.info("Formatting module %s", file_path)
-        with open(file_path, 'r', encoding="utf-8") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             original_code = file.read()
         try:
             # Format code with black
@@ -144,7 +149,7 @@ def format_modules():
             logger.debug("Formatted code: %s", fmt_code)
             logger.info("Writing formatted code to file %s", file_path)
             # Write the modified code back to the file.
-            with open(file_path, 'w', encoding="utf-8") as file:
+            with open(file_path, "w", encoding="utf-8") as file:
                 file.write(fmt_code)
         except black.NothingChanged:
             logger.info("No changes to file %s", file_path)
@@ -152,9 +157,9 @@ def format_modules():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--generate_tests', action='store_true')
-    parser.add_argument('--generate_module_docstrings', action='store_true')
-    parser.add_argument('--format_modules', action='store_true')
+    parser.add_argument("--generate_tests", action="store_true")
+    parser.add_argument("--generate_module_docstrings", action="store_true")
+    parser.add_argument("--format_modules", action="store_true")
     args = parser.parse_args()
 
     if args.generate_tests:

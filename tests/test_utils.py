@@ -34,7 +34,7 @@ def test_read_requirements_txt():
     assert isinstance(contents, str)
     assert len(contents) > 0
     assert contents.startswith("# Code Generation Library")
-    assert contents.endswith("pytest")
+    assert contents.endswith("pytest-mock")
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
         temp.write("custom_package1\ncustom_package2\n")
         temp_path = temp.name
@@ -105,7 +105,10 @@ def test_build_directory_structure():
             file.write("Hello, world!")
         structure = utils.build_directory_structure(tmpdirname)
         print(structure)
-        assert structure == "file.txt\nsubdir\n  subfile.txt\n"
+        assert structure in [
+            "file.txt\nsubdir\n  subfile.txt\n",
+            "subdir\n  subfile.txt\nfile.txt\n",
+        ]
 
 
 def test_add_imports():
@@ -133,6 +136,7 @@ def test_add_imports():
     finally:
         os.remove(file_path)
 
+
 def test_format_code():
     """
     Test the format_code function.
@@ -142,4 +146,3 @@ def test_format_code():
     expected_result = """def test():\n    return 1\n"""
 
     assert utils.format_code(code) == expected_result
-

@@ -16,6 +16,7 @@ import llm.prompts as prompts
 GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
 
+
 def load_json_string(str_in: str) -> dict:
     """
     Load a JSON string into a dictionary.
@@ -32,8 +33,9 @@ def load_json_string(str_in: str) -> dict:
         logger.debug("JSONDecodeError: %s", str(err))
         logger.debug("String to decode: %s", str_in)
         # Fix triple escaped newlines
-        str_in = str_in.replace('\\\n', '\\n')
+        str_in = str_in.replace("\\\n", "\\n")
         return json.loads(str_in)
+
 
 def api_request(
     messages: list[dict],
@@ -42,7 +44,7 @@ def api_request(
     temperature: int = 0.7,
     model: str = GOOD_MODEL,
     max_tokens: int = None,
-    gen_logger: Logger = logger
+    gen_logger: Logger = logger,
 ):
     """
     Make a request to the OpenAI API with exponential backoff.
@@ -61,32 +63,38 @@ def api_request(
     max_delay = 16
     jitter_range = (1, 3)
     params = {
-        'model': model,
-        'messages': messages,
-        'temperature': temperature,
+        "model": model,
+        "messages": messages,
+        "temperature": temperature,
     }
 
     if functions:
-        params['functions'] = functions
+        params["functions"] = functions
 
     if function_call:
-        params['function_call'] = function_call
+        params["function_call"] = function_call
 
     if max_tokens:
-        params['max_tokens'] = max_tokens
+        params["max_tokens"] = max_tokens
 
     for attempt in range(1, max_tries + 1):
         try:
             response = openai.ChatCompletion.create(**params)
             return response
         except (
-            openai.error.APIError, openai.error.Timeout,
-            openai.error.RateLimitError, openai.error.APIConnectionError,
-            openai.error.ServiceUnavailableError
+            openai.error.APIError,
+            openai.error.Timeout,
+            openai.error.RateLimitError,
+            openai.error.APIConnectionError,
+            openai.error.ServiceUnavailableError,
         ) as err:
             if attempt == max_tries:
-                gen_logger.error(f"API request failed - {attempt} attempts with final error {err}.")
-                results = {"choices": [{"message": {"content": "ERROR: API request failed."}}]}
+                gen_logger.error(
+                    f"API request failed - {attempt} attempts with final error {err}."
+                )
+                results = {
+                    "choices": [{"message": {"content": "ERROR: API request failed."}}]
+                }
                 return results
 
             delay = min(initial_delay * (backoff_factor ** (attempt - 1)), max_delay)
@@ -114,12 +122,13 @@ CODE_FUNCTIONS = [
                 "import_statements": {
                     "type": "string",
                     "description": "Python import statements for the function to add, escaped.",
-                }
+                },
             },
             "required": ["function_code", "import_statements"],
         },
     }
 ]
+
 
 def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
     """
@@ -136,13 +145,11 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
     messages = prompts.build_messages(prompt)
     function_call = {"name": "add_function_to_file"}
     response = api_request(
-        messages=messages,
-        functions=CODE_FUNCTIONS,
-        function_call=function_call
+        messages=messages, functions=CODE_FUNCTIONS, function_call=function_call
     )
-    response_message = response['choices'][0]['message']
+    response_message = response["choices"][0]["message"]
     logger.debug("Response message: %s", response_message)
-    if response_message.get('function_call'):
+    if response_message.get("function_call"):
         arguments_string = response_message["function_call"]["arguments"]
         # Tweak to prevent malformed escape sequences
         try:
@@ -153,7 +160,8 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
         imports = function_args.get("import_statements").split("\n")
         return function_args.get("function_code"), imports
     else:
-        return response_message['content']
+        return response_message["content"]
+
 
 def generate_code(task_description: str, function_file: str) -> Tuple[str, str]:
     """
@@ -168,8 +176,9 @@ def generate_code(task_description: str, function_file: str) -> Tuple[str, str]:
     """
     return generate_from_prompt(
         prompts.create_function_prompt,
-        {"task_description": task_description, "function_file": function_file}
+        {"task_description": task_description, "function_file": function_file},
     )
+
 
 def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
     """
@@ -180,13 +189,14 @@ def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
         function_file (str): File containing the function to build a test for.
 
     Returns:
-        Tuple[str, str]: A tuple containing the generated 
+        Tuple[str, str]: A tuple containing the generated
         Python test and import statements.
     """
     return generate_from_prompt(
         prompts.create_test_prompt,
-        {"function_code": function_code, "function_file": function_file}
+        {"function_code": function_code, "function_file": function_file},
     )
+
 
 def generate_module_docstring(module_code: str) -> str:
     """
@@ -205,6 +215,6 @@ def generate_module_docstring(module_code: str) -> str:
         functions=[],  # no functions required for this prompt
         function_call=None,
         model=QUICK_MODEL,
-        max_tokens=300
+        max_tokens=300,
     )
-    return response['choices'][0]['message']['content']
+    return response["choices"][0]["message"]["content"]

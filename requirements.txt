@@ -11,3 +11,4 @@ pylint
 
 # Testing
 pytest
+pytest-mock

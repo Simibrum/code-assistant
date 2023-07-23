@@ -18,6 +18,7 @@ from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from functions import logger
 
+
 def extract_project_description(readme_path: str = "README.md") -> str:
     """
     Extracts the Project Description section from a README file
@@ -33,7 +34,7 @@ def extract_project_description(readme_path: str = "README.md") -> str:
     if not os.path.exists(readme_path):
         return ""
 
-    with open(readme_path, 'r', encoding='utf-8') as file:
+    with open(readme_path, "r", encoding="utf-8") as file:
         readme = file.read()
 
     # Use regex to find the Project Description section.
@@ -47,6 +48,7 @@ def extract_project_description(readme_path: str = "README.md") -> str:
 
     # If no match is found, return an empty string.
     return ""
+
 
 def read_requirements_txt(file_path: str = "requirements.txt") -> str:
     """
@@ -62,6 +64,7 @@ def read_requirements_txt(file_path: str = "requirements.txt") -> str:
         contents = file.read()
     return contents
 
+
 def read_gitignore(gitignore_path):
     """
     Read the contents of a .gitignore file.
@@ -75,6 +78,7 @@ def read_gitignore(gitignore_path):
     with open(gitignore_path, "r", encoding="utf-8") as file:
         gitignore_patterns = file.readlines()
     return [pattern.strip() for pattern in gitignore_patterns if pattern.strip()]
+
 
 def should_use_file(file_path: str, ignore_patterns=None):
     """
@@ -101,13 +105,14 @@ def should_use_file(file_path: str, ignore_patterns=None):
 
     return True
 
+
 def build_directory_structure(
-        start_path: str,
-        gitignore_patterns: list[str] = None,
-        level: int=0,
-        max_levels: int=None,
-        indent:str="  "
-    ):
+    start_path: str,
+    gitignore_patterns: list[str] = None,
+    level: int = 0,
+    max_levels: int = None,
+    indent: str = "  ",
+):
     """
     Build a string representation of the directory structure starting at a given path.
 
@@ -116,7 +121,7 @@ def build_directory_structure(
         level (int, optional): The current level of the directory structure. Default is 0.
         max_levels (int, optional): The maximum number of levels to include. Default is None.
         indent (str, optional): The string to use for indentation. Default is two spaces.
-        
+
     Returns:
         str: The string representation of the directory structure.
     """
@@ -134,11 +139,11 @@ def build_directory_structure(
             structure += indent * level + entry + "\n"
             if os.path.isdir(path):
                 structure += build_directory_structure(
-                    path, gitignore_patterns,
-                    level+1, max_levels, indent
+                    path, gitignore_patterns, level + 1, max_levels, indent
                 )
 
     return structure
+
 
 def extract_functions_from_file(file_path: str):
     """
@@ -150,7 +155,7 @@ def extract_functions_from_file(file_path: str):
     Returns:
         list[tuple]: A list of tuples, where each tuple contains the function name and source code.
     """
-    with open(file_path, 'r', encoding="utf-8") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         source_code = file.read()
 
     # Parse the source code to an AST.
@@ -167,6 +172,7 @@ def extract_functions_from_file(file_path: str):
 
     return function_data
 
+
 def add_imports(file_path: str, new_imports: list[str]):
     """
     Add import statements to a Python file, avoiding duplicates.
@@ -179,7 +185,7 @@ def add_imports(file_path: str, new_imports: list[str]):
     if not os.path.exists(file_path):
         return
     # Parse the existing code.
-    with open(file_path, 'r', encoding="utf-8") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         module = ast.parse(file.read())
     logger.debug("Parsed module: %s", ast.dump(module))
     # Find the last import statement in the module.
@@ -201,8 +207,9 @@ def add_imports(file_path: str, new_imports: list[str]):
     # Add the new imports, avoiding duplicates.
     for new_import_node in new_import_nodes:
         if not any(
-            ast.dump(new_import_node) == ast.dump(existing_node) for existing_node in module.body
-            ):
+            ast.dump(new_import_node) == ast.dump(existing_node)
+            for existing_node in module.body
+        ):
             module.body.insert(last_import_index + 1, new_import_node)
             last_import_index += 1
 
@@ -217,8 +224,9 @@ def add_imports(file_path: str, new_imports: list[str]):
     logger.debug("Formatted code: %s", new_code)
 
     # Write the modified code back to the file.
-    with open(file_path, 'w', encoding="utf-8") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(new_code)
+
 
 def format_code(code: str) -> str:
     """
@@ -230,7 +238,4 @@ def format_code(code: str) -> str:
     Returns:
         str: The formatted code.
     """
-    return black.format_str(
-        code,
-        mode=black.FileMode(line_length=90)
-    )
+    return black.format_str(code, mode=black.FileMode(line_length=90))

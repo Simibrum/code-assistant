@@ -6,6 +6,7 @@ from llm.llm_interface import generate_code
 from functions import logger
 import utils
 
+
 def add_function_to_file(file_path: str, task_description: str):
     """
     Generate a new function based on a task description and add it to a Python file.
@@ -27,5 +28,5 @@ def add_function_to_file(file_path: str, task_description: str):
         utils.add_imports(file_path, imports)
 
     # Append the generated code to the end of the file.
-    with open(file_path, 'a', encoding="utf-8") as file:
+    with open(file_path, "a", encoding="utf-8") as file:
         file.write("\n" + function_code + "\n")
