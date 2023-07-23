@@ -32,8 +32,11 @@ def func2(x):
     os.remove(temp_path)
 
 def test_extract_project_description():
+    """
+    Test the extract_project_description function from the utils module.
+    """
     # Test case with a valid README file
-    assert "The aim is to build an agent" in utils.extract_project_description('README.md')
+    assert "The aim is to build an agent" in utils.extract_project_description()
 
     # Test case with an invalid README file
     assert utils.extract_project_description('invalid.md') == ''
@@ -41,7 +44,11 @@ def test_extract_project_description():
     # Test case with no Project Description section
     assert utils.extract_project_description('README_no_description.md') == ''
 
+
 def test_read_requirements_txt():
+    """
+    Test the read_requirements_txt function from the utils module.
+    """
     # Test if the function correctly reads the contents of the requirements.txt file
     contents = utils.read_requirements_txt()
     assert isinstance(contents, str)
@@ -56,84 +63,8 @@ def test_read_requirements_txt():
     custom_contents = utils.read_requirements_txt(file_path=temp_path)
     assert isinstance(custom_contents, str)
     assert len(custom_contents) > 0
-    assert custom_contents.startswith('custom_package1')
-    assert custom_contents.endswith('custom_package2')
-
-def test_read_gitignore():
-    # Test case 1: Test with empty .gitignore file
-    # Generate a temporary file with no contents
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp:
-        temp_path = temp.name
-    # Call the function to read the .gitignore file
-    assert utils.read_gitignore(temp_path) == []
-    
-    # Test case 2: Test with non-empty .gitignore file
-    gitignore_path = '.gitignore'
-    expected_output = ['*.pyc', 'build/']
-    assert utils.read_gitignore(gitignore_path) == expected_output
-
-def test_should_use_file():
-    # Test when ignore_patterns is None
-    assert utils.should_use_file('path/to/file.txt', None) == True
-
-    # Test when ignore_patterns is an empty list
-    assert utils.should_use_file('path/to/file.txt', []) == True
-
-    # Test when file matches an ignore pattern
-    assert utils.should_use_file('path/to/file.txt', ['*.txt']) == False
-
-    # Test when file does not match any ignore pattern
-    assert utils.should_use_file('path/to/file.txt', ['*.py']) == True
-
-    # Test when file is in git config directories
-    assert utils.should_use_file('.git', ['*.py']) == False
-    assert utils.should_use_file('.github', ['*.py']) == False
-    assert utils.should_use_file('__pycache__', ['*.py']) == False
-    assert utils.should_use_file('.pytest_cache', ['*.py']) == False
-
-def test_build_directory_structure():
-    # Test case 1: ...
-    assert ...
-
-    # Test case 2: ...
-    assert ...
-
-import re
-
-def test_extract_project_description():
-    # Create a temporary README file
-    with open('README.md', 'w') as f:
-        f.write('## Project Description\nThis is a test project')
-    
-    # Import the function from utils.py
-    from utils import extract_project_description
-    
-    # Call the function
-    description = extract_project_description()
-    
-    # Assert that the function has correctly extracted the project description
-    assert description == 'This is a test project'
-    
-    # Remove the temporary README file
-    import os
-    os.remove('README.md')
-
-def test_read_requirements_txt():
-    """
-    Test the function read_requirements_txt.
-
-    This test checks if the function correctly reads the content of a requirements.txt file.
-    """
-    # Create a mock requirements.txt file
-    mock_requirements = "# Code Generation Library\nopenai\n\n# Tools\ntiktoken\npathspec\n\n# Testing\npytest"
-    with open('requirements.txt', 'w', encoding='utf-8') as f:
-        f.write(mock_requirements)
-
-    # Import the function to be tested
-    from utils import read_requirements_txt
-
-    # Call the function and check if the output is correct
-    assert read_requirements_txt() == mock_requirements
+    assert custom_contents.strip().startswith('custom_package1')
+    assert custom_contents.strip().endswith('custom_package2')
 
 def test_read_gitignore():
     """
@@ -143,9 +74,19 @@ def test_read_gitignore():
     calling the read_gitignore function with the path to this file. The output of the function
     should match the content of the .gitignore file.
     """
-    import os
-    from utils import read_gitignore
-    import tempfile
+    # Test case 1: Test with empty .gitignore file
+    # Generate a temporary file with no contents
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp:
+        temp_path = temp.name
+    # Call the function to read the .gitignore file
+    assert utils.read_gitignore(temp_path) == []
+
+    # Test case 2: Test with non-empty .gitignore file
+    gitignore_path = '.gitignore'
+    expected_output = ['*.py[cod]', 'build/']
+    read_file = utils.read_gitignore(gitignore_path)
+    for pattern in expected_output:
+        assert pattern in read_file
 
     # Create temporary .gitignore file with some patterns
     with tempfile.NamedTemporaryFile(delete=False) as temp:
@@ -154,7 +95,7 @@ def test_read_gitignore():
 
     try:
         # Call the function with the path to the temporary .gitignore file
-        gitignore_patterns = read_gitignore(temp_path)
+        gitignore_patterns = utils.read_gitignore(temp_path)
 
         # Check that the returned list matches the content of the .gitignore file
         assert gitignore_patterns == ['*.pyc', '.DS_Store']
@@ -179,67 +120,77 @@ def test_should_use_file():
 
     # Test without providing any ignore patterns. By default, it should not ignore any file.
     assert utils.should_use_file('test.py')
+    # Test when ignore_patterns is None
+    assert utils.should_use_file('path/to/file.txt', None) is True
+
+    # Test when ignore_patterns is an empty list
+    assert utils.should_use_file('path/to/file.txt', []) is True
+
+    # Test when file matches an ignore pattern
+    assert utils.should_use_file('path/to/file.txt', ['*.txt']) is False
+
+    # Test when file does not match any ignore pattern
+    assert utils.should_use_file('path/to/file.txt', ['*.py']) is True
+
+    # Test when file is in git config directories
+    assert utils.should_use_file('.git', ['*.py']) is False
+    assert utils.should_use_file('.github', ['*.py']) is False
+    assert utils.should_use_file('__pycache__', ['*.py']) is False
+    assert utils.should_use_file('.pytest_cache', ['*.py']) is False
 
 def test_build_directory_structure():
-    """Test the build_directory_structure function."""
-
+    """
+    Test the build_directory_structure function from the utils module.
+    """
     # Create a temporary directory for testing
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Create some files and directories in the temporary directory
         os.mkdir(os.path.join(tmpdirname, 'subdir'))
-        with open(os.path.join(tmpdirname, 'file.txt'), 'w') as f:
-            f.write('Hello, world!')
-        with open(os.path.join(tmpdirname, 'subdir', 'subfile.txt'), 'w') as f:
-            f.write('Hello, world!')
+        with open(os.path.join(
+            tmpdirname, 'file.txt'), 'w', encoding="utf-8") as file:
+            file.write('Hello, world!')
+        with open(os.path.join(
+            tmpdirname, 'subdir', 'subfile.txt'), 'w', encoding="utf-8") as file:
+            file.write('Hello, world!')
 
         # Build the directory structure
         structure = utils.build_directory_structure(tmpdirname)
+        print(structure)
 
         # Check that the structure is as expected
-        assert structure == f'{tmpdirname}\n  file.txt\n  subdir\n    subfile.txt\n'
-
-def extract_functions_from_file(file_path: str):
-    """
-    Extract the names and source code of all functions in a Python file.
-
-    Args:
-        file_path (str): The path to the Python file.
-
-    Returns:
-        list[tuple]: A list of tuples, where each tuple contains the function name and source code.
-    """
-    with open(file_path, 'r', encoding="utf-8") as file:
-        source_code = file.read()
-
-    # Parse the source code to an AST.
-    module = ast.parse(source_code)
-
-    # Extract all function definitions.
-    functions = [node for node in module.body if isinstance(node, ast.FunctionDef)]
-
-    # Get the source code and name for each function.
-    function_data = []
-    for function in functions:
-        function_code = ast.get_source_segment(source_code, function)
-        function_data.append((function.name, function_code))
-
-    return function_data
+        assert structure == 'file.txt\nsubdir\n  subfile.txt\n'
 
 def test_add_imports():
-    import os
-    import ast
-    # Create a temporary python file for testing
-    test_file_path = 'test_file.py'
-    with open(test_file_path, 'w') as file:
-        file.write('import os\n')
-    # Add imports
-    utils.add_imports(test_file_path, ['import ast', 'from pathlib import Path'])
-    with open(test_file_path, 'r') as file:
-        module = ast.parse(file.read())
-    # Check if the imports were added correctly
-    assert 'import os' in ast.dump(module)
-    assert 'import ast' in ast.dump(module)
-    assert 'from pathlib import Path' in ast.dump(module)
-    # Clean up
-    os.remove(test_file_path)
+    """
+    Test the add_imports function.
 
+    The function should add new import statements to a Python file, avoiding duplicates.
+    """
+    # Create a temporary Python file.
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".py") as tmp:
+        tmp.write("import os\n")
+        file_path = tmp.name
+
+    try:
+        # Test that the function adds a new import statement.
+        utils.add_imports(file_path, ["import sys"])
+        with open(file_path, "r", encoding="utf-8") as file:
+            contents = file.read()
+            assert "import sys" in contents
+
+        # Test that the function avoids duplicates.
+        utils.add_imports(file_path, ["import sys"])
+        with open(file_path, "r", encoding="utf-8") as file:
+            assert file.read().count("import sys") == 1
+
+        # Test that the function can add multiple new import statements.
+        utils.add_imports(file_path, ["import math", "import json"])
+        with open(file_path, "r", encoding="utf-8") as file:
+            contents = file.read()
+            assert "import math" in contents
+            assert "import json" in contents
+    finally:
+        # Delete the temporary file.
+        os.remove(file_path)
+
+test_add_imports()

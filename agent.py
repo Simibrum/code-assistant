@@ -51,7 +51,7 @@ def generate_tests():
         functions = utils.extract_functions_from_file(python_file)
 
         # Write the test to a file.
-        test_file_name = f"tests/test_{python_file}"
+        test_file_name = f"tests/test_{python_file.split('/')[-1]}"
         
         # If the test file exists, extract the function names from it.
         existing_test_functions = set()
@@ -65,7 +65,7 @@ def generate_tests():
         # Iterate through the functions.
         for function_name, function_code in functions:
             # Only generate and write the test if it doesn't already exist.
-            if function_name not in existing_test_functions:
+            if f"test_{function_name}" not in existing_test_functions:
                 # Generate a test for the function.
                 logger.info("Generating test for function %s", function_name)
                 test_code, imports = llm.generate_test(function_code, function_file=python_file)
@@ -112,3 +112,5 @@ def generate_module_docstrings():
         # Write the modified code back to the file.
         with open(file_path, 'w', encoding="utf-8") as file:
             file.write(new_code)
+
+generate_tests()

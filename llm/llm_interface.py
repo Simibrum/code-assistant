@@ -111,7 +111,10 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
     response_message = response['choices'][0]['message']
     logger.debug("Response message: %s", response_message)
     if response_message.get('function_call'):
-        function_args = json.loads(response_message["function_call"]["arguments"])
+        function_args = json.loads(
+            response_message["function_call"]["arguments"],
+            strict=False
+            )
         return function_args.get("function_code"), function_args.get("import_statements")
     else:
         return response_message['content']

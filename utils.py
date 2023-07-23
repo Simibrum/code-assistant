@@ -27,6 +27,10 @@ def extract_project_description(readme_path: str = "README.md") -> str:
     Returns:
         str: The text of the Project Description section.
     """
+    # Check the readme file exists.
+    if not os.path.exists(readme_path):
+        return ""
+    
     with open(readme_path, 'r', encoding='utf-8') as file:
         readme = file.read()
 
@@ -169,6 +173,9 @@ def add_imports(file_path: str, new_imports: list[str]):
         file_path (str): The path to the Python file.
         new_imports (list[str]): The new import statements to add.
     """
+    # Check file exists and if not exit
+    if not os.path.exists(file_path):
+        return
     # Parse the existing code.
     with open(file_path, 'r', encoding="utf-8") as file:
         module = ast.parse(file.read())
@@ -180,7 +187,11 @@ def add_imports(file_path: str, new_imports: list[str]):
             last_import_index = i
 
     # Parse the new import statements.
-    new_import_nodes = [ast.parse(new_import).body[0] for new_import in new_imports]
+    new_import_nodes = []
+    for new_import in new_imports:
+        parsed_import = ast.parse(new_import)
+        if len(parsed_import.body) > 1:
+            new_import_nodes.extend(parsed_import.body)
 
     # Add the new imports, avoiding duplicates.
     for new_import_node in new_import_nodes:
