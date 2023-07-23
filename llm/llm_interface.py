@@ -16,7 +16,7 @@ import llm.prompts as prompts
 GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
 
-def load_json_string(s: str) -> dict:
+def load_json_string(str_in: str) -> dict:
     """
     Load a JSON string into a dictionary.
 
@@ -27,12 +27,13 @@ def load_json_string(s: str) -> dict:
         dict: The JSON string as a dictionary.
     """
     try:
-        return json.loads(s)
+        return json.loads(str_in)
     except json.JSONDecodeError as err:
         logger.debug("JSONDecodeError: %s", str(err))
+        logger.debug("String to decode: %s", str_in)
         # Fix triple escaped newlines
-        s = s.replace('\\\n', '\\n')
-        return json.loads(s)
+        str_in = str_in.replace('\\\n', '\\n')
+        return json.loads(str_in)
 
 def api_request(
     messages: list[dict],

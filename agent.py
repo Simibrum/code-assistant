@@ -5,6 +5,7 @@ performs the task, evaluates the result, and repeats.
 """
 import os
 import ast
+import argparse
 import utils
 from functions import logger
 import llm.llm_interface as llm
@@ -116,4 +117,15 @@ def generate_module_docstrings():
         with open(file_path, 'w', encoding="utf-8") as file:
             file.write(new_code)
 
-generate_tests()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--generate_tests', action='store_true')
+    args = parser.parse_args()
+    
+    if args.generate_tests:
+        generate_tests()
+
+    if args.generate_module_docstrings:
+        generate_module_docstrings()
+

@@ -1,5 +1,6 @@
 import os
 import ast
+import tempfile
 from unittest import mock
 import agent
 
@@ -28,8 +29,15 @@ def test_generate_module_docstrings():
     """
     Test the function generate_module_docstrings.
     """
+    # Generate two temporary python files
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix=".py") as temp:
+        temp.write('print("hello world1")')
+        temp_path1 = temp.name
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix=".py") as temp:
+        temp.write('print("hello world2")')
+        temp_path2 = temp.name
     # Mock the function get_python_files to return a list of python files
-    with mock.patch('agent.get_python_files', return_value=['file1.py', 'file2.py']):
+    with mock.patch('agent.get_python_files', return_value=[temp_path1, temp_path2]):
         # Mock the function ast.parse to return a parsed module without docstring
         with mock.patch('ast.parse', return_value=ast.Module(body=[], docstring=None)):
             # Mock the function llm.generate_module_docstring to return a docstring
