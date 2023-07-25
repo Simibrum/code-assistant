@@ -197,6 +197,42 @@ def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
         {"function_code": function_code, "function_file": function_file},
     )
 
+def generate_todo_list() -> str:
+    """
+    Use the LLM to generate a to-do list.
+
+    Returns:
+        str: The generated to-do list.
+    """
+    prompt = prompts.create_todo_list_prompt()
+    messages = prompts.build_messages(prompt)
+    response = api_request(
+        messages=messages,
+        functions=[],  # no functions required for this prompt
+        function_call=None,
+        model=GOOD_MODEL,
+    )
+    return response["choices"][0]["message"]["content"]
+
+def generate_summary(prompt: str) -> str:
+    """
+    Use the LLM to generate a summary using a given prompt.
+
+    Args:
+        prompt (str): The prompt to use.
+
+    Returns:
+        str: The generated summary.
+    """
+    messages = prompts.build_messages(prompt, add_dir=False, add_requirements=False)
+    response = api_request(
+        messages=messages,
+        functions=[],  # no functions required for this prompt
+        function_call=None,
+        model=GOOD_MODEL,
+    )
+    return response["choices"][0]["message"]["content"]
+
 
 def generate_module_docstring(module_code: str) -> str:
     """

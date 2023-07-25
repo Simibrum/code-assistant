@@ -54,14 +54,21 @@ def generate_requirements_prompt() -> str:
     return prompt
 
 
-def build_messages(prompt, messages=None) -> list[dict]:
+def build_messages(
+        prompt,
+        messages=None,
+        add_dir: bool = True,
+        add_requirements: bool = True
+        ) -> list[dict]:
     """Build a set of chat messages based around the prompt as the last message."""
     if not messages:
         messages = [
             {"role": "system", "content": generate_system_prompt()},
-            {"role": "user", "content": generate_directory_prompt()},
-            {"role": "user", "content": generate_requirements_prompt()},
         ]
+        if add_dir:
+            messages.append({"role": "user", "content": generate_directory_prompt()})
+        if add_requirements:
+            messages.append({"role": "user", "content": generate_requirements_prompt()})
     messages += [{"role": "user", "content": prompt}]
     return messages
 
@@ -164,5 +171,21 @@ def create_function_docstring_prompt(function_code: str) -> str:
         'Returns:\n    [Return value desc]\n\n'
         '\"\"\"\n\n'
     )
+
+    return prompt
+
+def create_todo_list_prompt() -> str:
+    """
+    Create a prompt for the LLM to generate a TODO list.
+
+    Returns:
+        str: The generated prompt.
+    """
+    # Add the message setting the task.
+    prompt = "Please write a markdown TODO list for the project. "
+    prompt += "Limit to 10 items."
+    prompt += "Limit lines to a maximum of 90 characters.\n\n"
+    prompt += "The TODO list should be in the following format:\n\n"
+    prompt += '##TODO list\n[ ]- Task 1\n[ ]- Task 2\n[ ]- Task 3\n\n'
 
     return prompt

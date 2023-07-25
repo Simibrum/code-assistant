@@ -7,6 +7,17 @@ The aim is to build an agent that can code itself using an LLM. The LLM will ret
 Simplicity is key. Functions will be returned with docstrings summarising the function. Python typing is to be used.
 A test driven development strategy will be used. Testing is with pytest. Lines are limited to 100 characters.
 
+## Auto Generated Summary
+
+The project is a language learning model (LLM) based software development assistant, named 'Agent'. The Agent autonomously generates Python code, tests, and manages a GitHub repository. It uses multiple Python scripts to accomplish different tasks:
+1. `utils.py`: Provides utility functions for the Agent such as extract project description from README, read a requirements.txt file, format Python code etc.
+2. `agent.py`: It's the main script that conducts a loop where it determines the next tasks, performs them, and evaluates the results.
+3. `functions.py`: Contains utility functions for loading environment variables, initializing a logger, and calculating the number of tokens used by a list of messages in a conversation.
+4. `code_management`: This directory consists of various scripts responsible for managing the codebase. This includes generating test functions, reading information from code files, and handling writing code to Python files.
+5. `llm`: This directory contains scripts for interacting with the LLM. It includes functions for generating prompts and communicating with the LLM to create new code or tests.
+
+The Agent is designed to generate Python code, tests, and manage a GitHub repository autonomously, making it a valuable tool for automated software development.
+
 ## Agent Structure
 
 ```

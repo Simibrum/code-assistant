@@ -2,6 +2,7 @@
 Module to read information from the code files.
 """
 import utils
+import llm.llm_interface as llm
 
 def read_code_file_descriptions(start_dir: str) -> dict:
     """
@@ -33,3 +34,66 @@ def read_function_descriptions(file_path: str) -> dict[str: str]:
     for function_name, function_code in utils.extract_functions_from_file(file_path):
         function_descriptions[function_name] = utils.read_function_description(function_code)
     return function_descriptions
+
+def read_all_function_descriptions(start_dir: str) -> dict[str: dict[str: str]]:
+    """
+    Read the descriptions of the functions in all Python files in a directory.
+
+    Args:
+        start_dir (str): The path to the directory to read.
+
+    Returns:
+        dict[str: dict[str: str]]: A dictionary of file paths and function descriptions.
+    """
+    all_function_descriptions = dict()
+    for file_path in utils.get_python_files(start_dir):
+        all_function_descriptions[file_path] = read_function_descriptions(file_path)
+    return all_function_descriptions
+
+def generate_project_summary_prompt(code_file_descriptions, all_function_descriptions):
+    """
+    Generate a prompt for ChatGPT to create a project summary.
+
+    Args:
+        code_file_descriptions (dict): A dictionary mapping file paths to module docstrings.
+        all_function_descriptions (dict): A dictionary mapping file paths to dictionaries,
+            where the inner dictionaries map function names to function docstrings.
+
+    Returns:
+        str: The generated prompt.
+    """
+    # Start with an introduction.
+    prompt = (
+        "This project consists of several Python files, "
+        "each with its own purpose, and several functions. "
+    )
+
+    # Describe each file.
+    for file_path, module_description in code_file_descriptions.items():
+        prompt += f"The file '{file_path}' is described as: '{module_description}'. "
+
+    # Describe the functions in each file.
+    for file_path, function_descriptions in all_function_descriptions.items():
+        prompt += f"In the file '{file_path}', there are several functions: "
+        for function_name, function_description in function_descriptions.items():
+            prompt += f"The function '{function_name}' is described as: '{function_description}'. "
+
+    # Ask for a project summary.
+    prompt += "Please provide a brief summary of the project as a whole."
+
+    return prompt
+
+
+def get_summary(start_directory: str) -> str:
+    """Get a summary of the code in the project.
+    
+    Args:
+        start_directory (str): The path to the directory to read.
+        
+    Returns:
+        str: The summary of the code in the project."""
+    code_file_descriptions = read_code_file_descriptions(start_directory)
+    all_function_descriptions = read_all_function_descriptions(start_directory)
+    prompt = generate_project_summary_prompt(code_file_descriptions, all_function_descriptions)
+    summary = llm.generate_summary(prompt)
+    return summary
