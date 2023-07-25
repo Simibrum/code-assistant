@@ -14,6 +14,7 @@ import os
 import re
 import ast
 import black
+import isort
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from functions import logger
@@ -238,7 +239,9 @@ def format_code(code: str) -> str:
     Returns:
         str: The formatted code.
     """
-    return black.format_str(code, mode=black.FileMode(line_length=90))
+    # Sort imports
+    sorted_code = isort.code(code)
+    return black.format_str(sorted_code, mode=black.FileMode(line_length=90))
 
 def get_python_files(directory: str = ".", skip_tests: bool = True):
     """

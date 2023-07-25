@@ -1,16 +1,21 @@
 """
 This module contains unit tests for the `agent` module. 
-It tests the functionality of the `get_python_files`, `generate_tests`, and `generate_module_docstrings` functions.
+It tests the functionality of the `get_python_files`, `generate_tests`, 
+and `generate_module_docstrings` functions.
 
 The `test_get_python_files` function checks if the `agent.get_python_files` 
-function correctly returns the paths of all Python files in the current directory, excluding the 'tests' directory.
+function correctly returns the paths of all Python files 
+in the current directory, excluding the 'tests' directory.
 
 The `test_generate_tests` function tests the `agent.generate_tests` function 
 to ensure that it generates a test file named 'test_agent.py' in the 'tests' directory.
 
-The `test_generate_module_docstrings` function tests the `agent.generate_module_docstrings` function. 
-It generates two temporary Python files, mocks the `agent.get_python_files` function to return those files, 
-and mocks the `llm.llm_interface.generate_module_docstring` function to return a docstring. It then asserts that 
+The `test_generate_module_docstrings` function tests the 
+`agent.generate_module_docstrings` function. 
+It generates two temporary Python files, mocks the 
+`agent.get_python_files` function to return those files, 
+and mocks the `llm.llm_interface.generate_module_docstring` 
+function to return a docstring. It then asserts that 
 the file contents have been modified correctly.
 
 These tests help ensure the correctness and functionality of the `agent` module.

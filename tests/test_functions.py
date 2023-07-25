@@ -1,12 +1,22 @@
 """This module contains test functions for the `functions` module. 
 
-The `test_load_env_vars` function tests the `load_env_vars` function, which loads environment variables from a file. It creates a temporary file with environment variable values, calls the function to load the variables, and checks if they are correctly loaded.
+The `test_load_env_vars` function tests the `load_env_vars` function, 
+which loads environment variables from a file. It creates a temporary file 
+with environment variable values, calls the function to load the variables, 
+and checks if they are correctly loaded.
 
-The `test_init_logger` function tests the `init_logger` function, which initializes a logger. It checks if the logger is properly initialized with the expected properties, such as the correct logger type, number of handlers, stream handler properties, formatter properties, and log level based on the debug mode.
+The `test_init_logger` function tests the `init_logger` function, 
+which initializes a logger. It checks if the logger is properly initialized with the 
+expected properties, such as the correct logger type, number of handlers, stream 
+handler properties, formatter properties, and log level based on the debug mode.
 
-The `test_num_tokens_from_messages` function tests the `num_tokens_from_messages` function, which calculates the number of tokens in a list of messages. It includes two test cases: one for the default model, where it verifies the expected number of tokens, and another for an unsupported model, where it raises a `NotImplementedError`.
+The `test_num_tokens_from_messages` function tests the `num_tokens_from_messages` 
+function, which calculates the number of tokens in a list of messages. It includes 
+two test cases: one for the default model, where it verifies the expected number 
+of tokens, and another for an unsupported model, where it raises a `NotImplementedError`.
 
-These test functions ensure that the functions in the `functions` module are working correctly and provide proper test coverage."""
+These test functions ensure that the functions in the `functions` module are 
+working correctly and provide proper test coverage."""
 import os
 import sys
 import logging

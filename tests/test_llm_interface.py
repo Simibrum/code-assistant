@@ -9,7 +9,6 @@ import json
 from unittest.mock import MagicMock, patch
 from llm import llm_interface
 
-
 def test_load_json_string():
     """
     Test the load_json_string function.
@@ -154,7 +153,10 @@ def test_generate_module_docstring():
             "choices": [
                 {
                     "message": {
-                        "content": 'A module that contains a hello_world function which prints "Hello, world!".'
+                        "content": (
+                            'A module that contains a hello_world '
+                            'function which prints "Hello, world!".'
+                        )
                     }
                 }
             ]
@@ -163,3 +165,29 @@ def test_generate_module_docstring():
     assert (
         actual_docstring == expected_docstring
     ), f"Expected: {expected_docstring}, but got: {actual_docstring}"
+
+
+def test_generate_function_docstring():
+    """
+    Test for the function generate_function_docstring.
+    """
+
+    # Arrange
+    function_code = 'def hello_world():\n    print("Hello, World!")'
+    expected_docstring = 'This function prints "Hello, World!" to the console.'
+
+    with patch('llm.llm_interface.api_request') as mock_api_request:
+        mock_api_request.return_value = {
+            'choices': [{
+                'message': {
+                    'content': expected_docstring
+                }
+            }]
+        }
+
+        # Act
+        docstring = llm_interface.generate_function_docstring(function_code)
+
+        # Assert
+        assert docstring == expected_docstring, \
+            f'Expected: {expected_docstring}, but got: {docstring}'

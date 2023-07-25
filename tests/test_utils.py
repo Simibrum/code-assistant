@@ -1,6 +1,7 @@
 """Tests for the utils module. """
 import tempfile
 import os
+from unittest.mock import patch, mock_open
 import utils
 
 
@@ -141,10 +142,8 @@ def test_format_code():
     """
     Test the format_code function.
     """
-    code = """def test():\n    return 1"""
-
-    expected_result = """def test():\n    return 1\n"""
-
+    code = "def test():\n    return 1"
+    expected_result = "def test():\n    return 1\n"
     assert utils.format_code(code) == expected_result
 
 
@@ -160,3 +159,69 @@ def test_get_python_files():
     for file in python_files:
         assert file.endswith(".py")
         assert "tests" not in file
+
+
+def test_read_file_description() -> None:
+    """
+    Test the read_file_description function from the utils module.
+    """
+    expected_docstring = "\nThis is a test file.\nThis is the file's docstring.\n"
+    with patch("builtins.open", new=mock_open(read_data=expected_docstring)):
+        output_docstring = utils.read_file_description("test_path.py")
+    assert output_docstring == expected_docstring, "The docstrings do not match."
+
+
+def test_read_function_description():
+    """
+    Test the functionality of read_function_description.
+    """
+    test_func = (
+        "def test_func():\n    '''\n"
+        "    This is a test function.\n    '''\n    pass\n"
+    )
+    docstring = utils.read_function_description(test_func)
+    assert docstring == "This is a test function."
+
+
+def test_get_function_code():
+    """
+    Test get_function_code function from utils.py.
+
+    The test will:
+    - Write a temporary Python file with a known function.
+    - Use get_function_code to extract the function.
+    - Verify that the extracted function matches the known function.
+    """
+    known_function_code = 'def known_function():\n    return "Known function."'
+    with open("temp.py", "w", encoding="utf-8") as file:
+        file.write(known_function_code)
+    try:
+        extracted_function_code = utils.get_function_code("temp.py", "known_function")
+        assert (
+            extracted_function_code == known_function_code
+        ), f"Expected:\n{known_function_code}\nBut got:\n{{extracted_function_code}}"
+    finally:
+        os.remove("temp.py")
+
+
+def test_add_docstring_to_function():
+    """
+    Test the function add_docstring_to_function.
+    """
+    # Setup
+    file_path = 'temp.py'
+    function_name = 'test_func'
+    docstring = 'This is a test function.'
+    with open(file_path, 'w', encoding="utf-8") as file:
+        file.write(f'def {function_name}():\n    pass')
+
+    # Exercise
+    utils.add_docstring_to_function(file_path, function_name, docstring)
+
+    # Verify
+    with open(file_path, 'r', encoding="utf-8") as file:
+        lines = file.readlines()
+    assert lines[1].strip() == f'"""{docstring}"""'
+
+    # Cleanup
+    os.remove(file_path)
