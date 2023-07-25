@@ -4,6 +4,7 @@ openai
 # Tools
 tiktoken
 pathspec
+markdown-it-py
 
 # Code formatting
 black
