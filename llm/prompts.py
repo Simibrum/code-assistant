@@ -137,3 +137,32 @@ def create_module_docstring_prompt(module_code: str) -> str:
     prompt += '"""\n[docstring]\n"""\n\n'
 
     return prompt
+
+def create_function_docstring_prompt(function_code: str) -> str:
+    """
+    Create a prompt for the LLM to generate a docstring for a Python function.
+
+    Args:
+        function_code (str): The source code of the function.
+
+    Returns:
+        str: The generated prompt.
+    """
+    # Include the function code in the prompt.
+    prompt = "Here is some code for a function:\n\n" + function_code + "\n\n"
+
+    # Add the message setting the task.
+    prompt += "Please write a docstring for the above function. "
+    prompt += "Do NOT include the function code in the docstring. "
+    prompt += "Only return the docstring. "
+    prompt += "Limit the total description to less than 500 words. "
+    prompt += "Limit lines to a maximum of 90 characters.\n\n"
+    prompt += "The docstring should be in the Google docstring format:\n\n"
+    prompt += (
+        '\"\"\"\n[Short, concise function description]\n\n'
+        'Args:\n    [param1]: [desc]\n  [param2]:[desc]\n'
+        'Returns:\n    [Return value desc]\n\n'
+        '\"\"\"\n\n'
+    )
+
+    return prompt

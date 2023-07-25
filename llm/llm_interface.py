@@ -218,3 +218,24 @@ def generate_module_docstring(module_code: str) -> str:
         max_tokens=300,
     )
     return response["choices"][0]["message"]["content"]
+
+def generate_function_docstring(function_code: str) -> str:
+    """
+    Use the LLM to generate a docstring for a Python function.
+
+    Args:
+        function_code (str): The source code of the function.
+
+    Returns:
+        str: The generated docstring.
+    """
+    prompt = prompts.create_function_docstring_prompt(function_code)
+    messages = prompts.build_messages(prompt)
+    response = api_request(
+        messages=messages,
+        functions=[],  # no functions required for this prompt
+        function_call=None,
+        model=QUICK_MODEL,
+        max_tokens=600,
+    )
+    return response["choices"][0]["message"]["content"]

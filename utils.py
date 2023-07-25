@@ -268,7 +268,7 @@ def get_python_files(directory: str = ".", skip_tests: bool = True):
     logger.debug("Python files: %s", python_files)
     return python_files
 
-def read_file_descriptions(file_path: str) -> str:
+def read_file_description(file_path: str) -> str:
     """
     Read the module docstring from a Python file.
 
@@ -285,3 +285,77 @@ def read_file_descriptions(file_path: str) -> str:
     # Extract the module docstring.
     docstring = ast.get_docstring(module)
     return docstring
+
+def read_function_description(function_code: str) -> str:
+    """
+    Read the docstring of a function.
+
+    Args:
+        function_code (str): The source code of the function.
+
+    Returns:
+        str: The docstring of the function.
+    """
+    # Parse the source code to an AST.
+    function = ast.parse(function_code)
+    # Extract the function docstring.
+    docstring = ast.get_docstring(function)
+    return docstring
+
+def get_function_code(file_path: str, function_name: str) -> str:
+    """
+    Get the source code of a function from a Python file.
+
+    Args:
+        file_path (str): The path to the Python file.
+        function_name (str): The name of the function.
+
+    Returns:
+        str: The source code of the function.
+    """
+    with open(file_path, "r", encoding="utf-8") as file:
+        contents = file.read()
+    # Parse the source code to an AST.
+    module = ast.parse(contents)
+    # Find the function definition.
+    for node in module.body:
+        if isinstance(node, ast.FunctionDef) and node.name == function_name:
+            # Extract the function source code.
+            function_code = ast.get_source_segment(contents, node)
+            return function_code
+    return None
+
+def add_docstring_to_function(file_path: str, function_name: str, docstring: str):
+    """
+    Add a docstring to a function.
+
+    Args:
+        file_path (str): The path to the Python file.
+        function_name (str): The name of the function.
+        docstring (str): The docstring to add.
+    """
+    # Parse the existing code.
+    with open(file_path, "r", encoding="utf-8") as file:
+        module = ast.parse(file.read())
+    logger.debug("Parsed module: %s", ast.dump(module))
+
+    # Find the function definition.
+    for node in module.body:
+        if isinstance(node, ast.FunctionDef) and node.name == function_name:
+            # Add the docstring to the function.
+            node.body.insert(0, ast.Expr(value=ast.Str(s=docstring)))
+            break
+
+    # Unparse the modified AST back to code.
+    new_code = ast.unparse(module)
+
+    logger.debug("New code: %s", new_code)
+
+    # Format code
+    new_code = format_code(new_code)
+
+    logger.debug("Formatted code: %s", new_code)
+
+    # Write the modified code back to the file.
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(new_code)

@@ -12,9 +12,6 @@ from functions import logger
 import llm.llm_interface as llm
 
 
-
-
-
 def generate_tests():
     """
     Generate tests for the functions in the codebase.

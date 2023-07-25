@@ -18,7 +18,7 @@ def read_code_file_descriptions(start_dir: str) -> dict:
         code_file_descriptions[file_path] = utils.read_file_description(file_path)
     return code_file_descriptions
 
-def read_function_descriptions(file_path: str) -> list[str]:
+def read_function_descriptions(file_path: str) -> dict[str: str]:
     """
     Read the descriptions of the functions in a Python file.
 
@@ -26,9 +26,10 @@ def read_function_descriptions(file_path: str) -> list[str]:
         file_path (str): The path to the Python file.
 
     Returns:
-        list[str]: A list of function descriptions.
+        dict[str: str]: A dictionary of function name
+         and function descriptions.
     """
-    function_descriptions = []
-    for function in utils.get_functions(file_path):
-        function_descriptions.append(utils.read_function_description(function))
+    function_descriptions = dict()
+    for function_name, function_code in utils.extract_functions_from_file(file_path):
+        function_descriptions[function_name] = utils.read_function_description(function_code)
     return function_descriptions
