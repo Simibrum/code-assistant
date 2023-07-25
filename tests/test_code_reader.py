@@ -36,6 +36,7 @@ def test_read_function_descriptions():
     assert isinstance(function_descriptions, dict), 'Result should be a dictionary.'
     assert all(isinstance(key, str) for key in function_descriptions), \
         'All keys in the dictionary should be strings.'
+    print(function_descriptions)
     assert all(isinstance(value, str) for value in function_descriptions.values()), \
         'All values in the dictionary should be strings.'
     assert 'read_function_descriptions' in function_descriptions, \

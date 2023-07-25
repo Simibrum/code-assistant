@@ -44,7 +44,7 @@ def test_generate_module_docstrings():
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as temp:
         temp.write('print("hello world2")')
         temp_path2 = temp.name
-    with mock.patch("agent.get_python_files", return_value=[temp_path1, temp_path2]):
+    with mock.patch("agent.utils.get_python_files", return_value=[temp_path1, temp_path2]):
         with mock.patch(
             "llm.llm_interface.generate_module_docstring",
             return_value="This is a docstring.",

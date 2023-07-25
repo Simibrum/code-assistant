@@ -62,7 +62,7 @@ def test_generate_function_docstring(mocker):
 
     # Create a mock for the llm.generate_function_docstring function.
     mock_generate_function_docstring = mocker.patch(
-        'llm.generate_function_docstring', return_value='Test docstring')
+        'llm.llm_interface.generate_function_docstring', return_value='Test docstring')
 
     # Create a mock for the utils.add_docstring_to_function function.
     mock_add_docstring_to_function = mocker.patch('utils.add_docstring_to_function')

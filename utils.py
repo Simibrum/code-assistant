@@ -300,7 +300,15 @@ def read_function_description(function_code: str) -> str:
         str: The docstring of the function.
     """
     # Parse the source code to an AST.
-    function = ast.parse(function_code)
+    function_as_module = ast.parse(function_code)
+    # Extract the first FunctionDef node in the module.
+    function_def_nodes = [
+        node for node in function_as_module.body if isinstance(node, ast.FunctionDef)
+        ]
+    if not function_def_nodes:
+        return None  # No function definition found in the code.
+
+    function = function_def_nodes[0]
     # Extract the function docstring.
     docstring = ast.get_docstring(function)
     return docstring

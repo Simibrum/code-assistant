@@ -165,10 +165,12 @@ def test_read_file_description() -> None:
     """
     Test the read_file_description function from the utils module.
     """
-    expected_docstring = "\nThis is a test file.\nThis is the file's docstring.\n"
-    with patch("builtins.open", new=mock_open(read_data=expected_docstring)):
+    expected_docstring = "This is a test file. This is the file's docstring."
+    mocked_file_contents = f'"""\n{expected_docstring}\n"""\n'
+    with patch("builtins.open", new=mock_open(read_data=mocked_file_contents)):
         output_docstring = utils.read_file_description("test_path.py")
     assert output_docstring == expected_docstring, "The docstrings do not match."
+
 
 
 def test_read_function_description():
