@@ -5,7 +5,6 @@ performs the task, evaluates the result, and repeats.
 """
 import os
 import ast
-import argparse
 import black
 import utils
 from functions import logger
@@ -124,20 +123,3 @@ def format_modules():
                 file.write(fmt_code)
         except black.NothingChanged:
             logger.info("No changes to file %s", file_path)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--generate_tests", action="store_true")
-    parser.add_argument("--generate_module_docstrings", action="store_true")
-    parser.add_argument("--format_modules", action="store_true")
-    args = parser.parse_args()
-
-    if args.generate_tests:
-        generate_tests()
-
-    if args.generate_module_docstrings:
-        generate_module_docstrings()
-
-    if args.format_modules:
-        format_modules()

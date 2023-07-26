@@ -44,7 +44,7 @@ def test_generate_module_docstrings():
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as temp:
         temp.write('print("hello world2")')
         temp_path2 = temp.name
-    with mock.patch("agent.utils.get_python_files", return_value=[temp_path1, temp_path2]):
+    with mock.patch("utils.get_python_files", return_value=[temp_path1, temp_path2]):
         with mock.patch(
             "llm.llm_interface.generate_module_docstring",
             return_value="This is a docstring.",
@@ -61,17 +61,17 @@ def test_format_modules(mocker):
     Test the function format_modules from agent.py
     """
     # Mock the function get_python_files
-    mocker.patch("agent.utils.get_python_files", return_value=["file1.py", "file2.py"])
+    mocker.patch("utils.get_python_files", return_value=["file1.py", "file2.py"])
 
     # Mock the function utils.format_code
     mocker.patch(
-        "agent.utils.format_code", side_effect=["formatted_file1", "formatted_file2"]
+        "utils.format_code", side_effect=["formatted_file1", "formatted_file2"]
     )
 
     # Mock open function
     mock_open = mocker.patch("builtins.open", mocker.mock_open(read_data="original_code"))
     # Mock logger
-    mocker.patch("agent.logger")
+    mocker.patch("agent.core.logger")
 
     # Call the function
     agent.format_modules()
@@ -85,4 +85,4 @@ def test_format_modules(mocker):
     mock_open().write.assert_any_call("formatted_file2")
 
     # Assert logger called
-    agent.logger.info.assert_called()
+    agent.core.logger.info.assert_called()
