@@ -1,3 +1,4 @@
+import tempfile
 from markdown_it.token import Token
 from code_management import readme_manager
 
@@ -10,9 +11,12 @@ def test_parse_readme():
     readme_path = "./README.md"
     result = readme_manager.parse_readme(readme_path)
     assert isinstance(
-        result, Token
-    ), "The result should be a Token instance."
+        result, list
+    ), "The result should be a list instance."
     assert len(result) > 0, "The result should not be empty."
+    assert all(
+        (isinstance(token, Token) for token in result)
+    ), "All tokens should be instances of the Token class."
 
 
 def test_get_section():
@@ -20,12 +24,12 @@ def test_get_section():
     Test the get_section function from the readme_manager.py file.
     """
     tokens = [
-        Token(type="heading_open", tag="h2", content=""),
-        Token(type="inline", content="section1"),
-        Token(type="inline", content="content1"),
-        Token(type="heading_open", tag="h2", content=""),
-        Token(type="inline", content="section2"),
-        Token(type="inline", content="content2"),
+        Token(type="heading_open", tag="h2", content="", nesting=1),
+        Token(type="inline", tag="", content="section1", nesting=0),
+        Token(type="inline", tag="", content="content1", nesting=-1),
+        Token(type="heading_open", tag="h2", content="", nesting=1),
+        Token(type="inline", tag="", content="section2", nesting=0),
+        Token(type="inline", tag="", content="content2", nesting=-1),
     ]
     section_name = "section1"
     expected_output = "content1"
@@ -39,16 +43,11 @@ def test_get_headings_from_md_file():
     """
     Tests the function get_headings_from_md_file from the file readme_manager.py.
     """
-    # Import the function to test.
-
-    # Define a sample Markdown file path.
-    sample_file_path = './sample.md'
-
-    # Define expected result. This would usually be known from the file content.
-    expected_result = ['Heading 1', 'Heading 2']
-
-    # Call the function with the sample file path.
-    result = readme_manager.get_headings_from_md_file(sample_file_path)
-
-    # Assert that the result is as expected.
-    assert result == expected_result, f'Expected {expected_result}, but got {result}'
+    # Generate a fake Markdown file as a temporary file.
+    with tempfile.NamedTemporaryFile(suffix=".md") as temp_file:
+        temp_file.write(b"# Heading 1\n## Heading 2\n### Heading 3")
+        temp_file.seek(0)
+        # Get the headings from the file.
+        headings = readme_manager.get_headings_from_md_file(temp_file.name)
+        # Assert that the headings are as expected.
+        assert headings == ["Heading 1", "Heading 2", "Heading 3"]

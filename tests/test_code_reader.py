@@ -52,7 +52,7 @@ def test_read_all_function_descriptions(mocker):
         "utils.get_python_files", return_value=["file1.py", "file2.py"]
     )
     mock_read_function_descriptions = mocker.patch(
-        "code_reader.read_function_descriptions",
+        "code_management.code_reader.read_function_descriptions",
         return_value={"func1": "description1", "func2": "description2"},
     )
 
