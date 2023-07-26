@@ -1,0 +1,3497 @@
+{
+    "created": 1690379591.865712,
+    "duration": 2.5530848503112793,
+    "exitcode": 1,
+    "root": "/workspaces/code-assistant",
+    "environment": {},
+    "summary": {
+        "passed": 50,
+        "failed": 2,
+        "total": 52,
+        "collected": 52
+    },
+    "collectors": [
+        {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "agent/__init__.py",
+                    "type": "Package"
+                },
+                {
+                    "nodeid": "code_management/__init__.py",
+                    "type": "Package"
+                },
+                {
+                    "nodeid": "llm/__init__.py",
+                    "type": "Package"
+                },
+                {
+                    "nodeid": "tests/__init__.py",
+                    "type": "Package"
+                }
+            ]
+        },
+        {
+            "nodeid": "agent/test_analysis.py",
+            "outcome": "passed",
+            "result": []
+        },
+        {
+            "nodeid": "agent/__init__.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "agent/test_analysis.py",
+                    "type": "Module"
+                }
+            ]
+        },
+        {
+            "nodeid": "code_management/test_writer.py",
+            "outcome": "passed",
+            "result": []
+        },
+        {
+            "nodeid": "code_management/__init__.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "code_management/test_writer.py",
+                    "type": "Module"
+                }
+            ]
+        },
+        {
+            "nodeid": "llm/__init__.py",
+            "outcome": "passed",
+            "result": []
+        },
+        {
+            "nodeid": "tests/test_agent.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_agent.py::test_generate_tests",
+                    "type": "Function",
+                    "lineno": 28
+                },
+                {
+                    "nodeid": "tests/test_agent.py::test_generate_module_docstrings",
+                    "type": "Function",
+                    "lineno": 36
+                },
+                {
+                    "nodeid": "tests/test_agent.py::test_format_modules",
+                    "type": "Function",
+                    "lineno": 58
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_code_reader.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_code_reader.py::test_read_code_file_descriptions",
+                    "type": "Function",
+                    "lineno": 7
+                },
+                {
+                    "nodeid": "tests/test_code_reader.py::test_read_function_descriptions",
+                    "type": "Function",
+                    "lineno": 24
+                },
+                {
+                    "nodeid": "tests/test_code_reader.py::test_read_all_function_descriptions",
+                    "type": "Function",
+                    "lineno": 46
+                },
+                {
+                    "nodeid": "tests/test_code_reader.py::test_generate_project_summary_prompt",
+                    "type": "Function",
+                    "lineno": 71
+                },
+                {
+                    "nodeid": "tests/test_code_reader.py::test_get_summary",
+                    "type": "Function",
+                    "lineno": 90
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_code_writer.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_code_writer.py::test_add_function_to_file",
+                    "type": "Function",
+                    "lineno": 24
+                },
+                {
+                    "nodeid": "tests/test_code_writer.py::test_generate_function_docstring",
+                    "type": "Function",
+                    "lineno": 54
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_core.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_core.py::test_generate_tests",
+                    "type": "Function",
+                    "lineno": 26
+                },
+                {
+                    "nodeid": "tests/test_core.py::test_generate_module_docstrings",
+                    "type": "Function",
+                    "lineno": 53
+                },
+                {
+                    "nodeid": "tests/test_core.py::test_format_modules",
+                    "type": "Function",
+                    "lineno": 84
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_functions.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_functions.py::test_load_env_vars",
+                    "type": "Function",
+                    "lineno": 26
+                },
+                {
+                    "nodeid": "tests/test_functions.py::test_init_logger",
+                    "type": "Function",
+                    "lineno": 39
+                },
+                {
+                    "nodeid": "tests/test_functions.py::test_num_tokens_from_messages",
+                    "type": "Function",
+                    "lineno": 57
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_load_json_string",
+                    "type": "Function",
+                    "lineno": 12
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_api_request",
+                    "type": "Function",
+                    "lineno": 32
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_from_prompt",
+                    "type": "Function",
+                    "lineno": 53
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_code",
+                    "type": "Function",
+                    "lineno": 83
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_test",
+                    "type": "Function",
+                    "lineno": 113
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_module_docstring",
+                    "type": "Function",
+                    "lineno": 143
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_function_docstring",
+                    "type": "Function",
+                    "lineno": 170
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_todo_list",
+                    "type": "Function",
+                    "lineno": 186
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py::test_generate_summary",
+                    "type": "Function",
+                    "lineno": 203
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_prompts.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_prompts.py::test_generate_system_prompt",
+                    "type": "Function",
+                    "lineno": 9
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_generate_directory_prompt",
+                    "type": "Function",
+                    "lineno": 23
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_generate_requirements_prompt",
+                    "type": "Function",
+                    "lineno": 32
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_build_messages",
+                    "type": "Function",
+                    "lineno": 48
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_function_prompt",
+                    "type": "Function",
+                    "lineno": 60
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_module_docstring_prompt",
+                    "type": "Function",
+                    "lineno": 73
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_test_prompt",
+                    "type": "Function",
+                    "lineno": 94
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_function_docstring_prompt",
+                    "type": "Function",
+                    "lineno": 111
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_todo_list_prompt",
+                    "type": "Function",
+                    "lineno": 131
+                },
+                {
+                    "nodeid": "tests/test_prompts.py::test_create_task_processing_prompt",
+                    "type": "Function",
+                    "lineno": 143
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_readme_manager.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_readme_manager.py::test_parse_readme",
+                    "type": "Function",
+                    "lineno": 22
+                },
+                {
+                    "nodeid": "tests/test_readme_manager.py::test_get_section",
+                    "type": "Function",
+                    "lineno": 37
+                },
+                {
+                    "nodeid": "tests/test_readme_manager.py::test_get_headings_from_md_file",
+                    "type": "Function",
+                    "lineno": 57
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_task_management.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_task_management.py::test_process_task",
+                    "type": "Function",
+                    "lineno": 19
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/test_utils.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_utils.py::test_extract_functions_from_file",
+                    "type": "Function",
+                    "lineno": 7
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_extract_project_description",
+                    "type": "Function",
+                    "lineno": 20
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_read_requirements_txt",
+                    "type": "Function",
+                    "lineno": 29
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_read_gitignore",
+                    "type": "Function",
+                    "lineno": 48
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_should_use_file",
+                    "type": "Function",
+                    "lineno": 74
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_build_directory_structure",
+                    "type": "Function",
+                    "lineno": 94
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_add_imports",
+                    "type": "Function",
+                    "lineno": 114
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_format_code",
+                    "type": "Function",
+                    "lineno": 140
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_get_python_files",
+                    "type": "Function",
+                    "lineno": 149
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_read_file_description",
+                    "type": "Function",
+                    "lineno": 163
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_read_function_description",
+                    "type": "Function",
+                    "lineno": 175
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_get_function_code",
+                    "type": "Function",
+                    "lineno": 187
+                },
+                {
+                    "nodeid": "tests/test_utils.py::test_add_docstring_to_function",
+                    "type": "Function",
+                    "lineno": 208
+                }
+            ]
+        },
+        {
+            "nodeid": "tests/__init__.py",
+            "outcome": "passed",
+            "result": [
+                {
+                    "nodeid": "tests/test_agent.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_code_reader.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_code_writer.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_core.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_functions.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_llm_interface.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_prompts.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_readme_manager.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_task_management.py",
+                    "type": "Module"
+                },
+                {
+                    "nodeid": "tests/test_utils.py",
+                    "type": "Module"
+                }
+            ]
+        }
+    ],
+    "tests": [
+        {
+            "nodeid": "tests/test_agent.py::test_generate_tests",
+            "lineno": 28,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_tests",
+                "test_agent.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00042320000102336053,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0001799000001483364,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002367999986745417,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_agent.py::test_generate_module_docstrings",
+            "lineno": 36,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_module_docstrings",
+                "test_agent.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00024279999888676684,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.004999799999495735,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.376 -INFO - Generating docstring for module /tmp/tmpwxd8seq6.py | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.376 -DEBUG - Generated docstring: This is a docstring. | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.376 -DEBUG - New code: \"\"\"This is a docstring.\"\"\"\nprint('hello world1') | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.378 -DEBUG - Formatted code: \"\"\"This is a docstring.\"\"\"\nprint(\"hello world1\")\n | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.378 -INFO - Writing docstring to file /tmp/tmpwxd8seq6.py | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.378 -INFO - Generating docstring for module /tmp/tmp375v0wua.py | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.379 -DEBUG - Generated docstring: This is a docstring. | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.379 -DEBUG - New code: \"\"\"This is a docstring.\"\"\"\nprint('hello world2') | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.379 -DEBUG - Formatted code: \"\"\"This is a docstring.\"\"\"\nprint(\"hello world2\")\n | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.379 -INFO - Writing docstring to file /tmp/tmp375v0wua.py | core.py > core > generate_module_docstrings\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Generating docstring for module /tmp/tmpwxd8seq6.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 78,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3764331,
+                        "msecs": 376.0,
+                        "relativeCreated": 149374.07875061035,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generated docstring: This is a docstring.",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 86,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3768115,
+                        "msecs": 376.0,
+                        "relativeCreated": 149374.4571208954,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: \"\"\"This is a docstring.\"\"\"\nprint('hello world1')",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 94,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3769648,
+                        "msecs": 376.0,
+                        "relativeCreated": 149374.61042404175,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: \"\"\"This is a docstring.\"\"\"\nprint(\"hello world1\")\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 97,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3784792,
+                        "msecs": 378.0,
+                        "relativeCreated": 149376.1248588562,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing docstring to file /tmp/tmpwxd8seq6.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 98,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.378592,
+                        "msecs": 378.0,
+                        "relativeCreated": 149376.23763084412,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generating docstring for module /tmp/tmp375v0wua.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 78,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.378866,
+                        "msecs": 378.0,
+                        "relativeCreated": 149376.5115737915,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generated docstring: This is a docstring.",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 86,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3790305,
+                        "msecs": 379.0,
+                        "relativeCreated": 149376.67608261108,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: \"\"\"This is a docstring.\"\"\"\nprint('hello world2')",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 94,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3791645,
+                        "msecs": 379.0,
+                        "relativeCreated": 149376.81007385254,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: \"\"\"This is a docstring.\"\"\"\nprint(\"hello world2\")\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 97,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3798761,
+                        "msecs": 379.0,
+                        "relativeCreated": 149377.52175331116,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing docstring to file /tmp/tmp375v0wua.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 98,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.3799627,
+                        "msecs": 379.0,
+                        "relativeCreated": 149377.60829925537,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002266000010422431,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_agent.py::test_format_modules",
+            "lineno": 58,
+            "outcome": "passed",
+            "keywords": [
+                "test_format_modules",
+                "test_agent.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00036920000093232375,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.005180500000278698,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00028000000020256266,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_reader.py::test_read_code_file_descriptions",
+            "lineno": 7,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_code_file_descriptions",
+                "test_code_reader.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0004966999986208975,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0010473000002093613,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002676999993127538,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_reader.py::test_read_function_descriptions",
+            "lineno": 24,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_function_descriptions",
+                "test_code_reader.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014320000082079787,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0051729999995586695,
+                "outcome": "passed",
+                "stdout": "{'read_code_file_descriptions': 'Read the descriptions of the code files in a directory.\\n\\nArgs:\\n    start_dir (str): The path to the directory to read.\\n\\nReturns:\\n    dict: A dictionary mapping file paths to file descriptions.', 'read_function_descriptions': 'Read the descriptions of the functions in a Python file.\\n\\nArgs:\\n    file_path (str): The path to the Python file.\\n\\nReturns:\\n    dict[str: str]: A dictionary of function name\\n     and function descriptions.', 'read_all_function_descriptions': 'Read the descriptions of the functions in all Python files in a directory.\\n\\nArgs:\\n    start_dir (str): The path to the directory to read.\\n\\nReturns:\\n    dict[str: dict[str: str]]: A dictionary of file paths and function descriptions.', 'generate_project_summary_prompt': 'Generate a prompt for ChatGPT to create a project summary.\\n\\nArgs:\\n    code_file_descriptions (dict): A dictionary mapping file paths to module docstrings.\\n    all_function_descriptions (dict): A dictionary mapping file paths to dictionaries,\\n        where the inner dictionaries map function names to function docstrings.\\n\\nReturns:\\n    str: The generated prompt.', 'get_summary': 'Get a summary of the code in the project.\\n\\nArgs:\\n    start_directory (str): The path to the directory to read.\\n    \\nReturns:\\n    str: The summary of the code in the project.'}\n"
+            },
+            "teardown": {
+                "duration": 0.00021910000032221433,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_reader.py::test_read_all_function_descriptions",
+            "lineno": 46,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_all_function_descriptions",
+                "test_code_reader.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00026230000003124587,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.001208599998790305,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00025859999914246146,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_reader.py::test_generate_project_summary_prompt",
+            "lineno": 71,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_project_summary_prompt",
+                "test_code_reader.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00013929999840911478,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00014109999938227702,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00021379999998316634,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_reader.py::test_get_summary",
+            "lineno": 90,
+            "outcome": "passed",
+            "keywords": [
+                "test_get_summary",
+                "test_code_reader.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00022060000083001796,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0011926999995921506,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002297000010003103,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_writer.py::test_add_function_to_file",
+            "lineno": 24,
+            "outcome": "passed",
+            "keywords": [
+                "test_add_function_to_file",
+                "test_code_writer.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00026109999998880085,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.03924900000129128,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.433 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"def add_two_numbers(a,b):\\\\n\\\\t return a+b\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n2023-07-26 13:53:09.433 -DEBUG - Function code: def add_two_numbers(a,b):\n\t return a+b | code_writer.py > code_writer > add_function_to_file\n2023-07-26 13:53:09.434 -INFO - Writing imports to file: ['import json'] | code_writer.py > code_writer > add_function_to_file\n2023-07-26 13:53:09.434 -DEBUG - Parsed module: Module(body=[], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:09.434 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='json')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:09.434 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07c040>] | utils.py > utils > add_imports\n2023-07-26 13:53:09.434 -DEBUG - New code: import json | utils.py > utils > add_imports\n2023-07-26 13:53:09.440 -DEBUG - Formatted code: import json\n | utils.py > utils > add_imports\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'arguments': '{\"function_code\": \"def add_two_numbers(a,b):\\\\n\\\\t return a+b\", \"import_statements\": \"import json\"}'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 151,
+                        "funcName": "generate_from_prompt",
+                        "created": 1690379589.4337616,
+                        "msecs": 433.0,
+                        "relativeCreated": 149431.40721321106,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Function code: def add_two_numbers(a,b):\n\t return a+b",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/code_management/code_writer.py",
+                        "filename": "code_writer.py",
+                        "module": "code_writer",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 24,
+                        "funcName": "add_function_to_file",
+                        "created": 1690379589.4339566,
+                        "msecs": 433.0,
+                        "relativeCreated": 149431.60223960876,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing imports to file: ['import json']",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/code_management/code_writer.py",
+                        "filename": "code_writer.py",
+                        "module": "code_writer",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 27,
+                        "funcName": "add_function_to_file",
+                        "created": 1690379589.4340127,
+                        "msecs": 434.0,
+                        "relativeCreated": 149431.65826797485,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed module: Module(body=[], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 169,
+                        "funcName": "add_imports",
+                        "created": 1690379589.434217,
+                        "msecs": 434.0,
+                        "relativeCreated": 149431.86259269714,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed import: Module(body=[Import(names=[alias(name='json')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 177,
+                        "funcName": "add_imports",
+                        "created": 1690379589.4343064,
+                        "msecs": 434.0,
+                        "relativeCreated": 149431.9519996643,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New import nodes: [<ast.Import object at 0x7fc4bd07c040>]",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 180,
+                        "funcName": "add_imports",
+                        "created": 1690379589.4343588,
+                        "msecs": 434.0,
+                        "relativeCreated": 149432.0044517517,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: import json",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 191,
+                        "funcName": "add_imports",
+                        "created": 1690379589.43444,
+                        "msecs": 434.0,
+                        "relativeCreated": 149432.0855140686,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: import json\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 193,
+                        "funcName": "add_imports",
+                        "created": 1690379589.4401977,
+                        "msecs": 440.0,
+                        "relativeCreated": 149437.8433227539,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00048609999976179097,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_code_writer.py::test_generate_function_docstring",
+            "lineno": 54,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_function_docstring",
+                "test_code_writer.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0003687999997055158,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00333409999984724,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.445 -DEBUG - Function code: def test(): pass | code_writer.py > code_writer > generate_function_docstring\n2023-07-26 13:53:09.445 -DEBUG - Docstring: Test docstring | code_writer.py > code_writer > generate_function_docstring\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Function code: def test(): pass",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/code_management/code_writer.py",
+                        "filename": "code_writer.py",
+                        "module": "code_writer",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 48,
+                        "funcName": "generate_function_docstring",
+                        "created": 1690379589.445108,
+                        "msecs": 445.0,
+                        "relativeCreated": 149442.7535533905,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Docstring: Test docstring",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/code_management/code_writer.py",
+                        "filename": "code_writer.py",
+                        "module": "code_writer",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 52,
+                        "funcName": "generate_function_docstring",
+                        "created": 1690379589.4452639,
+                        "msecs": 445.0,
+                        "relativeCreated": 149442.90947914124,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.000276099999609869,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_core.py::test_generate_tests",
+            "lineno": 26,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_tests",
+                "test_core.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002445999998599291,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0045148000008339295,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.448 -INFO - Test file tests/test_file1.py already exists. | core.py > core > generate_tests\n2023-07-26 13:53:09.448 -INFO - Found 2 existing test functions. | core.py > core > generate_tests\n2023-07-26 13:53:09.448 -DEBUG - Existing test functions: {'func2', 'func1'} | core.py > core > generate_tests\n2023-07-26 13:53:09.448 -INFO - Generating test for function func1 | core.py > core > generate_tests\n2023-07-26 13:53:09.448 -DEBUG - Test code: test_code | core.py > core > generate_tests\n2023-07-26 13:53:09.448 -INFO - Writing imports to file: imports | core.py > core > generate_tests\n2023-07-26 13:53:09.449 -INFO - Writing test to file tests/test_file1.py | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Generating test for function func2 | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -DEBUG - Test code: test_code | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Writing imports to file: imports | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Writing test to file tests/test_file1.py | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Test file tests/test_file2.py already exists. | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Found 2 existing test functions. | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -DEBUG - Existing test functions: {'func2', 'func1'} | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Generating test for function func1 | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -DEBUG - Test code: test_code | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Writing imports to file: imports | core.py > core > generate_tests\n2023-07-26 13:53:09.450 -INFO - Writing test to file tests/test_file2.py | core.py > core > generate_tests\n2023-07-26 13:53:09.451 -INFO - Generating test for function func2 | core.py > core > generate_tests\n2023-07-26 13:53:09.451 -DEBUG - Test code: test_code | core.py > core > generate_tests\n2023-07-26 13:53:09.451 -INFO - Writing imports to file: imports | core.py > core > generate_tests\n2023-07-26 13:53:09.451 -INFO - Writing test to file tests/test_file2.py | core.py > core > generate_tests\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Test file tests/test_file1.py already exists.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 33,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4485795,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.2251663208,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Found 2 existing test functions.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 37,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.448694,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.33960723877,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Existing test functions: {'func2', 'func1'}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 38,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4488058,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.45142555237,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generating test for function func1",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 45,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4488845,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.53010368347,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Test code: test_code",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 52,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4489443,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.58994674683,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing imports to file: imports",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 53,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4489865,
+                        "msecs": 448.0,
+                        "relativeCreated": 149446.63214683533,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing test to file tests/test_file1.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 55,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4492342,
+                        "msecs": 449.0,
+                        "relativeCreated": 149446.879863739,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generating test for function func2",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 45,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4503045,
+                        "msecs": 450.0,
+                        "relativeCreated": 149447.9501247406,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Test code: test_code",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 52,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4503875,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.03309440613,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing imports to file: imports",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 53,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4504406,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.08626174927,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing test to file tests/test_file1.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 55,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4504967,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.14229011536,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Test file tests/test_file2.py already exists.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 33,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4506118,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.25744628906,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Found 2 existing test functions.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 37,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.450669,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.31466674805,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Existing test functions: {'func2', 'func1'}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 38,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4507127,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.35829734802,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generating test for function func1",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 45,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4507663,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.41194152832,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Test code: test_code",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 52,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4508188,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.46439361572,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing imports to file: imports",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 53,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4508593,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.50492477417,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing test to file tests/test_file2.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 55,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4509113,
+                        "msecs": 450.0,
+                        "relativeCreated": 149448.5569000244,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generating test for function func2",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 45,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4510026,
+                        "msecs": 451.0,
+                        "relativeCreated": 149448.6482143402,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Test code: test_code",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 52,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4510553,
+                        "msecs": 451.0,
+                        "relativeCreated": 149448.7009048462,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing imports to file: imports",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 53,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.4510975,
+                        "msecs": 451.0,
+                        "relativeCreated": 149448.7431049347,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing test to file tests/test_file2.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 55,
+                        "funcName": "generate_tests",
+                        "created": 1690379589.451147,
+                        "msecs": 451.0,
+                        "relativeCreated": 149448.79269599915,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00022489999901154079,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_core.py::test_generate_module_docstrings",
+            "lineno": 53,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_module_docstrings",
+                "test_core.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002611999989312608,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.009566900000208989,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.460 -INFO - Generating docstring for module file1.py | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.461 -DEBUG - Generated docstring: Generated docstring | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.461 -DEBUG - New code: \"\"\"Generated docstring\"\"\"\n\ndef function():\n    pass | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.461 -DEBUG - Formatted code: Formatted code | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.461 -INFO - Writing docstring to file file1.py | core.py > core > generate_module_docstrings\n2023-07-26 13:53:09.461 -INFO - Module file2.py already has a docstring. | core.py > core > generate_module_docstrings\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Generating docstring for module file1.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 78,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.4609957,
+                        "msecs": 460.0,
+                        "relativeCreated": 149458.64129066467,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Generated docstring: Generated docstring",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 86,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.461185,
+                        "msecs": 461.0,
+                        "relativeCreated": 149458.83059501648,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: \"\"\"Generated docstring\"\"\"\n\ndef function():\n    pass",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 94,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.4613624,
+                        "msecs": 461.0,
+                        "relativeCreated": 149459.00797843933,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: Formatted code",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 97,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.461441,
+                        "msecs": 461.0,
+                        "relativeCreated": 149459.08665657043,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Writing docstring to file file1.py",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 98,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.4614882,
+                        "msecs": 461.0,
+                        "relativeCreated": 149459.1338634491,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Module file2.py already has a docstring.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/agent/core.py",
+                        "filename": "core.py",
+                        "module": "core",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 75,
+                        "funcName": "generate_module_docstrings",
+                        "created": 1690379589.4617355,
+                        "msecs": 461.0,
+                        "relativeCreated": 149459.38110351562,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002750999992713332,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_core.py::test_format_modules",
+            "lineno": 84,
+            "outcome": "passed",
+            "keywords": [
+                "test_format_modules",
+                "test_core.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002488000009179814,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.004586099999869475,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002688000004127389,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_functions.py::test_load_env_vars",
+            "lineno": 26,
+            "outcome": "passed",
+            "keywords": [
+                "test_load_env_vars",
+                "test_functions.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0019129000011162134,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.000291599999400205,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002341999988857424,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_functions.py::test_init_logger",
+            "lineno": 39,
+            "outcome": "failed",
+            "keywords": [
+                "test_init_logger",
+                "test_functions.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00013659999967785552,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00040660000013303943,
+                "outcome": "failed",
+                "crash": {
+                    "path": "/workspaces/code-assistant/tests/test_functions.py",
+                    "lineno": 48,
+                    "message": "AssertionError: assert <_io.TextIOWr...oding='utf-8'> == <_io.TextIOWr...oding='utf-8'>\n  Use -v to get more diff"
+                },
+                "traceback": [
+                    {
+                        "path": "tests/test_functions.py",
+                        "lineno": 48,
+                        "message": "AssertionError"
+                    }
+                ],
+                "longrepr": "def test_init_logger():\n        \"\"\"\n        Test the init_logger function from the functions module.\n        \"\"\"\n        logger = functions.init_logger()\n        assert isinstance(logger, logging.Logger)\n        assert len(logger.handlers) == 2\n        assert isinstance(logger.handlers[0], logging.StreamHandler)\n>       assert logger.handlers[0].stream == sys.stderr\nE       AssertionError: assert <_io.TextIOWr...oding='utf-8'> == <_io.TextIOWr...oding='utf-8'>\nE         Use -v to get more diff\n\ntests/test_functions.py:48: AssertionError"
+            },
+            "teardown": {
+                "duration": 0.00033739999889803585,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_functions.py::test_num_tokens_from_messages",
+            "lineno": 57,
+            "outcome": "passed",
+            "keywords": [
+                "test_num_tokens_from_messages",
+                "test_functions.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00024950000079115853,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.2990257000001293,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00032590000046184286,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_load_json_string",
+            "lineno": 12,
+            "outcome": "passed",
+            "keywords": [
+                "test_load_json_string",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00030139999944367446,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0006941999999980908,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:09.807 -DEBUG - JSONDecodeError: Invalid control character at: line 1 column 10 (char 9) | llm_interface.py > llm_interface > load_json_string\n2023-07-26 13:53:09.807 -DEBUG - JSONDecodeError: Invalid control character at: line 1 column 10 (char 9) | llm_interface.py > llm_interface > load_json_string\n2023-07-26 13:53:09.808 -DEBUG - String to decode: {\"key\": \"\nvalue\n\"} | llm_interface.py > llm_interface > load_json_string\n2023-07-26 13:53:09.808 -DEBUG - String to decode: {\"key\": \"\nvalue\n\"} | llm_interface.py > llm_interface > load_json_string\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "JSONDecodeError: Invalid control character at: line 1 column 10 (char 9)",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 33,
+                        "funcName": "load_json_string",
+                        "created": 1690379589.807964,
+                        "msecs": 807.0,
+                        "relativeCreated": 149805.60970306396,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "String to decode: {\"key\": \"\nvalue\n\"}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 34,
+                        "funcName": "load_json_string",
+                        "created": 1690379589.8081713,
+                        "msecs": 808.0,
+                        "relativeCreated": 149805.8168888092,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:09"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002196000004914822,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_api_request",
+            "lineno": 32,
+            "outcome": "passed",
+            "keywords": [
+                "test_api_request",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014349999946716707,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.6831787999999506,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00032439999995403923,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_from_prompt",
+            "lineno": 53,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_from_prompt",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00021379999998316634,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0283251000000746,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:10.521 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n2023-07-26 13:53:10.521 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 151,
+                        "funcName": "generate_from_prompt",
+                        "created": 1690379590.5217564,
+                        "msecs": 521.0,
+                        "relativeCreated": 150519.40202713013,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00025490000007266644,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_code",
+            "lineno": 83,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_code",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00015949999942677096,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.02757480000036594,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:10.550 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n2023-07-26 13:53:10.550 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Hello World\\\\\")\", \"import_statements\": \"import json\"}'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 151,
+                        "funcName": "generate_from_prompt",
+                        "created": 1690379590.5504136,
+                        "msecs": 550.0,
+                        "relativeCreated": 150548.0592250824,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002330999996047467,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_test",
+            "lineno": 113,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_test",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00015979999989212956,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.034239599999636994,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:10.585 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Testing Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n2023-07-26 13:53:10.585 -DEBUG - Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Testing Hello World\\\\\")\", \"import_statements\": \"import json\"}'}} | llm_interface.py > llm_interface > generate_from_prompt\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'arguments': '{\"function_code\": \"print(\\\\\"Testing Hello World\\\\\")\", \"import_statements\": \"import json\"}'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/llm_interface.py",
+                        "filename": "llm_interface.py",
+                        "module": "llm_interface",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 151,
+                        "funcName": "generate_from_prompt",
+                        "created": 1690379590.5854187,
+                        "msecs": 585.0,
+                        "relativeCreated": 150583.06431770325,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00025749999986146577,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_module_docstring",
+            "lineno": 143,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_module_docstring",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00024590000066382345,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.04392769999867596,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0005462999997689622,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_function_docstring",
+            "lineno": 170,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_function_docstring",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00017859999934444204,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.037759799999548704,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0003101999991486082,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_todo_list",
+            "lineno": 186,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_todo_list",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00034359999881417025,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0020683000002463814,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0003157999999530148,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_llm_interface.py::test_generate_summary",
+            "lineno": 203,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_summary",
+                "test_llm_interface.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0007206000009318814,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0016684999991412042,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00029429999995045364,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_generate_system_prompt",
+            "lineno": 9,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_system_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0004779999999300344,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.000545599999895785,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0003894000001309905,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_generate_directory_prompt",
+            "lineno": 23,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_directory_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0001537000007374445,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.02592010000080336,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00024870000015653204,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_generate_requirements_prompt",
+            "lineno": 32,
+            "outcome": "passed",
+            "keywords": [
+                "test_generate_requirements_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00015530000018770806,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0005017000003135763,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002289000003656838,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_build_messages",
+            "lineno": 48,
+            "outcome": "passed",
+            "keywords": [
+                "test_build_messages",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00022589999935007654,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.029414799999358365,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00023440000040864106,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_function_prompt",
+            "lineno": 60,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_function_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00015950000124576036,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00013760000001639128,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00019439999960013665,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_module_docstring_prompt",
+            "lineno": 73,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_module_docstring_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00026140000045415945,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0001627000001462875,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020289999883971177,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_test_prompt",
+            "lineno": 94,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_test_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0001390999987052055,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00012910000077681616,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002012999993894482,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_function_docstring_prompt",
+            "lineno": 111,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_function_docstring_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002229999990959186,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00014900000132911373,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00019840000095427968,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_todo_list_prompt",
+            "lineno": 131,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_todo_list_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014150000060908496,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0001551000004837988,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020050000057381112,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_prompts.py::test_create_task_processing_prompt",
+            "lineno": 143,
+            "outcome": "passed",
+            "keywords": [
+                "test_create_task_processing_prompt",
+                "test_prompts.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00026339999931224156,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00020079999922018033,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0001984999998967396,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_readme_manager.py::test_parse_readme",
+            "lineno": 22,
+            "outcome": "passed",
+            "keywords": [
+                "test_parse_readme",
+                "test_readme_manager.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00023539999892818742,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0026674000000639353,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00021850000121048652,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_readme_manager.py::test_get_section",
+            "lineno": 37,
+            "outcome": "passed",
+            "keywords": [
+                "test_get_section",
+                "test_readme_manager.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002237999997305451,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00027380000028642826,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.0002133999987563584,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_readme_manager.py::test_get_headings_from_md_file",
+            "lineno": 57,
+            "outcome": "passed",
+            "keywords": [
+                "test_get_headings_from_md_file",
+                "test_readme_manager.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014200000077835284,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0007978000012371922,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00022429999989981297,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_task_management.py::test_process_task",
+            "lineno": 19,
+            "outcome": "passed",
+            "keywords": [
+                "test_process_task",
+                "test_task_management.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00022360000002663583,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0873394999998709,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:10.779 -DEBUG - Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}} | task_management.py > task_management > process_task\n2023-07-26 13:53:10.779 -DEBUG - Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}} | task_management.py > task_management > process_task\n2023-07-26 13:53:10.812 -DEBUG - Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}} | task_management.py > task_management > process_task\n2023-07-26 13:53:10.812 -DEBUG - Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}} | task_management.py > task_management > process_task\n2023-07-26 13:53:10.812 -DEBUG - JSONDecodeError: Mocked error: line 1 column 1 (char 0) | task_management.py > task_management > process_task\n2023-07-26 13:53:10.812 -DEBUG - JSONDecodeError: Mocked error: line 1 column 1 (char 0) | task_management.py > task_management > process_task\n2023-07-26 13:53:10.840 -DEBUG - Response message: {'content': 'mocked_content'} | task_management.py > task_management > process_task\n2023-07-26 13:53:10.840 -DEBUG - Response message: {'content': 'mocked_content'} | task_management.py > task_management > process_task\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/task_management.py",
+                        "filename": "task_management.py",
+                        "module": "task_management",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 77,
+                        "funcName": "process_task",
+                        "created": 1690379590.7798755,
+                        "msecs": 779.0,
+                        "relativeCreated": 150777.52113342285,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'function_call': {'name': 'function_to_call', 'arguments': 'arguments_string'}}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/task_management.py",
+                        "filename": "task_management.py",
+                        "module": "task_management",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 77,
+                        "funcName": "process_task",
+                        "created": 1690379590.8127162,
+                        "msecs": 812.0,
+                        "relativeCreated": 150810.36186218262,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "JSONDecodeError: Mocked error: line 1 column 1 (char 0)",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/task_management.py",
+                        "filename": "task_management.py",
+                        "module": "task_management",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 84,
+                        "funcName": "process_task",
+                        "created": 1690379590.812902,
+                        "msecs": 812.0,
+                        "relativeCreated": 150810.54759025574,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Response message: {'content': 'mocked_content'}",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/llm/task_management.py",
+                        "filename": "task_management.py",
+                        "module": "task_management",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 77,
+                        "funcName": "process_task",
+                        "created": 1690379590.8406792,
+                        "msecs": 840.0,
+                        "relativeCreated": 150838.32478523254,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002626000004966045,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_extract_functions_from_file",
+            "lineno": 7,
+            "outcome": "passed",
+            "keywords": [
+                "test_extract_functions_from_file",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002668999986781273,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0005144999995536637,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020980000044801272,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_extract_project_description",
+            "lineno": 20,
+            "outcome": "passed",
+            "keywords": [
+                "test_extract_project_description",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002086000004055677,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0002592999990156386,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020249999943189323,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_read_requirements_txt",
+            "lineno": 29,
+            "outcome": "failed",
+            "keywords": [
+                "test_read_requirements_txt",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00013969999963592272,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0003085999996983446,
+                "outcome": "failed",
+                "crash": {
+                    "path": "/workspaces/code-assistant/tests/test_utils.py",
+                    "lineno": 38,
+                    "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x7fc4bcf97130>('pytest-mock')\n +    where <built-in method endswith of str object at 0x7fc4bcf97130> = '# Code Generation Library\\nopenai\\n\\n# Tools\\ntiktoken\\npathspec\\nmarkdown-it-py\\n\\n# Code formatting\\nblack\\npylint\\nisort\\n\\n# Testing\\npytest\\npytest-mock\\npytest-json-report'.endswith"
+                },
+                "traceback": [
+                    {
+                        "path": "tests/test_utils.py",
+                        "lineno": 38,
+                        "message": "AssertionError"
+                    }
+                ],
+                "longrepr": "def test_read_requirements_txt():\n        \"\"\"\n        Test the read_requirements_txt function from the utils module.\n        \"\"\"\n        contents = utils.read_requirements_txt()\n        assert isinstance(contents, str)\n        assert len(contents) > 0\n        assert contents.startswith(\"# Code Generation Library\")\n>       assert contents.endswith(\"pytest-mock\")\nE       AssertionError: assert False\nE        +  where False = <built-in method endswith of str object at 0x7fc4bcf97130>('pytest-mock')\nE        +    where <built-in method endswith of str object at 0x7fc4bcf97130> = '# Code Generation Library\\nopenai\\n\\n# Tools\\ntiktoken\\npathspec\\nmarkdown-it-py\\n\\n# Code formatting\\nblack\\npylint\\nisort\\n\\n# Testing\\npytest\\npytest-mock\\npytest-json-report'.endswith\n\ntests/test_utils.py:38: AssertionError"
+            },
+            "teardown": {
+                "duration": 0.00019049999900744297,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_read_gitignore",
+            "lineno": 48,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_gitignore",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00013920000128564425,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0004802000003110152,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00021949999973003287,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_should_use_file",
+            "lineno": 74,
+            "outcome": "passed",
+            "keywords": [
+                "test_should_use_file",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00018710000040300656,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.002826799998729257,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020760000006703194,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_build_directory_structure",
+            "lineno": 94,
+            "outcome": "passed",
+            "keywords": [
+                "test_build_directory_structure",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014000000010128133,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.002491100000042934,
+                "outcome": "passed",
+                "stdout": "subdir\n  subfile.txt\nfile.txt\n\n"
+            },
+            "teardown": {
+                "duration": 0.00021130000095581636,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_add_imports",
+            "lineno": 114,
+            "outcome": "passed",
+            "keywords": [
+                "test_add_imports",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014230000124371145,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.004661099999793805,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:10.858 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.858 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07dea0>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07dea0>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - New code: import os\nimport sys | utils.py > utils > add_imports\n2023-07-26 13:53:10.859 -DEBUG - New code: import os\nimport sys | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Formatted code: import os\nimport sys\n | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Formatted code: import os\nimport sys\n | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07d3f0>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07d3f0>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - New code: import os\nimport sys | utils.py > utils > add_imports\n2023-07-26 13:53:10.860 -DEBUG - New code: import os\nimport sys | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Formatted code: import os\nimport sys\n | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Formatted code: import os\nimport sys\n | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='math')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='math')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='json')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - Parsed import: Module(body=[Import(names=[alias(name='json')])], type_ignores=[]) | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07d9f0>, <ast.Import object at 0x7fc4bd07d060>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - New import nodes: [<ast.Import object at 0x7fc4bd07d9f0>, <ast.Import object at 0x7fc4bd07d060>] | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - New code: import os\nimport sys\nimport math\nimport json | utils.py > utils > add_imports\n2023-07-26 13:53:10.861 -DEBUG - New code: import os\nimport sys\nimport math\nimport json | utils.py > utils > add_imports\n2023-07-26 13:53:10.862 -DEBUG - Formatted code: import json\nimport math\nimport os\nimport sys\n | utils.py > utils > add_imports\n2023-07-26 13:53:10.862 -DEBUG - Formatted code: import json\nimport math\nimport os\nimport sys\n | utils.py > utils > add_imports\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Parsed module: Module(body=[Import(names=[alias(name='os')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 169,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8588881,
+                        "msecs": 858.0,
+                        "relativeCreated": 150856.53376579285,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 177,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8590355,
+                        "msecs": 859.0,
+                        "relativeCreated": 150856.68110847473,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New import nodes: [<ast.Import object at 0x7fc4bd07dea0>]",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 180,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8590987,
+                        "msecs": 859.0,
+                        "relativeCreated": 150856.7442893982,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: import os\nimport sys",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 191,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8592036,
+                        "msecs": 859.0,
+                        "relativeCreated": 150856.849193573,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: import os\nimport sys\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 193,
+                        "funcName": "add_imports",
+                        "created": 1690379590.860099,
+                        "msecs": 860.0,
+                        "relativeCreated": 150857.7446937561,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 169,
+                        "funcName": "add_imports",
+                        "created": 1690379590.860436,
+                        "msecs": 860.0,
+                        "relativeCreated": 150858.08157920837,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed import: Module(body=[Import(names=[alias(name='sys')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 177,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8605754,
+                        "msecs": 860.0,
+                        "relativeCreated": 150858.22105407715,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New import nodes: [<ast.Import object at 0x7fc4bd07d3f0>]",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 180,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8606417,
+                        "msecs": 860.0,
+                        "relativeCreated": 150858.28733444214,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: import os\nimport sys",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 191,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8607516,
+                        "msecs": 860.0,
+                        "relativeCreated": 150858.3972454071,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: import os\nimport sys\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 193,
+                        "funcName": "add_imports",
+                        "created": 1690379590.861275,
+                        "msecs": 861.0,
+                        "relativeCreated": 150858.92057418823,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed module: Module(body=[Import(names=[alias(name='os')]), Import(names=[alias(name='sys')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 169,
+                        "funcName": "add_imports",
+                        "created": 1690379590.861595,
+                        "msecs": 861.0,
+                        "relativeCreated": 150859.2405319214,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed import: Module(body=[Import(names=[alias(name='math')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 177,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8617015,
+                        "msecs": 861.0,
+                        "relativeCreated": 150859.34710502625,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Parsed import: Module(body=[Import(names=[alias(name='json')])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 177,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8617759,
+                        "msecs": 861.0,
+                        "relativeCreated": 150859.42149162292,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New import nodes: [<ast.Import object at 0x7fc4bd07d9f0>, <ast.Import object at 0x7fc4bd07d060>]",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 180,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8618326,
+                        "msecs": 861.0,
+                        "relativeCreated": 150859.47823524475,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: import os\nimport sys\nimport math\nimport json",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 191,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8619587,
+                        "msecs": 861.0,
+                        "relativeCreated": 150859.6043586731,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: import json\nimport math\nimport os\nimport sys\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 193,
+                        "funcName": "add_imports",
+                        "created": 1690379590.8627043,
+                        "msecs": 862.0,
+                        "relativeCreated": 150860.34989356995,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:10"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00022619999981543515,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_format_code",
+            "lineno": 140,
+            "outcome": "passed",
+            "keywords": [
+                "test_format_code",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014310000005934853,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0009601999990991317,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020849999964411836,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_get_python_files",
+            "lineno": 149,
+            "outcome": "passed",
+            "keywords": [
+                "test_get_python_files",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00013499999840860255,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.9892653000006248,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:11.854 -INFO - Found 15 Python files. | utils.py > utils > get_python_files\n2023-07-26 13:53:11.854 -INFO - Found 15 Python files. | utils.py > utils > get_python_files\n2023-07-26 13:53:11.854 -DEBUG - Python files: ['./utils.py', './functions.py', './code_management/__init__.py', './code_management/test_writer.py', './code_management/code_reader.py', './code_management/code_writer.py', './code_management/readme_manager.py', './llm/__init__.py', './llm/prompts.py', './llm/task_management.py', './llm/llm_interface.py', './agent/test_analysis.py', './agent/__init__.py', './agent/core.py', './agent/__main__.py'] | utils.py > utils > get_python_files\n2023-07-26 13:53:11.854 -DEBUG - Python files: ['./utils.py', './functions.py', './code_management/__init__.py', './code_management/test_writer.py', './code_management/code_reader.py', './code_management/code_writer.py', './code_management/readme_manager.py', './llm/__init__.py', './llm/prompts.py', './llm/task_management.py', './llm/llm_interface.py', './agent/test_analysis.py', './agent/__init__.py', './agent/core.py', './agent/__main__.py'] | utils.py > utils > get_python_files\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Found 15 Python files.",
+                        "args": null,
+                        "levelname": "INFO",
+                        "levelno": 20,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 232,
+                        "funcName": "get_python_files",
+                        "created": 1690379591.8547482,
+                        "msecs": 854.0,
+                        "relativeCreated": 151852.39386558533,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:11"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Python files: ['./utils.py', './functions.py', './code_management/__init__.py', './code_management/test_writer.py', './code_management/code_reader.py', './code_management/code_writer.py', './code_management/readme_manager.py', './llm/__init__.py', './llm/prompts.py', './llm/task_management.py', './llm/llm_interface.py', './agent/test_analysis.py', './agent/__init__.py', './agent/core.py', './agent/__main__.py']",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 233,
+                        "funcName": "get_python_files",
+                        "created": 1690379591.8549204,
+                        "msecs": 854.0,
+                        "relativeCreated": 151852.56600379944,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:11"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.0002716999988479074,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_read_file_description",
+            "lineno": 163,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_file_description",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00016379999942728318,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0027629999985947507,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00021439999909489416,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_read_function_description",
+            "lineno": 175,
+            "outcome": "passed",
+            "keywords": [
+                "test_read_function_description",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014709999959450215,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.00018599999930302147,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00020140000015089754,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_get_function_code",
+            "lineno": 187,
+            "outcome": "passed",
+            "keywords": [
+                "test_get_function_code",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.00014259999989008065,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.000606700001299032,
+                "outcome": "passed"
+            },
+            "teardown": {
+                "duration": 0.00021299999934853986,
+                "outcome": "passed"
+            }
+        },
+        {
+            "nodeid": "tests/test_utils.py::test_add_docstring_to_function",
+            "lineno": 208,
+            "outcome": "passed",
+            "keywords": [
+                "test_add_docstring_to_function",
+                "test_utils.py",
+                "tests/__init__.py",
+                "code-assistant"
+            ],
+            "setup": {
+                "duration": 0.0002356000004510861,
+                "outcome": "passed"
+            },
+            "call": {
+                "duration": 0.0023925000004965113,
+                "outcome": "passed",
+                "stderr": "2023-07-26 13:53:11.862 -DEBUG - Parsed module: Module(body=[FunctionDef(name='test_func', args=arguments(posonlyargs=[], args=[], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Pass()], decorator_list=[])], type_ignores=[]) | utils.py > utils > add_docstring_to_function\n2023-07-26 13:53:11.862 -DEBUG - Parsed module: Module(body=[FunctionDef(name='test_func', args=arguments(posonlyargs=[], args=[], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Pass()], decorator_list=[])], type_ignores=[]) | utils.py > utils > add_docstring_to_function\n2023-07-26 13:53:11.863 -DEBUG - New code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass | utils.py > utils > add_docstring_to_function\n2023-07-26 13:53:11.863 -DEBUG - New code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass | utils.py > utils > add_docstring_to_function\n2023-07-26 13:53:11.864 -DEBUG - Formatted code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass\n | utils.py > utils > add_docstring_to_function\n2023-07-26 13:53:11.864 -DEBUG - Formatted code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass\n | utils.py > utils > add_docstring_to_function\n",
+                "log": [
+                    {
+                        "name": "functions",
+                        "msg": "Parsed module: Module(body=[FunctionDef(name='test_func', args=arguments(posonlyargs=[], args=[], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Pass()], decorator_list=[])], type_ignores=[])",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 307,
+                        "funcName": "add_docstring_to_function",
+                        "created": 1690379591.8628387,
+                        "msecs": 862.0,
+                        "relativeCreated": 151860.48436164856,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:11"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "New code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 313,
+                        "funcName": "add_docstring_to_function",
+                        "created": 1690379591.863131,
+                        "msecs": 863.0,
+                        "relativeCreated": 151860.77666282654,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:11"
+                    },
+                    {
+                        "name": "functions",
+                        "msg": "Formatted code: def test_func():\n    \"\"\"This is a test function.\"\"\"\n    pass\n",
+                        "args": null,
+                        "levelname": "DEBUG",
+                        "levelno": 10,
+                        "pathname": "/workspaces/code-assistant/utils.py",
+                        "filename": "utils.py",
+                        "module": "utils",
+                        "exc_info": null,
+                        "exc_text": null,
+                        "stack_info": null,
+                        "lineno": 315,
+                        "funcName": "add_docstring_to_function",
+                        "created": 1690379591.8642175,
+                        "msecs": 864.0,
+                        "relativeCreated": 151861.8631362915,
+                        "thread": 140483058403136,
+                        "threadName": "MainThread",
+                        "processName": "MainProcess",
+                        "process": 33628,
+                        "asctime": "2023-07-26 13:53:11"
+                    }
+                ]
+            },
+            "teardown": {
+                "duration": 0.00043759999971371144,
+                "outcome": "passed"
+            }
+        }
+    ]
+}

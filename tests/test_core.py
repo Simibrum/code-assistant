@@ -1,11 +1,23 @@
+'''"""
+This module contains test functions for the `agent.core` module. It includes tests for the
+`generate_tests`, `generate_module_docstrings`, and `format_modules` functions.
+
+The `generate_tests` function tests the `generate_tests` function in the `agent.core` module.
+It mocks various functions and methods to simulate the generation of tests for Python files.
+
+The `generate_module_docstrings` function tests the `generate_module_docstrings` function in the
+`agent.core` module. It mocks the necessary functions and methods to simulate the generation of
+docstrings for Python modules.
+
+The `format_modules` function tests the `format_modules` function in the `agent.core` module.
+It mocks the necessary functions and methods to simulate the formatting of Python modules.
+
+These test functions ensure the correct behavior and functionality of the `agent.core` module.
+"""
+'''
 import ast
 import logging
-import os
-from unittest import mock
 from unittest.mock import MagicMock, patch
-
-import black
-import pytest
 
 import agent.core
 
@@ -74,24 +86,14 @@ def test_format_modules(mocker):
     """
     Test the function format_modules from the core module.
     """
-    # Mock the utils.get_python_files function to return a specific list of files.
-    mocker.patch('agent.core.utils.get_python_files', return_value=['file1.py', 'file2.py'])
-
-    # Mock the utils.format_code function to return a formatted code.
-    mocker.patch('agent.core.utils.format_code', return_value='formatted_code')
-
-    # Mock the open function to prevent actual file reading and writing.
-    mocker.patch('builtins.open', mocker.mock_open())
-
-    # Mock the logger
-    mocker.patch('agent.core.logger')
-
-    # Call the function
+    mocker.patch(
+        "agent.core.utils.get_python_files", return_value=["file1.py", "file2.py"]
+    )
+    mocker.patch("agent.core.utils.format_code", return_value="formatted_code")
+    mocker.patch("builtins.open", mocker.mock_open())
+    mocker.patch("agent.core.logger")
     agent.core.format_modules()
-
-    # Assert that the mocked functions were called with the expected arguments.
     agent.core.utils.get_python_files.assert_called_once_with(skip_tests=False)
-    agent.core.utils.format_code.assert_any_call('')
-    agent.core.logger.info.assert_any_call('Formatting module %s', 'file1.py')
-    agent.core.logger.info.assert_any_call('Formatting module %s', 'file2.py')
-
+    agent.core.utils.format_code.assert_any_call("")
+    agent.core.logger.info.assert_any_call("Formatting module %s", "file1.py")
+    agent.core.logger.info.assert_any_call("Formatting module %s", "file2.py")

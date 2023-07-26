@@ -14,3 +14,4 @@ isort
 # Testing
 pytest
 pytest-mock
+pytest-json-report

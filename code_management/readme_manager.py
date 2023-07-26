@@ -1,5 +1,21 @@
+"""
+This module provides functions for parsing and manipulating Markdown files. It includes functions to parse a README.md file and return its structured form, retrieve the contents of a specific section from the README.md file, extract all headings from a Markdown file, and replace a portion of text in a Markdown document between two headings.
+
+The `parse_readme` function takes the path to a README.md file and returns the structured form of the file using the `MarkdownIt` library.
+
+The `get_section` function retrieves the contents of a specific section from the structured form of the README.md file.
+
+The `get_headings_from_md_file` function extracts all the headings from a Markdown file.
+
+The `replace_section_in_markdown` function replaces a portion of text in a Markdown document between two headings.
+
+These functions provide convenient utilities for working with Markdown files and can be used to extract specific information or modify the contents of Markdown files programmatically.
+"""
+
 from typing import List
+
 from markdown_it import MarkdownIt
+
 
 def parse_readme(readme_path):
     """
@@ -11,13 +27,12 @@ def parse_readme(readme_path):
     Returns:
         markdown_it.token.Token: The structured form of the README.md file.
     """
-    with open(readme_path, 'r', encoding="utf-8") as file:
+    with open(readme_path, "r", encoding="utf-8") as file:
         contents = file.read()
-
     markdown = MarkdownIt()
     tokens = markdown.parse(contents)
-
     return tokens
+
 
 def get_section(tokens, section_name):
     """
@@ -32,18 +47,14 @@ def get_section(tokens, section_name):
     """
     in_section = False
     section_contents = []
-
     for token in tokens:
-        if token.type == 'heading_open' and token.tag == 'h2':
+        if token.type == "heading_open" and token.tag == "h2":
             in_section = False
-
-        if in_section and token.type == 'inline':
+        if in_section and token.type == "inline":
             section_contents.append(token.content)
-
-        if token.type == 'inline' and token.content == section_name:
+        if token.type == "inline" and token.content == section_name:
             in_section = True
-
-    return '\n'.join(section_contents)
+    return "\n".join(section_contents)
 
 
 def get_headings_from_md_file(file_path: str) -> List[str]:
@@ -56,25 +67,18 @@ def get_headings_from_md_file(file_path: str) -> List[str]:
     Returns:
         List[str]: A list of the headings in the file.
     """
-    # Read the file content.
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
-
-    # Parse the content.
     markdown = MarkdownIt()
     tokens = markdown.parse(content)
-
-    # Extract the headings.
     headings = []
-
     for i, token in enumerate(tokens):
-        if token.type == 'heading_open':
-            # The next token should be an 'inline' token containing the heading text.
+        if token.type == "heading_open":
             if i < len(tokens) - 1:
                 next_token = tokens[i + 1]
                 headings.append(next_token.content)
-
     return headings
+
 
 def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str) -> str:
     """
@@ -93,12 +97,14 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     start_index = None
     end_index = None
     for i, token in enumerate(tokens):
-        if token.type == 'heading_open' and token.content.lower() == heading.lower():
+        if token.type == "heading_open" and token.content.lower() == heading.lower():
             start_index = i
-        elif start_index is not None and token.type == 'heading_open':
+        elif start_index is not None and token.type == "heading_open":
             end_index = i
             break
     if start_index is None or end_index is None:
         return markdown_text
-    replaced_tokens = tokens[:start_index+1] + markdown.parse(new_text) + tokens[end_index:]
-    return ''.join(token.content for token in replaced_tokens)
+    replaced_tokens = (
+        tokens[: start_index + 1] + markdown.parse(new_text) + tokens[end_index:]
+    )
+    return "".join((token.content for token in replaced_tokens))

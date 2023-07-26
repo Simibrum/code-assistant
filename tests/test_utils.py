@@ -35,7 +35,7 @@ def test_read_requirements_txt():
     assert isinstance(contents, str)
     assert len(contents) > 0
     assert contents.startswith("# Code Generation Library")
-    assert contents.endswith("pytest-mock")
+    assert "pytest-mock" in contents
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
         temp.write("custom_package1\ncustom_package2\n")
         temp_path = temp.name

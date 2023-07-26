@@ -1,9 +1,10 @@
 """Functions to manage tasks."""
-from typing import Tuple
 import json
-from llm.llm_interface import api_request, load_json_string
-from llm import prompts
+from typing import Tuple
+
 from functions import logger
+from llm import prompts
+from llm.llm_interface import api_request, load_json_string
 
 TASK_FUNCTIONS = [
     {
@@ -14,15 +15,12 @@ TASK_FUNCTIONS = [
             "properties": {
                 "task_description": {
                     "type": "string",
-                    "description": (
-                        "Description of task to allow LLM to generate function "
-                        "code in Python."
-                    ),
+                    "description": "Description of task to allow LLM to generate function code in Python.",
                 },
                 "function_file": {
                     "type": "string",
                     "description": "Path to file where function will be written.",
-                }
+                },
             },
             "required": ["task_description", "function_file"],
         },
@@ -35,13 +33,8 @@ TASK_FUNCTIONS = [
             "properties": {
                 "questions_for_user": {
                     "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                    "description": (
-                        "List of strings containing questions to consecutively "
-                        "ask the user to get further information."
-                    ),
+                    "items": {"type": "string"},
+                    "description": "List of strings containing questions to consecutively ask the user to get further information.",
                 }
             },
             "required": ["questions_for_user"],
@@ -49,27 +42,21 @@ TASK_FUNCTIONS = [
     },
     {
         "name": "divide_and_process_sub_tasks",
-        "description": (
-            "A given task is too complex, divide task into subtasks and "
-            "process subtasks one-by-one."
-        ),
+        "description": "A given task is too complex, divide task into subtasks and process subtasks one-by-one.",
         "parameters": {
             "type": "object",
             "properties": {
                 "sub_tasks": {
                     "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                    "description": (
-                        "List of strings containing subtask descriptions for processing."
-                    ),
+                    "items": {"type": "string"},
+                    "description": "List of strings containing subtask descriptions for processing.",
                 }
             },
             "required": ["sub_tasks"],
         },
-    }
+    },
 ]
+
 
 def process_task(task_description: str) -> Tuple[str, dict]:
     """Process a task description determine next action.
@@ -91,12 +78,11 @@ def process_task(task_description: str) -> Tuple[str, dict]:
     if response_message.get("function_call"):
         function_to_call = response_message["function_call"]["name"]
         arguments_string = response_message["function_call"]["arguments"]
-        # Tweak to prevent malformed escape sequences
         try:
             function_args = load_json_string(arguments_string)
         except json.JSONDecodeError as err:
             logger.debug("JSONDecodeError: %s", str(err))
-            return None, None
-        return function_to_call, function_args
+            return (None, None)
+        return (function_to_call, function_args)
     else:
-        return response_message["content"], None
+        return (response_message["content"], None)
