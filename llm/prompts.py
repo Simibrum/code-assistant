@@ -189,3 +189,24 @@ def create_todo_list_prompt() -> str:
     prompt += '##TODO list\n[ ]- Task 1\n[ ]- Task 2\n[ ]- Task 3\n\n'
 
     return prompt
+
+def create_task_processing_prompt(task_description: str) -> str:
+    """
+    Create a prompt for the LLM to perform a task processing action.
+
+    Args:
+        task_description (str): The description of the task to process.
+
+    Returns:
+        str: The generated prompt.
+    """
+    prompt = "----\n"
+    prompt += "We now want to process a task description.\n\n"
+    prompt += "We need to determine whether:\n"
+    prompt += "1. The task is too complex and needs to be broken down into subtasks.\n"
+    prompt += "2. The task is too obscure and we need further information from the user.\n"
+    prompt += "3. The task is manageable and we can generate code for it.\n\n"
+    prompt += "Here is the task description:\n\n"
+    prompt += task_description + "\n\n"
+    prompt += "Only use the functions you have been provided with.\n\n"
+    return prompt
