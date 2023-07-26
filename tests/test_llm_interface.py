@@ -6,8 +6,11 @@ functions such as `load_json_string`, `api_request`, `generate_from_prompt`,
 is documented with clear and concise explanations of what it is testing.
 """
 import json
+from unittest import mock
 from unittest.mock import MagicMock, patch
+import pytest
 from llm import llm_interface
+
 
 def test_load_json_string():
     """
@@ -171,23 +174,52 @@ def test_generate_function_docstring():
     """
     Test for the function generate_function_docstring.
     """
-
-    # Arrange
     function_code = 'def hello_world():\n    print("Hello, World!")'
     expected_docstring = 'This function prints "Hello, World!" to the console.'
-
-    with patch('llm.llm_interface.api_request') as mock_api_request:
+    with patch("llm.llm_interface.api_request") as mock_api_request:
         mock_api_request.return_value = {
-            'choices': [{
-                'message': {
-                    'content': expected_docstring
-                }
-            }]
+            "choices": [{"message": {"content": expected_docstring}}]
         }
-
-        # Act
         docstring = llm_interface.generate_function_docstring(function_code)
+        assert (
+            docstring == expected_docstring
+        ), f"Expected: {expected_docstring}, but got: {docstring}"
 
-        # Assert
-        assert docstring == expected_docstring, \
-            f'Expected: {expected_docstring}, but got: {docstring}'
+
+def test_generate_todo_list(mocker):
+    """
+    Test the generate_todo_list function.
+    """
+    mocker.patch(
+        "llm.llm_interface.prompts.create_todo_list_prompt", return_value="prompt"
+    )
+    mocker.patch("llm.llm_interface.prompts.build_messages", return_value="messages")
+    mocker.patch(
+        "llm.llm_interface.api_request",
+        return_value={"choices": [{"message": {"content": "content"}}]},
+    )
+
+    result = llm_interface.generate_todo_list()
+    assert result == "content"
+
+
+def test_generate_summary(mocker):
+    """
+    Test the generate_summary function.
+    """
+    # Arrange
+    mock_prompt = 'This is a test prompt.'
+    mock_response = {
+        'choices': [{
+            'message': {
+                'content': 'This is a test summary.'
+            }
+        }]
+    }
+    mocker.patch('llm.llm_interface.api_request', return_value=mock_response)
+
+    # Act
+    result =  llm_interface.generate_summary(mock_prompt)
+
+    # Assert
+    assert result == mock_response['choices'][0]['message']['content']
