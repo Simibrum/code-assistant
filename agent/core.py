@@ -192,7 +192,7 @@ def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
     # Recursive cases:
     if function == "generate_function_for_task":
         generate_function_for_task(**parameters)
-    elif function == "get_further_information":
+    elif function == "get_further_information_from_user":
         extra_info_string = get_further_information(**parameters)
         # Resubmit the task description with the extra information.
         task_description = task_description + "\n" + extra_info_string

@@ -28,7 +28,7 @@ TASK_FUNCTIONS = [
         },
     },
     {
-        "name": "get_further_information",
+        "name": "get_further_information_from_user",
         "description": "Get further information about a task from a user using chat.",
         "parameters": {
             "type": "object",
@@ -49,7 +49,10 @@ TASK_FUNCTIONS = [
     },
     {
         "name": "divide_and_process_sub_tasks",
-        "description": "Divide task into subtasks and process subtasks.",
+        "description": (
+            "A given task is too complex, divide task into subtasks and "
+            "process subtasks one-by-one."
+        ),
         "parameters": {
             "type": "object",
             "properties": {
@@ -59,7 +62,7 @@ TASK_FUNCTIONS = [
                         "type": "string",
                     },
                     "description": (
-                        "List of strings containing subtasks to be processed."
+                        "List of strings containing subtask descriptions for processing."
                     ),
                 }
             },
