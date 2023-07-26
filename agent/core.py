@@ -9,6 +9,7 @@ import black
 import utils
 from functions import logger
 import llm.llm_interface as llm
+from llm.task_management import process_task
 
 
 def generate_tests():
@@ -123,3 +124,79 @@ def format_modules():
                 file.write(fmt_code)
         except black.NothingChanged:
             logger.info("No changes to file %s", file_path)
+
+def get_task_description():
+    """Get a task description from the user."""
+    print("Enter task description:")
+    task_description = input()
+    logger.debug("Task description: %s", task_description)
+    return task_description
+
+def generate_function_for_task(task_description: str, function_file: str):
+    """Generate a python function to perform a task.
+
+    Args:
+        task_description (str): Description of task to allow LLM to 
+        generate function code in Python.
+        function_file (str): Path to file where function will be written.
+    """
+    # Generate code using the LLM.
+    function_code, imports = llm.generate_code(task_description, function_file=function_file)
+
+    if not function_code:
+        print("No code generated.")
+        return
+    logger.debug("Function code: %s", function_code)
+
+    if imports:
+        logger.info("Writing imports to file: %s", imports)
+        utils.add_imports(function_file, imports)
+
+    # Append the generated code to the end of the file.
+    with open(function_file, "a", encoding="utf-8") as file:
+        file.write("\n" + function_code + "\n")
+
+def get_further_information(questions_for_user: list):
+    """Get further information about a task from a user using chat.
+
+    Args:
+        questions_for_user (list): List of strings containing 
+        questions to consecutively ask the user to get further information.
+    """
+    # Ask user questions to get further information.
+    extra_info_string = ""
+    for question in questions_for_user:
+        print(question)
+        user_response = input()
+        extra_info_string += f"{question}\n{user_response}\n"
+        logger.debug("User response: %s", user_response)
+    return extra_info_string
+
+def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
+    """Main function."""
+    if not task_description:
+        task_description = get_task_description()
+
+    if depth >= max_depth:
+        raise ValueError(f"Maximum recursion depth ({max_depth}) exceeded")
+
+    function, parameters = process_task(task_description)
+    logger.debug("Function: %s", function)
+    logger.debug("Parameters: %s", parameters)
+
+    # Base case: If there are no parameters this is a standard string response
+    if not parameters:
+        print(function)
+        return
+
+    # Recursive cases:
+    if function == "generate_function_for_task":
+        generate_function_for_task(**parameters)
+    elif function == "get_further_information":
+        extra_info_string = get_further_information(**parameters)
+        # Resubmit the task description with the extra information.
+        task_description = task_description + "\n" + extra_info_string
+        run_task(task_description, depth=depth + 1)
+    elif function == "divide_and_process_sub_tasks":
+        for subtask in parameters:
+            run_task(subtask, depth=depth + 1)

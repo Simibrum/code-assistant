@@ -75,3 +75,30 @@ def get_headings_from_md_file(file_path: str) -> List[str]:
                 headings.append(next_token.content)
 
     return headings
+
+def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str) -> str:
+    """
+    Replaces a portion of text in a Markdown document between two headings.
+
+    Args:
+        markdown_text (str): The Markdown text.
+        heading (str): The name of the first heading.
+        new_text (str): The new text to replace the existing content between the first heading and the next heading.
+
+    Returns:
+        str: The modified Markdown text.
+    """
+    markdown = MarkdownIt()
+    tokens = markdown.parse(markdown_text)
+    start_index = None
+    end_index = None
+    for i, token in enumerate(tokens):
+        if token.type == 'heading_open' and token.content.lower() == heading.lower():
+            start_index = i
+        elif start_index is not None and token.type == 'heading_open':
+            end_index = i
+            break
+    if start_index is None or end_index is None:
+        return markdown_text
+    replaced_tokens = tokens[:start_index+1] + markdown.parse(new_text) + tokens[end_index:]
+    return ''.join(token.content for token in replaced_tokens)
