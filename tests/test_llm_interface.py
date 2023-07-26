@@ -6,9 +6,7 @@ functions such as `load_json_string`, `api_request`, `generate_from_prompt`,
 is documented with clear and concise explanations of what it is testing.
 """
 import json
-from unittest import mock
 from unittest.mock import MagicMock, patch
-import pytest
 from llm import llm_interface
 
 

@@ -1,10 +1,8 @@
 
 
 import json
-import pytest
-from llm.task_management import process_task
 from unittest.mock import patch
-
+from llm.task_management import process_task
 
 def test_process_task():
     """Test the process_task function."""
@@ -29,4 +27,3 @@ def test_process_task():
             mock_request.return_value = {'choices': [{'message': {'content': 'mocked_content'}}]}
             result = process_task('task_description')
             assert result == ('mocked_content', None)
-
