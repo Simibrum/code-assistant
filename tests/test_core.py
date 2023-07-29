@@ -17,7 +17,10 @@ These test functions ensure the correct behavior and functionality of the `agent
 '''
 import ast
 import logging
+from unittest import mock
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 import agent.core
 
@@ -97,3 +100,43 @@ def test_format_modules(mocker):
     agent.core.utils.format_code.assert_any_call("")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file1.py")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file2.py")
+
+
+def test_get_task_description(mocker):
+    """Test the get_task_description function."""
+    mocker.patch("builtins.input", return_value="Test task description")
+    mocker.patch("agent.core.logger")
+
+    assert agent.core.get_task_description() == "Test task description"
+
+
+def test_generate_function_for_task():
+    """Tests the function generate_function_for_task in agent/core.py."""
+    with mock.patch("agent.core.llm.generate_code") as mock_generate_code, mock.patch(
+        "agent.core.logger.debug"
+    ) as mock_logger_debug, mock.patch(
+        "agent.core.utils.add_imports"
+    ) as mock_add_imports, mock.patch(
+        "builtins.open", new_callable=mock.mock_open
+    ) as mock_file:
+        mock_generate_code.return_value = ("def function(): pass", "import numpy")
+        agent.core.generate_function_for_task(
+            "Create a function that adds two numbers", "./file.py")
+        mock_generate_code.assert_called_once_with(
+            "Create a function that adds two numbers", function_file="./file.py"
+        )
+        mock_logger_debug.assert_called_once_with(
+            "Function code: %s", "def function(): pass"
+        )
+        mock_add_imports.assert_called_once_with("./file.py", "import numpy")
+        mock_file.assert_called_once_with("./file.py", "a", encoding="utf-8")
+        mock_file().write.assert_called_once_with("\ndef function(): pass\n")
+
+
+def test_get_further_information(mocker):
+    """Test the get_further_information function."""
+    mocker.patch("builtins.input", side_effect=["Response 1", "Response 2"])
+    mocker.patch("agent.core.logger.debug")
+    questions = ["Question 1?", "Question 2?"]
+    result = agent.core.get_further_information(questions)
+    assert result == "Question 1?\nResponse 1\nQuestion 2?\nResponse 2\n"

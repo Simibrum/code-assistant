@@ -64,3 +64,22 @@ def test_get_headings_from_md_file():
         temp_file.seek(0)
         headings = readme_manager.get_headings_from_md_file(temp_file.name)
         assert headings == ["Heading 1", "Heading 2", "Heading 3"]
+
+
+def test_replace_section_in_markdown():
+    """
+    Tests the function replace_section_in_markdown from the file readme_manager.py.
+    """
+
+    # Test case: replace a section in the markdown
+    markdown_text = "# Heading 1\nThis is the first section.\n\n# Heading 2\nThis is the second section."
+    heading = "Heading 1"
+    new_text = "This is the replaced section."
+    expected_output = "# Heading 1\n\nThis is the replaced section.\n\n# Heading 2\n\nThis is the second section.\n"
+    assert readme_manager.replace_section_in_markdown(
+        markdown_text, heading, new_text) == expected_output
+
+    # Test case: heading not found, no replacement should occur
+    heading = "Non-existing heading"
+    assert readme_manager.replace_section_in_markdown(
+        markdown_text, heading, new_text) == markdown_text
