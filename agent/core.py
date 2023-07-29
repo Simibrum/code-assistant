@@ -221,7 +221,7 @@ def update_readme_todos():
     )
     for issue in issues:
         status = 'X' if issue.state == 'closed' else ' '
-        todo_str += f"- [ {status} ] {issue.title}\n"
+        todo_str += f"- [{status}] {issue.title}\n"
 
     # Read the readme
     with open("README.md", "r", encoding="utf-8") as readme_file:

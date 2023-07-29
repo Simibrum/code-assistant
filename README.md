@@ -53,12 +53,12 @@ The Agent is designed to generate Python code, tests, and manage a GitHub reposi
 
 Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):
 
-- \[   \] Have Requests for More Information in Issue Comments
-- \[   \] Complete the Agent Process for Generating New Code
-- \[   \] Write "To Do" Section of Readme Automatically Based on GitHub Issues
-- \[   \] Write "Agent Structure" Section of Readme.MD Automatically
-- \[   \] Test Generation for Classes
-- \[   \] Useful links and resources
+- \[ \] Useful links and resources
+- \[ \] Test Generation for Classes
+- \[ \] Write "Agent Structure" Section of Readme.MD Automatically
+- \[ \] Write "To Do" Section of Readme Automatically Based on GitHub Issues
+- \[ \] Complete the Agent Process for Generating New Code
+- \[ \] Have Requests for More Information in Issue Comments
 
 ## GitHub Integration
 
