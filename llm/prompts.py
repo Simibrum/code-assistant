@@ -210,3 +210,20 @@ def create_task_processing_prompt(task_description: str) -> str:
     prompt += task_description + "\n\n"
     prompt += "Only use the functions you have been provided with.\n\n"
     return prompt
+
+def create_reduce_module_descriptions_prompt(initial_description: str) -> str:
+    """
+    Create a prompt for the LLM to reduce module descriptions.
+
+    Args:
+        initial_description (str): Initial string with markdown list.
+
+    Returns:
+        str: prompt for reduction.
+    """
+    prompt = "Can you reduce each of the module descriptions "
+    prompt += "below to a single sentence?\n\n"
+    prompt += initial_description + "\n\n"
+    prompt += "Only use the functions you have been provided with.\n\n"
+    prompt += "Keep the same format: '- [module_name]: [module_description]'\n\n"
+    return prompt

@@ -275,3 +275,26 @@ def generate_function_docstring(function_code: str) -> str:
         max_tokens=600,
     )
     return response["choices"][0]["message"]["content"]
+
+def reduce_module_descriptions(initial_description: str) -> str:
+    """Reduce module descriptions to single sentence.
+
+    Args:
+        initial_description (str): string with markdown list
+        of module descriptions.
+
+    Returns:
+        str: reduced markdown string list of module descriptions.
+    """
+    prompt = prompts.create_reduce_module_descriptions_prompt(initial_description)
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt},
+    ]
+    response = api_request(
+        messages=messages,
+        functions=[],  # no functions required for this prompt
+        function_call=None,
+        model=QUICK_MODEL,
+    )
+    return response["choices"][0]["message"]["content"]

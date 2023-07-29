@@ -13,9 +13,15 @@ These functions provide convenient utilities for working with Markdown files and
 """
 
 from typing import List
+import os
 
 from markdown_it import MarkdownIt
 from mdformat.renderer import MDRenderer
+
+import utils
+from github_management.issue_management import GitHubIssues
+from code_management import code_reader
+import llm.llm_interface as llm
 
 
 def parse_readme(readme_path):
@@ -114,3 +120,84 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     env = {}
     output_markdown = renderer.render(replaced_tokens, options, env)
     return output_markdown
+
+def update_readme_summary(readme_text: str) -> str:
+    """
+    Update the Summary section of the readme with the summary of the project.
+
+    Args:
+        readme_text (str): The text of the readme.
+
+    Returns:
+        str: The modified readme text.
+    """
+    # Get the summary of the project
+    summary = code_reader.get_summary(".")
+    # Replace the Summary section in the readme text
+    new_readme_text = replace_section_in_markdown(readme_text, "Summary", summary)
+
+    return new_readme_text
+
+
+def update_readme_todos(readme_text: str) -> str:
+    """
+    Update the To Do section of the readme with the issues from the GitHub repository.
+
+    Args:
+        readme_text (str): The text of the readme.
+
+    Returns:
+        str: The modified readme text.
+    """
+    # Initialize GitHubIssues and MarkdownManager
+    github_issues = GitHubIssues(
+        token=os.environ['GITHUB_TOKEN'], repo_name='simibrum/code-assistant')
+
+    # Get all issues from the GitHub repository
+    issues = github_issues.get_all_issues()
+
+    # Generate the string for the To Do section
+    todo_str = (
+        "Loaded from repository [Issues]"
+        "(https://github.com/Simibrum/code-assistant/issues):\n\n"
+    )
+    for issue in issues:
+        status = 'X' if issue.state == 'closed' else ' '
+        todo_str += f"- [{status}] {issue.title}\n"
+
+    # Replace the To Do section in the readme text
+    new_readme_text = replace_section_in_markdown(readme_text, "To do", todo_str)
+
+    return new_readme_text
+
+def update_agent_structure(readme_text: str) -> str:
+    """
+    Update the Agent Structure section of the readme.
+
+    Args:
+        readme_text (str): The text of the readme.
+
+    Returns:
+        str: The modified readme text.
+    """
+    section_string = ""
+    # Get the directory structure of the repository
+    repository_structure = utils.build_directory_structure(".")
+    # Add the directory structure to the Agent Structure section
+    section_string += f"""\n```{repository_structure}```\n\n"""
+    # Get a one line summary of the repository files based on docstrings
+    module_descriptions = code_reader.read_code_file_descriptions(".")
+    description_string = "\n".join(
+        f"- `{file_path}`: {module_description}"
+        for file_path, module_description in module_descriptions.items()
+    )
+    # Reduce the descriptions using LLM
+    reduced_string = llm.reduce_module_descriptions(description_string)
+    # Add the reduced descriptions to the Agent Structure section
+    section_string += f"""The following files are included in the repository:\n\n{reduced_string}"""
+
+    # Replace the Agent Structure section in the readme text
+    new_readme_text = replace_section_in_markdown(
+        readme_text, "Agent Structure", section_string)
+
+    return new_readme_text
