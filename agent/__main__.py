@@ -54,4 +54,4 @@ if __name__ == "__main__":
         git_handler.commit_changes("Run task")
 
     if args.update_readme:
-        core.update_readme()
+        core.update_readme_todos()

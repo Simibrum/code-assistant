@@ -51,8 +51,3 @@ class GitHubIssues:
             if issue.title == title:
                 raise IssueAlreadyExistsError("Issue with the same title already exists.")
         self.repo.create_issue(title=title, body=body)
-
-
-gh_repo_issues = GitHubIssues(GITHUB_TOKEN, 'simibrum/code-assistant')
-
-gh_repo_issues.print_all_open_issue_details()
