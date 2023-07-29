@@ -209,7 +209,7 @@ def format_code(code: str) -> str:
     return black.format_str(sorted_code, mode=black.FileMode(line_length=90))
 
 
-def get_python_files(directory: str = ".", skip_tests: bool = True):
+def get_python_files(directory: str = ".", skip_tests: bool = True) -> list[str]:
     """
     Get the paths of all the Python files in the present directory.
 

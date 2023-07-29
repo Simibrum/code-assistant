@@ -48,10 +48,25 @@ The Agent is designed to generate Python code, tests, and manage a GitHub reposi
 
 ## To do
 
+Load from repository Issues.
+
 [X] - Build minimum agent structure
-[ ] - Add function to add function docstrings
-[ ] - Add function to read module docstrings for summary
-[ ] - Add function to extract functions and their descriptions as a dict
+[X] - Add function to add function docstrings
+[X] - Add function to read module docstrings for summary
+[X] - Add function to extract functions and their descriptions as a dict
+
+## GitHub Integration
+
+GitHub has good resources to manage a coding project. We will make use of them.
+
+What is the best way to connect to the repository data? Github App, OAuth app or Personal Access Token?
+
+Create an access token (here's howto - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+If you are working with an organisation repository there are a few extra steps:
+* Turn on organisation level personal access tokens (PAT) - https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/setting-a-personal-access-token-policy-for-your-organization
+* As an individual developer who has access to organisation resources, create a new PAT restricting to access to the organisation repository
+* Add as a Codespace secret for the repository
 
 ## Contributing
 
