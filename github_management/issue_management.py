@@ -22,7 +22,7 @@ class GitHubIssues:
 
     def get_all_issues(self):
         """Fetch all issues for the repository."""
-        issues = self.repo.get_issues(sort='created', direction='asc')
+        issues = self.repo.get_issues(state='all', sort='created', direction='asc')
         return issues
 
     def print_issue_details(self, issue):

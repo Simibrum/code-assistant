@@ -219,3 +219,16 @@ def update_readme():
     # Write the new readme text to the file
     with open("README.md", "w", encoding="utf-8") as readme_file:
         readme_file.write(new_readme_text)
+
+def update_todos():
+    """Update the To Do section of the readme."""
+    # Read the readme
+    with open("README.md", "r", encoding="utf-8") as readme_file:
+        readme_text = readme_file.read()
+
+    # Update the To Do section
+    new_readme_text = readme_manager.update_readme_todos(readme_text)
+
+    # Write the new readme text to the file
+    with open("README.md", "w", encoding="utf-8") as readme_file:
+        readme_file.write(new_readme_text)

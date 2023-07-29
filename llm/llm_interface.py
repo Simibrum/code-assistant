@@ -231,6 +231,7 @@ def generate_summary(prompt: str) -> str:
         function_call=None,
         model=GOOD_MODEL,
     )
+    logger.debug("Response: %s", response)
     return response["choices"][0]["message"]["content"]
 
 

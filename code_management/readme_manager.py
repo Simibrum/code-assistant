@@ -22,6 +22,7 @@ import utils
 from github_management.issue_management import GitHubIssues
 from code_management import code_reader
 import llm.llm_interface as llm
+from functions import logger
 
 
 def parse_readme(readme_path):
@@ -134,7 +135,8 @@ def update_readme_summary(readme_text: str) -> str:
     # Get the summary of the project
     summary = code_reader.get_summary(".")
     # Replace the Summary section in the readme text
-    new_readme_text = replace_section_in_markdown(readme_text, "Summary", summary)
+    new_readme_text = replace_section_in_markdown(
+        readme_text, "Auto Generated Summary", summary)
 
     return new_readme_text
 
@@ -155,6 +157,7 @@ def update_readme_todos(readme_text: str) -> str:
 
     # Get all issues from the GitHub repository
     issues = github_issues.get_all_issues()
+    logger.debug("Issues: %s", issues)
 
     # Generate the string for the To Do section
     todo_str = (
