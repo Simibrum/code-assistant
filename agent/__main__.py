@@ -10,6 +10,7 @@ if __name__ == "__main__":
     parser.add_argument("--generate_module_docstrings", action="store_true")
     parser.add_argument("--format_modules", action="store_true")
     parser.add_argument("--run_task", action="store_true")
+    parser.add_argument("--update_readme", action="store_true")
     args = parser.parse_args()
 
     # Create new handler for git commands
@@ -51,3 +52,6 @@ if __name__ == "__main__":
         git_handler.add_files()
         # Commit changes
         git_handler.commit_changes("Run task")
+
+    if args.update_readme:
+        core.update_readme()

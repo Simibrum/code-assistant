@@ -10,6 +10,8 @@ import utils
 from functions import logger
 import llm.llm_interface as llm
 from llm.task_management import process_task
+from github_management.issue_management import GitHubIssues
+from code_management.readme_manager import replace_section_in_markdown
 
 
 def generate_tests():
@@ -200,3 +202,34 @@ def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
     elif function == "divide_and_process_sub_tasks":
         for subtask in parameters:
             run_task(subtask, depth=depth + 1)
+
+def update_readme_todos():
+    """
+    Update the To Do section of the readme with the issues from the GitHub repository.
+    """
+    # Initialize GitHubIssues and MarkdownManager
+    github_issues = GitHubIssues(
+        token=os.environ['GITHUB_TOKEN'], repo_name='simibrum/code-assistant')
+
+    # Get all issues from the GitHub repository
+    issues = github_issues.get_all_issues()
+
+    # Generate the string for the To Do section
+    todo_str = (
+        "Loaded from repository [Issues]"
+        "(https://github.com/Simibrum/code-assistant/issues):\n\n"
+    )
+    for issue in issues:
+        status = 'X' if issue.state == 'closed' else ' '
+        todo_str += f"- [ {status} ] {issue.title}\n"
+
+    # Read the readme
+    with open("README.md", "r", encoding="utf-8") as readme_file:
+        readme_text = readme_file.read()
+
+    # Replace the To Do section in the readme text
+    new_readme_text = replace_section_in_markdown(readme_text, "To do", todo_str)
+
+    # Write the new readme text to the file
+    with open("README.md", "w", encoding="utf-8") as readme_file:
+        readme_file.write(new_readme_text)
