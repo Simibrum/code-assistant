@@ -10,40 +10,86 @@ A test driven development strategy will be used. Testing is with pytest. Lines a
 
 ## Auto Generated Summary
 
-The project is a language learning model (LLM) based software development assistant, named 'Agent'. The Agent autonomously generates Python code, tests, and manages a GitHub repository. It uses multiple Python scripts to accomplish different tasks:
+The project aims to build a self-coding agent that utilizes a Language Learning Model (LLM) to generate code, tests, and manage a GitHub repository. The agent operates through several Python files each with its own purpose and functions. Some key functions involve extracting project descriptions from README files, loading environment variables, initializing a logger, calculating the number of tokens used in a conversation, managing GitHub issues, reading information from code files, writing code to Python files, and parsing and manipulating Markdown files, among others.
 
-1. `utils.py`: Provides utility functions for the Agent such as extract project description from README, read a requirements.txt file, format Python code etc.
-1. `agent.py`: It's the main script that conducts a loop where it determines the next tasks, performs them, and evaluates the results.
-1. `functions.py`: Contains utility functions for loading environment variables, initializing a logger, and calculating the number of tokens used by a list of messages in a conversation.
-1. `code_management`: This directory consists of various scripts responsible for managing the codebase. This includes generating test functions, reading information from code files, and handling writing code to Python files.
-1. `llm`: This directory contains scripts for interacting with the LLM. It includes functions for generating prompts and communicating with the LLM to create new code or tests.
+The agent also interacts with the LLM to generate new code or tests, create function prompts, and manage tasks. It has capabilities to generate docstrings for modules and functions, produce to-do lists, and summarize project code. It uses pytest for testing and includes functionalities to analyze test results and improve code based on these analyses.
 
-The Agent is designed to generate Python code, tests, and manage a GitHub repository autonomously, making it a valuable tool for automated software development.
+Overall, the project represents an advanced use case of AI in automating the software development process, contributing to coding efficiency and quality.
 
 ## Agent Structure
 
 ```
-/my_agent
-    /llm
-        llm_interface.py
-    /code_management
-        code_writer.py
-        test_writer.py
-    /github_management
-        github_interface.py
-    /actions
-        run_tests.yml
-    agent.py
-    README.md
+github_management
+  branch_management.py
+  issue_management.py
+temp_test_results.json
+utils.py
+code_management
+  __init__.py
+  test_writer.py
+  code_reader.py
+  code_writer.py
+  readme_manager.py
+.devcontainer
+  devcontainer.json
+requirements.txt
+LICENSE
+llm
+  __init__.py
+  prompts.py
+  task_management.py
+  llm_interface.py
+git_management
+  __init__.py
+  git_handler.py
+agent
+  test_analysis.py
+  __init__.py
+  core.py
+  __main__.py
+tests
+  test_functions.py
+  __init__.py
+  test_prompts.py
+  test_readme_manager.py
+  test_code_reader.py
+  test_test_analysis.py
+  test_core.py
+  test_utils.py
+  test_llm_interface.py
+  test_code_writer.py
+  test_agent.py
+  test_task_management.py
+.gitignore
+functions.py
+.vscode
+  settings.json
+pyproject.toml
+README.md
+
 ```
 
-- `llm/llm_interface.py`: This script would handle interactions with the LLM, such as querying the LLM to generate new code or tests.
-- `code_management/code_writer.py`: This script would handle writing code to your Python files, including adding new functions or refactoring existing ones.
-- `code_management/test_writer.py`: This script would handle writing tests, such as adding new tests to your test files.
-- `github_management/github_interface.py`: This script would handle interactions with GitHub, such as committing and pushing changes, creating new branches, or checking the status of GitHub Actions.
-- `actions/run_tests.yml`: This is a GitHub Actions workflow file that's triggered on every push to run your tests.
-- `agent.py`: This is the main script that uses all the other components to perform tasks. It would contain the main loop of the agent, where it determines the next task, performs the task, evaluates the result, and repeats.
-- `README.md`: This is the README file for the agent's repository, explaining what the agent does and how to use it.
+The following files are included in the repository:
+
+- `./utils.py`: `utils.py` - Provides utility functions for the Agent.
+- `./functions.py`: Provides utility functions for loading environment variables, initializing a logger, and calculating the number of tokens used by a list of messages in a conversation.
+- `./github_management/branch_management.py`: None
+- `./github_management/issue_management.py`: File to manage issues on GitHub for the repository.
+- `./code_management/__init__.py`: None
+- `./code_management/test_writer.py`: Code for generating test functions.
+- `./code_management/code_reader.py`: Module to read information from the code files.
+- `./code_management/code_writer.py`: Handles writing code to Python files, including adding new functions or refactoring existing ones.
+- `./code_management/readme_manager.py`: Provides functions for parsing and manipulating Markdown files, including parsing a README.md file, retrieving the contents of a specific section, extracting headings, and replacing text in a Markdown document between headings.
+- `./llm/__init__.py`: None
+- `./llm/prompts.py`: Common prompt building functions.
+- `./llm/task_management.py`: Functions to manage tasks.
+- `./llm/llm_interface.py`: Handles interactions with the LLM, such as querying it to generate new code or tests.
+- `./git_management/__init__.py`: None
+- `./git_management/git_handler.py`: File to manage git operations for the repository.
+- `./agent/test_analysis.py`: Functions to analyze test results and improve the code.
+- `./agent/__init__.py`: Package for agent functions.
+- `./agent/core.py`: The main script that uses all the other components to perform tasks, including determining the next task, performing it, evaluating the result, and repeating.
+- `./agent/__main__.py`: File that runs the agent.
 
 ## Installation
 
@@ -53,12 +99,13 @@ The Agent is designed to generate Python code, tests, and manage a GitHub reposi
 
 Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):
 
-- \[ \] Useful links and resources
+- \[X\] Create WebInterface.py
 - \[ \] Test Generation for Classes
 - \[ \] Write "Agent Structure" Section of Readme.MD Automatically
-- \[ \] Write "To Do" Section of Readme Automatically Based on GitHub Issues
+- \[X\] Write "To Do" Section of Readme Automatically Based on GitHub Issues
 - \[ \] Complete the Agent Process for Generating New Code
 - \[ \] Have Requests for More Information in Issue Comments
+- \[X\] Generate tests
 
 ## GitHub Integration
 

@@ -184,7 +184,7 @@ def update_agent_structure(readme_text: str) -> str:
     # Get the directory structure of the repository
     repository_structure = utils.build_directory_structure(".")
     # Add the directory structure to the Agent Structure section
-    section_string += f"""\n```{repository_structure}```\n\n"""
+    section_string += f"""\n```\n{repository_structure}\n```\n\n"""
     # Get a one line summary of the repository files based on docstrings
     module_descriptions = code_reader.read_code_file_descriptions(".")
     description_string = "\n".join(
