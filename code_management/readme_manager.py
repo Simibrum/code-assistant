@@ -15,6 +15,7 @@ These functions provide convenient utilities for working with Markdown files and
 from typing import List
 
 from markdown_it import MarkdownIt
+from mdformat.renderer import MDRenderer
 
 
 def parse_readme(readme_path):
@@ -97,14 +98,19 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     start_index = None
     end_index = None
     for i, token in enumerate(tokens):
-        if token.type == "heading_open" and token.content.lower() == heading.lower():
-            start_index = i
-        elif start_index is not None and token.type == "heading_open":
-            end_index = i
-            break
+        if token.type == "heading_open":
+            if (i < (len(tokens) - 1)) and tokens[i+1].content.lower() == heading.lower():
+                start_index = i
+            elif start_index is not None:
+                end_index = i
+                break
     if start_index is None or end_index is None:
         return markdown_text
     replaced_tokens = (
-        tokens[: start_index + 1] + markdown.parse(new_text) + tokens[end_index:]
+        tokens[:start_index + 3] + markdown.parse(new_text) + tokens[end_index:]
     )
-    return "".join((token.content for token in replaced_tokens))
+    renderer = MDRenderer()
+    options = {}
+    env = {}
+    output_markdown = renderer.render(replaced_tokens, options, env)
+    return output_markdown

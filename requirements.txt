@@ -5,6 +5,7 @@ openai
 tiktoken
 pathspec
 markdown-it-py
+mdformat
 
 # Code formatting
 black

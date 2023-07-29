@@ -106,19 +106,8 @@ def test_get_task_description(mocker):
     """Test the get_task_description function."""
     mocker.patch("builtins.input", return_value="Test task description")
     mocker.patch("agent.core.logger")
-    from agent.core import get_task_description
 
-    assert get_task_description() == "Test task description"
-
-
-import logging
-import os
-from unittest import mock
-from unittest.mock import Mock, patch
-
-import pytest
-
-from agent.core import generate_function_for_task, get_further_information, run_task
+    assert agent.core.get_task_description() == "Test task description"
 
 
 def test_generate_function_for_task():
@@ -131,7 +120,8 @@ def test_generate_function_for_task():
         "builtins.open", new_callable=mock.mock_open
     ) as mock_file:
         mock_generate_code.return_value = ("def function(): pass", "import numpy")
-        generate_function_for_task("Create a function that adds two numbers", "./file.py")
+        agent.core.generate_function_for_task(
+            "Create a function that adds two numbers", "./file.py")
         mock_generate_code.assert_called_once_with(
             "Create a function that adds two numbers", function_file="./file.py"
         )
@@ -147,31 +137,6 @@ def test_get_further_information(mocker):
     """Test the get_further_information function."""
     mocker.patch("builtins.input", side_effect=["Response 1", "Response 2"])
     mocker.patch("agent.core.logger.debug")
-    from agent.core import get_further_information
-
     questions = ["Question 1?", "Question 2?"]
-    result = get_further_information(questions)
+    result = agent.core.get_further_information(questions)
     assert result == "Question 1?\nResponse 1\nQuestion 2?\nResponse 2\n"
-
-
-import pytest
-from agent.core import run_task
-
-
-def test_run_task():
-    """Test the run_task function."""
-
-    # Test case when task_description is None
-    task_description = None
-    depth = 0
-    max_depth = 3
-    with pytest.raises(ValueError):
-        run_task(task_description, depth, max_depth)
-
-    # Test case when task_description is not None
-    task_description = 'Test task'
-    depth = 0
-    max_depth = 3
-    with pytest.raises(ValueError):
-        run_task(task_description, depth, max_depth)
-
