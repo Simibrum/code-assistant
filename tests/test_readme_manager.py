@@ -15,6 +15,7 @@ These test functions ensure the functionality and correctness of the `readme_man
 """
 import tempfile
 
+from markdown_it import MarkdownIt
 from markdown_it.token import Token
 
 from code_management import readme_manager
@@ -64,3 +65,19 @@ def test_get_headings_from_md_file():
         temp_file.seek(0)
         headings = readme_manager.get_headings_from_md_file(temp_file.name)
         assert headings == ["Heading 1", "Heading 2", "Heading 3"]
+
+
+def test_replace_section_in_markdown():
+    from code_management.readme_manager import replace_section_in_markdown
+
+    # Test case: replace a section in the markdown
+    markdown_text = "# Heading 1\nThis is the first section.\n\n# Heading 2\nThis is the second section."
+    heading = "Heading 1"
+    new_text = "This is the replaced section."
+    expected_output = "# Heading 1\nThis is the replaced section.\n\n# Heading 2\nThis is the second section."
+    assert replace_section_in_markdown(markdown_text, heading, new_text) == expected_output
+
+    # Test case: heading not found, no replacement should occur
+    heading = "Non-existing heading"
+    assert replace_section_in_markdown(markdown_text, heading, new_text) == markdown_text
+

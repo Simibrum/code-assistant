@@ -1,7 +1,11 @@
 """Tests for the utils module. """
-import tempfile
+import json
 import os
-from unittest.mock import patch, mock_open
+import tempfile
+from unittest.mock import mock_open, patch
+
+import pytest
+
 import utils
 
 
@@ -172,14 +176,12 @@ def test_read_file_description() -> None:
     assert output_docstring == expected_docstring, "The docstrings do not match."
 
 
-
 def test_read_function_description():
     """
     Test the functionality of read_function_description.
     """
     test_func = (
-        "def test_func():\n    '''\n"
-        "    This is a test function.\n    '''\n    pass\n"
+        "def test_func():\n    '''\n    This is a test function.\n    '''\n    pass\n"
     )
     docstring = utils.read_function_description(test_func)
     assert docstring == "This is a test function."
@@ -210,20 +212,32 @@ def test_add_docstring_to_function():
     """
     Test the function add_docstring_to_function.
     """
-    # Setup
-    file_path = 'temp.py'
-    function_name = 'test_func'
-    docstring = 'This is a test function.'
-    with open(file_path, 'w', encoding="utf-8") as file:
-        file.write(f'def {function_name}():\n    pass')
-
-    # Exercise
+    file_path = "temp.py"
+    function_name = "test_func"
+    docstring = "This is a test function."
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(f"def {function_name}():\n    pass")
     utils.add_docstring_to_function(file_path, function_name, docstring)
-
-    # Verify
-    with open(file_path, 'r', encoding="utf-8") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     assert lines[1].strip() == f'"""{docstring}"""'
-
-    # Cleanup
     os.remove(file_path)
+
+
+def test_run_pytest(mocker):
+    """Test the function run_pytest"""
+
+    # Arrange
+    # Mock the pytest.main call
+    mocker.patch('pytest.main', return_value=None)
+    # Mock the opening and reading of the file
+    mocked_open = mocker.patch('builtins.open', mocker.mock_open(read_data=json.dumps({'success': True})))
+
+    # Act
+    result = utils.run_pytest()
+
+    # Assert
+    pytest.main.assert_called_once_with(['--json-report', '--json-report-file=temp_test_results.json'])
+    mocked_open.assert_called_once_with('temp_test_results.json', 'r', encoding='utf-8')
+    assert result == {'success': True}
+

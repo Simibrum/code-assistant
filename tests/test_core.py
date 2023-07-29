@@ -17,7 +17,10 @@ These test functions ensure the correct behavior and functionality of the `agent
 '''
 import ast
 import logging
+from unittest import mock
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 import agent.core
 
@@ -97,3 +100,78 @@ def test_format_modules(mocker):
     agent.core.utils.format_code.assert_any_call("")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file1.py")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file2.py")
+
+
+def test_get_task_description(mocker):
+    """Test the get_task_description function."""
+    mocker.patch("builtins.input", return_value="Test task description")
+    mocker.patch("agent.core.logger")
+    from agent.core import get_task_description
+
+    assert get_task_description() == "Test task description"
+
+
+import logging
+import os
+from unittest import mock
+from unittest.mock import Mock, patch
+
+import pytest
+
+from agent.core import generate_function_for_task, get_further_information, run_task
+
+
+def test_generate_function_for_task():
+    """Tests the function generate_function_for_task in agent/core.py."""
+    with mock.patch("agent.core.llm.generate_code") as mock_generate_code, mock.patch(
+        "agent.core.logger.debug"
+    ) as mock_logger_debug, mock.patch(
+        "agent.core.utils.add_imports"
+    ) as mock_add_imports, mock.patch(
+        "builtins.open", new_callable=mock.mock_open
+    ) as mock_file:
+        mock_generate_code.return_value = ("def function(): pass", "import numpy")
+        generate_function_for_task("Create a function that adds two numbers", "./file.py")
+        mock_generate_code.assert_called_once_with(
+            "Create a function that adds two numbers", function_file="./file.py"
+        )
+        mock_logger_debug.assert_called_once_with(
+            "Function code: %s", "def function(): pass"
+        )
+        mock_add_imports.assert_called_once_with("./file.py", "import numpy")
+        mock_file.assert_called_once_with("./file.py", "a", encoding="utf-8")
+        mock_file().write.assert_called_once_with("\ndef function(): pass\n")
+
+
+def test_get_further_information(mocker):
+    """Test the get_further_information function."""
+    mocker.patch("builtins.input", side_effect=["Response 1", "Response 2"])
+    mocker.patch("agent.core.logger.debug")
+    from agent.core import get_further_information
+
+    questions = ["Question 1?", "Question 2?"]
+    result = get_further_information(questions)
+    assert result == "Question 1?\nResponse 1\nQuestion 2?\nResponse 2\n"
+
+
+import pytest
+from agent.core import run_task
+
+
+def test_run_task():
+    """Test the run_task function."""
+
+    # Test case when task_description is None
+    task_description = None
+    depth = 0
+    max_depth = 3
+    with pytest.raises(ValueError):
+        run_task(task_description, depth, max_depth)
+
+    # Test case when task_description is not None
+    task_description = 'Test task'
+    depth = 0
+    max_depth = 3
+    with pytest.raises(ValueError):
+        run_task(task_description, depth, max_depth)
+
