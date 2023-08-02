@@ -11,6 +11,8 @@ from functions import logger
 import llm.llm_interface as llm
 from llm.task_management import process_task
 from code_management import readme_manager
+from github_management.issue_management import GitHubIssues
+from git_management.git_handler import GitHandler
 
 
 def generate_tests():
@@ -201,6 +203,23 @@ def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
     elif function == "divide_and_process_sub_tasks":
         for subtask in parameters:
             run_task(subtask, depth=depth + 1)
+
+def run_task_from_next_issue():
+    """Run a task based on the next easiest issue."""
+    gh_issues = GitHubIssues()
+    # Get the next issue.
+    issue = gh_issues.get_next_issue()
+    # Generate task description from the issue
+    task_description = gh_issues.task_from_issue(issue)
+    # Create a new branch for the issue
+    branch_name = gh_issues.generate_branch_name(issue)
+    # Switch to the new branch
+    git_handler = GitHandler()
+    git_handler.create_new_branch(branch_name)
+    # Run the task.
+    run_task(task_description)
+    # Create tests
+    generate_tests()
 
 
 def update_readme():

@@ -211,6 +211,19 @@ def create_task_processing_prompt(task_description: str) -> str:
     prompt += "Only use the functions you have been provided with.\n\n"
     return prompt
 
+def create_task_prompt_from_issue(issue) -> str:
+    """
+    Create a prompt for the LLM to create a task from an issue.
+
+    Args:
+        issue (Issue): the issue from GitHub
+
+    Returns:
+        str: the prompt
+    """
+    task_description = f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+    return create_task_processing_prompt(task_description)
+
 def create_reduce_module_descriptions_prompt(initial_description: str) -> str:
     """
     Create a prompt for the LLM to reduce module descriptions.

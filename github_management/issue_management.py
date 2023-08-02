@@ -20,12 +20,7 @@ def slugify(title, max_length=30):
     slug = re.sub(r'\s+', '_', slug)      # Replace spaces and hyphens with underscores
     return slug[:max_length]
 
-def generate_branch_name(issue):
-    """Generate a branch name for a given issue."""
-    issue_number = issue.number
-    issue_title_slug = slugify(issue.title)
-    branch_name = f"issue_{issue_number}_{issue_title_slug}"
-    return branch_name
+
 
 
 class GitHubIssues:
@@ -54,6 +49,13 @@ class GitHubIssues:
         print(f"State: {issue.state}")
         print(f"Comments: {issue.comments}")
         print("------------")
+
+    def generate_branch_name(self, issue):
+        """Generate a branch name for a given issue."""
+        issue_number = issue.number
+        issue_title_slug = slugify(issue.title)
+        branch_name = f"issue_{issue_number}_{issue_title_slug}"
+        return branch_name
 
     def print_all_open_issue_details(self):
         """Fetch and print details of all open issues."""
@@ -85,3 +87,18 @@ class GitHubIssues:
 
         # Assign the label 'next-to-do' to the selected issue
         self.add_label_to_issue(issue_number, 'next-to-do')
+
+    def get_next_issue(self):
+        """Fetch the next issue to work on."""
+        next_to_do_issues = self.repo.get_issues(labels=['next-to-do'])
+        if not list(next_to_do_issues):
+            self.select_easiest_issue()
+            next_to_do_issues = self.repo.get_issues(labels=['next-to-do'])
+        # Get the first issue in the list
+        next_to_do_issue = next(next_to_do_issues)
+        return next_to_do_issue
+
+    def task_from_issue(self, issue) -> str:
+        """Create a task description from an issue."""
+        task_description = f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+        return task_description
