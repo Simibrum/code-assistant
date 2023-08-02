@@ -15,13 +15,12 @@ These test functions ensure the functionality and correctness of the `readme_man
 """
 import os
 import tempfile
-from unittest import mock
-
-import pytest
 from markdown_it.token import Token
+from unittest.mock import patch
 
 from code_management import readme_manager
 from code_management.readme_manager import update_readme_todos
+from functions import logger
 
 
 def test_parse_readme():
@@ -113,38 +112,42 @@ def test_update_readme_todos(mocker):
     """
     Test the update_readme_todos function.
     """
-    # Mock the GitHubIssues class and its get_all_issues method
     mock_github_issues_class = mocker.patch(
-        'code_management.readme_manager.GitHubIssues', autospec=True)
+        "code_management.readme_manager.GitHubIssues", autospec=True
+    )
     mock_get_all_issues = mock_github_issues_class.return_value.get_all_issues
     mock_get_all_issues.return_value = [
-        mocker.Mock(state='open', title='Issue 1'),
-        mocker.Mock(state='closed', title='Issue 2')
+        mocker.Mock(state="open", title="Issue 1"),
+        mocker.Mock(state="closed", title="Issue 2"),
     ]
-
-    # Mock the replace_section_in_markdown function
     mock_replace_section_in_markdown = mocker.patch(
-        'code_management.readme_manager.replace_section_in_markdown')
-    mock_replace_section_in_markdown.return_value = 'updated_readme_text'
-
-    # Call the function
-    result = update_readme_todos('readme_text')
-
-    # Assert that the GitHubIssues class was called with the correct arguments
-    mock_github_issues_class.assert_called_once_with(
-        token=os.environ['GITHUB_TOKEN'], repo_name='simibrum/code-assistant')
-
-    # Assert that the get_all_issues method was called
-    mock_get_all_issues.assert_called_once()
-
-    # Assert that the replace_section_in_markdown function was called with the correct arguments
-    expected_todo_str = (
-        "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):\n\n"
-        "- [ ] Issue 1\n"
-        "- [X] Issue 2\n"
+        "code_management.readme_manager.replace_section_in_markdown"
     )
+    mock_replace_section_in_markdown.return_value = "updated_readme_text"
+    result = update_readme_todos("readme_text")
+    mock_github_issues_class.assert_called_once_with(
+        token=os.environ["GITHUB_TOKEN"], repo_name="simibrum/code-assistant"
+    )
+    mock_get_all_issues.assert_called_once()
+    expected_todo_str = "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):\n\n- [ ] Issue 1\n- [X] Issue 2\n"
     mock_replace_section_in_markdown.assert_called_once_with(
-        'readme_text', 'To do', expected_todo_str)
+        "readme_text", "To do", expected_todo_str
+    )
+    assert result == "updated_readme_text"
 
-    # Assert that the function returned the correct result
-    assert result == 'updated_readme_text'
+
+def test_update_agent_structure():
+    """
+    Test the function update_agent_structure.
+    """
+    # Arrange
+    readme_text = '## Agent Structure\nOld Content\n## Another section\nMore content'
+
+    # Act
+    with patch('llm.llm_interface.reduce_module_descriptions', return_value='New Content'):
+        new_readme_text = readme_manager.update_agent_structure(readme_text)
+        logger.debug("New Readme Text: %s", new_readme_text)
+
+    # Assert
+    assert '# Agent Structure' in new_readme_text
+    assert 'Old Content' not in new_readme_text

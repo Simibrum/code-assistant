@@ -23,6 +23,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 import agent.core
+from agent.core import run_task
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,6 @@ def test_get_task_description(mocker):
     """Test the get_task_description function."""
     mocker.patch("builtins.input", return_value="Test task description")
     mocker.patch("agent.core.logger")
-
     assert agent.core.get_task_description() == "Test task description"
 
 
@@ -121,7 +121,8 @@ def test_generate_function_for_task():
     ) as mock_file:
         mock_generate_code.return_value = ("def function(): pass", "import numpy")
         agent.core.generate_function_for_task(
-            "Create a function that adds two numbers", "./file.py")
+            "Create a function that adds two numbers", "./file.py"
+        )
         mock_generate_code.assert_called_once_with(
             "Create a function that adds two numbers", function_file="./file.py"
         )
@@ -140,3 +141,64 @@ def test_get_further_information(mocker):
     questions = ["Question 1?", "Question 2?"]
     result = agent.core.get_further_information(questions)
     assert result == "Question 1?\nResponse 1\nQuestion 2?\nResponse 2\n"
+
+def test_run_task_from_next_issue(mocker):
+    """Test the run_task_from_next_issue function."""
+    mock_gh_issues = mocker.patch("agent.core.GitHubIssues", autospec=True)
+    mock_git_handler = mocker.patch("agent.core.GitHandler", autospec=True)
+    mock_logger = mocker.patch("agent.core.logger", autospec=True)
+    mock_run_task = mocker.patch("agent.core.run_task", autospec=True)
+    mock_generate_tests = mocker.patch("agent.core.generate_tests", autospec=True)
+    mock_issue = mock_gh_issues.return_value.get_next_issue.return_value
+    mock_issue.number = 123
+
+    agent.core.run_task_from_next_issue()
+
+    mock_gh_issues.return_value.get_next_issue.assert_called_once()
+    mock_gh_issues.return_value.task_from_issue.assert_called_once_with(mock_issue)
+    mock_gh_issues.return_value.generate_branch_name.assert_called_once_with(mock_issue)
+    mock_git_handler.return_value.create_new_branch.assert_called_once()
+    mock_run_task.assert_called_once()
+    mock_generate_tests.assert_called_once()
+
+
+def test_update_readme(mocker):
+    """Test the update_readme function."""
+    # Mock the open and read calls
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    mock_open().read.return_value = ''
+
+    # Mock the specific functions in readme_manager
+    mock_update_readme_summary = mocker.patch("agent.core.readme_manager.update_readme_summary")
+    mock_update_agent_structure = mocker.patch("agent.core.readme_manager.update_agent_structure")
+    mock_update_readme_todos = mocker.patch("agent.core.readme_manager.update_readme_todos")
+
+    # Call the function you're testing
+    agent.core.update_readme()
+
+    # Verify that the file was opened twice
+    assert mock_open.call_count == 3
+
+    # Verify that the functions were called with the correct arguments
+    mock_update_readme_summary.assert_called_once()
+    mock_update_agent_structure.assert_called_once()
+    mock_update_readme_todos.assert_called_once()
+
+
+def test_update_todos(mocker):
+    """Test the update_todos function."""
+    # Mock the open() function
+    mock_open = mocker.patch('builtins.open', new_callable=mocker.mock_open)
+
+    # Mock the readme_manager.update_readme_todos() function
+    mock_update_readme_todos = mocker.patch(
+        'code_management.readme_manager.update_readme_todos')
+
+    # Call the function to test
+    agent.core.update_todos()
+
+    # Check that the file was opened twice
+    assert mock_open.call_count == 2
+
+    # Check that the update_readme_todos function was called once
+    assert mock_update_readme_todos.call_count == 1

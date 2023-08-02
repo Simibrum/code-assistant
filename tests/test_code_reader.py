@@ -2,11 +2,6 @@
 Test the functions in code_reader.py.
 """
 from unittest import mock
-
-import pytest
-from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine
-from sqlalchemy.orm import Session, sessionmaker
-
 from code_management import code_reader
 
 

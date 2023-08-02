@@ -6,7 +6,9 @@ functions such as `load_json_string`, `api_request`, `generate_from_prompt`,
 is documented with clear and concise explanations of what it is testing.
 """
 import json
+from unittest import mock
 from unittest.mock import MagicMock, patch
+
 from llm import llm_interface
 
 
@@ -154,10 +156,7 @@ def test_generate_module_docstring():
             "choices": [
                 {
                     "message": {
-                        "content": (
-                            'A module that contains a hello_world '
-                            'function which prints "Hello, world!".'
-                        )
+                        "content": 'A module that contains a hello_world function which prints "Hello, world!".'
                     }
                 }
             ]
@@ -196,7 +195,6 @@ def test_generate_todo_list(mocker):
         "llm.llm_interface.api_request",
         return_value={"choices": [{"message": {"content": "content"}}]},
     )
-
     result = llm_interface.generate_todo_list()
     assert result == "content"
 
@@ -205,19 +203,52 @@ def test_generate_summary(mocker):
     """
     Test the generate_summary function.
     """
+    mock_prompt = "This is a test prompt."
+    mock_response = {"choices": [{"message": {"content": "This is a test summary."}}]}
+    mocker.patch("llm.llm_interface.api_request", return_value=mock_response)
+    result = llm_interface.generate_summary(mock_prompt)
+    assert result == mock_response["choices"][0]["message"]["content"]
+
+
+def test_reduce_module_descriptions():
+    """Test the reduce_module_descriptions function."""
+    initial_description = "This is the initial description."
+    expected_output = "This is the reduced description."
+    with mock.patch("llm.llm_interface.api_request") as mock_api_request:
+        mock_api_request.return_value = {
+            "choices": [{"message": {"content": expected_output}}]
+        }
+        actual_output = llm_interface.reduce_module_descriptions(initial_description)
+        assert (
+            actual_output == expected_output
+        ), f"Expected: {expected_output}, but got: {actual_output}"
+
+
+def test_review_issues(mocker):
+    """Test the review_issues function."""
+
     # Arrange
-    mock_prompt = 'This is a test prompt.'
-    mock_response = {
+    open_issues = ['issue1', 'issue2', 'issue3']
+    token_limit = 3800
+    expected_issue_number = 1
+
+    # Mock the dependencies
+    mocker.patch('llm.llm_interface.prompts.create_issue_review_prompt', return_value='prompt')
+    mocker.patch('llm.llm_interface.num_tokens_from_messages', return_value=3700)
+    mocker.patch('llm.llm_interface.api_request', return_value={
         'choices': [{
             'message': {
-                'content': 'This is a test summary.'
+                'function_call': {
+                    'arguments': '{"issue_number": 1}'
+                }
             }
         }]
-    }
-    mocker.patch('llm.llm_interface.api_request', return_value=mock_response)
+    })
+    mocker.patch('llm.llm_interface.load_json_string', return_value={'issue_number': expected_issue_number})
+    mocker.patch('llm.llm_interface.logger')
 
     # Act
-    result =  llm_interface.generate_summary(mock_prompt)
+    result = llm_interface.review_issues(open_issues, token_limit)
 
     # Assert
-    assert result == mock_response['choices'][0]['message']['content']
+    assert result == expected_issue_number
