@@ -5,6 +5,7 @@ See https://pygithub.readthedocs.io/ for documentation on the GitHub API wrapper
 import os
 import re
 from github import Github
+import llm.llm_interface as llm
 
 
 GITHUB_TOKEN = os.environ.get('TOKEN_GH')
@@ -69,3 +70,18 @@ class GitHubIssues:
             if issue.title == title:
                 raise IssueAlreadyExistsError("Issue with the same title already exists.")
         self.repo.create_issue(title=title, body=body)
+
+    def add_label_to_issue(self, issue_number: int, label_name: str):
+        """Add a label to an issue."""
+        issue = self.repo.get_issue(issue_number)
+        # Check if the label already exists
+        issue.add_to_labels(label_name)
+
+    def select_easiest_issue(self, token_limit: int = 3800):
+        """Use an LLM to determine the easiest issue to solve."""
+        open_issues = self.get_open_issues()
+
+        issue_number = llm.review_issues(open_issues, token_limit)
+
+        # Assign the label 'next-to-do' to the selected issue
+        self.add_label_to_issue(issue_number, 'next-to-do')

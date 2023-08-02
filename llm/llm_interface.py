@@ -9,7 +9,7 @@ import json
 from typing import Tuple
 import openai
 
-from functions import logger
+from functions import logger, num_tokens_from_messages
 import llm.prompts as prompts
 
 
@@ -299,3 +299,73 @@ def reduce_module_descriptions(initial_description: str) -> str:
         model=QUICK_MODEL,
     )
     return response["choices"][0]["message"]["content"]
+
+
+ISSUE_REVIEW_FUNCTIONS = [
+    {
+        "name": "label_easiest_issue",
+        "description": "Label the easiest issue.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_number": {
+                    "type": "integer",
+                    "description": (
+                        "Number of the issue that is easiest to solve."
+                        "For subsequent labelling."
+                    ),
+                },
+            },
+            "required": ["issue_number"],
+        },
+    }
+]
+
+def review_issues(open_issues: list, token_limit:int = 3800) -> int:
+    """Review issues and assign labels.
+
+    Args:
+        open_issues (list): list of open issues.
+
+    Returns:
+        int: easiest issue number.
+    """
+    prompt = prompts.create_issue_review_prompt(open_issues, titles_only=False)
+    messages = [
+        {"role": "system", "content": "You are a helpful Python programming assistant."},
+        {"role": "user", "content": prompt},
+    ]
+    # Check the token limit
+    if num_tokens_from_messages(messages) > token_limit:
+        # Rebuild the prompt using only titles if over the limit
+        prompt = prompts.create_issue_review_prompt(open_issues, titles_only=True)
+        messages[-1]["content"] = prompt
+    # Check the token limit again
+    if num_tokens_from_messages(messages) > token_limit:
+        # Rebuild using the earliest issue numbers if still over the limit
+        prompt = prompts.create_issue_review_prompt(open_issues[:30], titles_only=True)
+        messages[-1]["content"] = prompt
+    if num_tokens_from_messages(messages) > token_limit:
+        # Rebuild using the earliest issue numbers if still over the limit
+        prompt = prompts.create_issue_review_prompt(open_issues[:10], titles_only=True)
+        messages[-1]["content"] = prompt
+    response = api_request(
+        messages=messages,
+        functions=ISSUE_REVIEW_FUNCTIONS,
+        function_call={"name":"label_easiest_issue"},
+        model=QUICK_MODEL,
+    )
+    response_message = response["choices"][0]["message"]
+    logger.debug("Response message: %s", response)
+    if response_message.get("function_call"):
+        arguments_string = response_message["function_call"]["arguments"]
+        # Tweak to prevent malformed escape sequences
+        try:
+            function_args = load_json_string(arguments_string)
+        except json.JSONDecodeError as err:
+            logger.debug("JSONDecodeError: %s", str(err))
+            return None, None
+        issue_number = function_args.get("issue_number")
+        return issue_number
+    else:
+        return response_message["content"]

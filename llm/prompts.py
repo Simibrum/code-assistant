@@ -227,3 +227,22 @@ def create_reduce_module_descriptions_prompt(initial_description: str) -> str:
     prompt += "Only use the functions you have been provided with.\n\n"
     prompt += "Keep the same format: '- [module_name]: [module_description]'\n\n"
     return prompt
+
+def create_issue_review_prompt(open_issues: list, titles_only: bool = False) -> str:
+    """
+    Create a prompt for the LLM to review open issues.
+
+    Args:
+        open_issues (list[Issue]): the open issues from GitHub
+
+    Returns:
+        str: the prompt
+    """
+    prompt = "Can you select the easiest issue to solve?\n----\n"
+    for issue in open_issues:
+        if titles_only:
+            prompt += f"* Issue #{issue.number}: {issue.title}\n"
+        else:
+            prompt += f"* Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+    prompt += "Only use the functions you have been provided with.\n\n"
+    return prompt
