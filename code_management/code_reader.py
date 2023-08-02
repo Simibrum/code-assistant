@@ -1,9 +1,6 @@
 """
 Module to read information from the code files.
 """
-from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table, create_engine
-from sqlalchemy.orm import mapper, sessionmaker
-
 import llm.llm_interface as llm
 import utils
 
@@ -97,34 +94,3 @@ def get_summary(start_directory: str) -> str:
     )
     summary = llm.generate_summary(prompt)
     return summary
-
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey
-from sqlalchemy.orm import mapper, sessionmaker
-
-
-class Code(object):
-    def __init__(self, id=None, code_string=None):
-        self.id = id
-        self.code_string = code_string
-
-    def __repr__(self):
-        return f'<Code({self.id}, {self.code_string})>'
-
-
-def setup_db(db_path='sqlite:///code.db'):
-    """Set up an SQLite DB with SQLAlchemy to store code as strings.
-
-    Args:
-        db_path (str): The path to the SQLite DB. Defaults to 'sqlite:///code.db'.
-    """
-    engine = create_engine(db_path, echo=True)
-    metadata = MetaData()
-    code_table = Table('code', metadata,
-                       Column('id', Integer, primary_key=True),
-                       Column('code_string', String),
-                       )
-    metadata.create_all(engine)
-    mapper(Code, code_table)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    return session

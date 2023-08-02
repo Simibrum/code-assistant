@@ -114,7 +114,8 @@ def test_update_readme_todos(mocker):
     Test the update_readme_todos function.
     """
     # Mock the GitHubIssues class and its get_all_issues method
-    mock_github_issues_class = mocker.patch('readme_manager.GitHubIssues', autospec=True)
+    mock_github_issues_class = mocker.patch(
+        'code_management.readme_manager.GitHubIssues', autospec=True)
     mock_get_all_issues = mock_github_issues_class.return_value.get_all_issues
     mock_get_all_issues.return_value = [
         mocker.Mock(state='open', title='Issue 1'),
@@ -122,7 +123,8 @@ def test_update_readme_todos(mocker):
     ]
 
     # Mock the replace_section_in_markdown function
-    mock_replace_section_in_markdown = mocker.patch('readme_manager.replace_section_in_markdown')
+    mock_replace_section_in_markdown = mocker.patch(
+        'code_management.readme_manager.replace_section_in_markdown')
     mock_replace_section_in_markdown.return_value = 'updated_readme_text'
 
     # Call the function
@@ -138,12 +140,11 @@ def test_update_readme_todos(mocker):
     # Assert that the replace_section_in_markdown function was called with the correct arguments
     expected_todo_str = (
         "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):\n\n"
-        "- [ ] Issue 1"
-        "- [X] Issue 2"
+        "- [ ] Issue 1\n"
+        "- [X] Issue 2\n"
     )
     mock_replace_section_in_markdown.assert_called_once_with(
         'readme_text', 'To do', expected_todo_str)
 
     # Assert that the function returned the correct result
     assert result == 'updated_readme_text'
-

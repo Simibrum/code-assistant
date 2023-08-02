@@ -116,26 +116,3 @@ def test_get_summary():
         )
         mock_llm_generate_summary.assert_called_once_with("prompt")
         assert result == "summary"
-
-
-import pytest
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
-from sqlalchemy.orm import sessionmaker, Session
-from code_management.code_reader import setup_db
-
-def test_setup_db():
-    """Test the setup_db function."""
-
-    # Setup
-    db_path = 'sqlite:///:memory:'
-
-    # Exercise
-    session = setup_db(db_path)
-
-    # Verify
-    assert isinstance(session, Session)
-    assert 'code' in session.bind.table_names()
-
-    # Cleanup
-    session.close()
-
