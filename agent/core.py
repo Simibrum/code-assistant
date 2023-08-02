@@ -206,19 +206,24 @@ def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
 
 def run_task_from_next_issue():
     """Run a task based on the next easiest issue."""
+    logger.info("Running task from next issue.")
     gh_issues = GitHubIssues()
     # Get the next issue.
     issue = gh_issues.get_next_issue()
     # Generate task description from the issue
     task_description = gh_issues.task_from_issue(issue)
+    logger.debug("Task description: %s", task_description)
     # Create a new branch for the issue
+    logger.info("Creating new branch for issue %s", issue.number)
     branch_name = gh_issues.generate_branch_name(issue)
     # Switch to the new branch
     git_handler = GitHandler()
     git_handler.create_new_branch(branch_name)
     # Run the task.
+    logger.info("Running task.")
     run_task(task_description)
     # Create tests
+    logger.info("Generating tests.")
     generate_tests()
 
 
