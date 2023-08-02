@@ -1,5 +1,9 @@
-"""File to manage issues on GitHub for the repository."""
+"""File to manage issues on GitHub for the repository.
+
+See https://pygithub.readthedocs.io/ for documentation on the GitHub API wrapper.
+"""
 import os
+import re
 from github import Github
 
 
@@ -9,9 +13,23 @@ class IssueAlreadyExistsError(Exception):
     """Raised when an issue with the same title already exists."""
 
 
+def slugify(title, max_length=30):
+    """Converts a title to a slug."""
+    slug = re.sub(r'[^\w\s-]', '', title)  # Remove non-alphanumeric characters
+    slug = re.sub(r'\s+', '_', slug)      # Replace spaces and hyphens with underscores
+    return slug[:max_length]
+
+def generate_branch_name(issue):
+    """Generate a branch name for a given issue."""
+    issue_number = issue.number
+    issue_title_slug = slugify(issue.title)
+    branch_name = f"issue_{issue_number}_{issue_title_slug}"
+    return branch_name
+
+
 class GitHubIssues:
     """Class to manage issues on GitHub for the repository."""
-    def __init__(self, token: str, repo_name: str):
+    def __init__(self, token: str = GITHUB_TOKEN, repo_name: str = 'simibrum/code-assistant'):
         self.github = Github(token)
         self.repo = self.github.get_repo(repo_name)
 
