@@ -95,8 +95,11 @@ class GitHubIssues:
             self.select_easiest_issue()
             next_to_do_issues = self.repo.get_issues(labels=['next-to-do'])
         # Get the first issue in the list
-        next_to_do_issue = next(next_to_do_issues)
-        return next_to_do_issue
+        issues = list(next_to_do_issues)
+        if issues:
+            return issues[0]
+        else:
+            return None
 
     def task_from_issue(self, issue) -> str:
         """Create a task description from an issue."""

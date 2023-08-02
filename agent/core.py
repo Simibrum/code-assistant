@@ -210,6 +210,9 @@ def run_task_from_next_issue():
     gh_issues = GitHubIssues()
     # Get the next issue.
     issue = gh_issues.get_next_issue()
+    if not issue:
+        logger.info("No issues to process.")
+        return
     # Generate task description from the issue
     task_description = gh_issues.task_from_issue(issue)
     logger.debug("Task description: %s", task_description)
