@@ -2,6 +2,11 @@
 Test the functions in code_reader.py.
 """
 from unittest import mock
+
+import pytest
+from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine
+from sqlalchemy.orm import Session, sessionmaker
+
 from code_management import code_reader
 
 
@@ -55,7 +60,6 @@ def test_read_all_function_descriptions(mocker):
         "code_management.code_reader.read_function_descriptions",
         return_value={"func1": "description1", "func2": "description2"},
     )
-
     result = code_reader.read_all_function_descriptions("some_directory")
     mock_get_python_files.assert_called_once_with("some_directory")
     assert mock_read_function_descriptions.call_args_list == [
@@ -90,37 +94,48 @@ def test_generate_project_summary_prompt():
 
 def test_get_summary():
     """Test the get_summary function."""
-
-    # Mocking the dependencies
     with mock.patch(
-        'code_management.code_reader.read_code_file_descriptions'
-        ) as mock_read_code_file_descriptions, \
-         mock.patch(
-        'code_management.code_reader.read_all_function_descriptions'
-        ) as mock_read_all_function_descriptions, \
-         mock.patch(
-        'code_management.code_reader.generate_project_summary_prompt'
-        ) as mock_generate_project_summary_prompt, \
-         mock.patch(
-        'code_management.code_reader.llm.generate_summary'
-        ) as mock_llm_generate_summary:
-
-        # Set the return values of the mocked functions
-        mock_read_code_file_descriptions.return_value = 'code_file_descriptions'
-        mock_read_all_function_descriptions.return_value = 'all_function_descriptions'
-        mock_generate_project_summary_prompt.return_value = 'prompt'
-        mock_llm_generate_summary.return_value = 'summary'
-
-        # Run the function with a test input
-        start_directory = '/path/to/directory'
+        "code_management.code_reader.read_code_file_descriptions"
+    ) as mock_read_code_file_descriptions, mock.patch(
+        "code_management.code_reader.read_all_function_descriptions"
+    ) as mock_read_all_function_descriptions, mock.patch(
+        "code_management.code_reader.generate_project_summary_prompt"
+    ) as mock_generate_project_summary_prompt, mock.patch(
+        "code_management.code_reader.llm.generate_summary"
+    ) as mock_llm_generate_summary:
+        mock_read_code_file_descriptions.return_value = "code_file_descriptions"
+        mock_read_all_function_descriptions.return_value = "all_function_descriptions"
+        mock_generate_project_summary_prompt.return_value = "prompt"
+        mock_llm_generate_summary.return_value = "summary"
+        start_directory = "/path/to/directory"
         result = code_reader.get_summary(start_directory)
-
-        # Check the calls to the mocked functions
         mock_read_code_file_descriptions.assert_called_once_with(start_directory)
         mock_read_all_function_descriptions.assert_called_once_with(start_directory)
         mock_generate_project_summary_prompt.assert_called_once_with(
-            'code_file_descriptions', 'all_function_descriptions')
-        mock_llm_generate_summary.assert_called_once_with('prompt')
+            "code_file_descriptions", "all_function_descriptions"
+        )
+        mock_llm_generate_summary.assert_called_once_with("prompt")
+        assert result == "summary"
 
-        # Check the result
-        assert result == 'summary'
+
+import pytest
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+from sqlalchemy.orm import sessionmaker, Session
+from code_management.code_reader import setup_db
+
+def test_setup_db():
+    """Test the setup_db function."""
+
+    # Setup
+    db_path = 'sqlite:///:memory:'
+
+    # Exercise
+    session = setup_db(db_path)
+
+    # Verify
+    assert isinstance(session, Session)
+    assert 'code' in session.bind.table_names()
+
+    # Cleanup
+    session.close()
+

@@ -13,11 +13,15 @@ It generates a temporary Markdown file, writes headings to it, and asserts that 
 
 These test functions ensure the functionality and correctness of the `readme_manager` module.
 """
+import os
 import tempfile
+from unittest import mock
 
+import pytest
 from markdown_it.token import Token
 
 from code_management import readme_manager
+from code_management.readme_manager import update_readme_todos
 
 
 def test_parse_readme():
@@ -70,16 +74,76 @@ def test_replace_section_in_markdown():
     """
     Tests the function replace_section_in_markdown from the file readme_manager.py.
     """
-
-    # Test case: replace a section in the markdown
     markdown_text = "# Heading 1\nThis is the first section.\n\n# Heading 2\nThis is the second section."
     heading = "Heading 1"
     new_text = "This is the replaced section."
     expected_output = "# Heading 1\n\nThis is the replaced section.\n\n# Heading 2\n\nThis is the second section.\n"
-    assert readme_manager.replace_section_in_markdown(
-        markdown_text, heading, new_text) == expected_output
-
-    # Test case: heading not found, no replacement should occur
+    assert (
+        readme_manager.replace_section_in_markdown(markdown_text, heading, new_text)
+        == expected_output
+    )
     heading = "Non-existing heading"
-    assert readme_manager.replace_section_in_markdown(
-        markdown_text, heading, new_text) == markdown_text
+    assert (
+        readme_manager.replace_section_in_markdown(markdown_text, heading, new_text)
+        == markdown_text
+    )
+
+
+def test_update_readme_summary(mocker):
+    """
+    Tests the 'update_readme_summary' function in the readme_manager module.
+    """
+    mocker.patch(
+        "code_management.readme_manager.code_reader.get_summary",
+        return_value="Mock Summary",
+    )
+    mocker.patch(
+        "code_management.readme_manager.replace_section_in_markdown",
+        return_value="New Readme Text",
+    )
+    result = readme_manager.update_readme_summary("Readme Text")
+    readme_manager.code_reader.get_summary.assert_called_once_with(".")
+    readme_manager.replace_section_in_markdown.assert_called_once_with(
+        "Readme Text", "Auto Generated Summary", "Mock Summary"
+    )
+    assert result == "New Readme Text"
+
+
+def test_update_readme_todos(mocker):
+    """
+    Test the update_readme_todos function.
+    """
+    # Mock the GitHubIssues class and its get_all_issues method
+    mock_github_issues_class = mocker.patch('readme_manager.GitHubIssues', autospec=True)
+    mock_get_all_issues = mock_github_issues_class.return_value.get_all_issues
+    mock_get_all_issues.return_value = [
+        mocker.Mock(state='open', title='Issue 1'),
+        mocker.Mock(state='closed', title='Issue 2')
+    ]
+
+    # Mock the replace_section_in_markdown function
+    mock_replace_section_in_markdown = mocker.patch('readme_manager.replace_section_in_markdown')
+    mock_replace_section_in_markdown.return_value = 'updated_readme_text'
+
+    # Call the function
+    result = update_readme_todos('readme_text')
+
+    # Assert that the GitHubIssues class was called with the correct arguments
+    mock_github_issues_class.assert_called_once_with(
+        token=os.environ['GITHUB_TOKEN'], repo_name='simibrum/code-assistant')
+
+    # Assert that the get_all_issues method was called
+    mock_get_all_issues.assert_called_once()
+
+    # Assert that the replace_section_in_markdown function was called with the correct arguments
+    expected_todo_str = (
+        "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):\n\n"
+        "- [ ] Issue 1"
+        "- [X] Issue 2"
+    )
+    mock_replace_section_in_markdown.assert_called_once_with(
+        'readme_text', 'To do', expected_todo_str)
+
+    # Assert that the function returned the correct result
+    assert result == 'updated_readme_text'
+
