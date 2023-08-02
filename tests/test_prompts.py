@@ -2,16 +2,9 @@
 Tests for the prompts.
 """
 from unittest import mock
-from unittest.mock import MagicMock, Mock, patch
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 import llm.prompts as prompts
-from llm.prompts import (
-    create_issue_review_prompt,
-    create_reduce_module_descriptions_prompt,
-    create_task_prompt_from_issue,
-)
 
 
 def test_generate_system_prompt():

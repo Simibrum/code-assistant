@@ -15,8 +15,8 @@ These test functions ensure the functionality and correctness of the `readme_man
 """
 import os
 import tempfile
-from markdown_it.token import Token
 from unittest.mock import patch
+from markdown_it.token import Token
 
 from code_management import readme_manager
 from code_management.readme_manager import update_readme_todos

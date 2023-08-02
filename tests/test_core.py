@@ -20,10 +20,7 @@ import logging
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 import agent.core
-from agent.core import run_task
 
 logger = logging.getLogger(__name__)
 
