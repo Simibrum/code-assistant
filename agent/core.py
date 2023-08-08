@@ -262,14 +262,14 @@ def update_todos():
     with open("README.md", "w", encoding="utf-8") as readme_file:
         readme_file.write(new_readme_text)
 
-def populate_database(db_path: str, start_dir: str):
+def populate_db(start_dir: str = "."):
     """Populate the database with the code in the project.
 
     Args:
         db_path (str): The path to the database to populate.
         start_directory (str): The path to the directory to read.
     """
-    db_session = setup_db(db_path)
-    for file_path in utils.get_python_files(start_dir):
+    db_session = setup_db()
+    for file_path in utils.get_python_files(start_dir, skip_tests=False):
         create_code_objects(db_session, file_path)
     db_session.commit()

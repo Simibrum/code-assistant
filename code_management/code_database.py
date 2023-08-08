@@ -68,7 +68,7 @@ class CodeTest(Base):
         return f'<CodeTest({self.id}, {self.test_name})>'
 
 
-def setup_db(db_path='sqlite:///code.db'):
+def setup_db(db_path: str = 'sqlite:///code.db'):
     """Set up an SQLite DB with SQLAlchemy to store code as strings and classes.
 
     Args:
