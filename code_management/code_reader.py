@@ -170,14 +170,4 @@ def create_code_objects(session: Session, file_path: str):
 
     session.commit()
 
-def populate_database(db_path: str, start_dir: str):
-    """Populate the database with the code in the project.
 
-    Args:
-        db_path (str): The path to the database to populate.
-        start_directory (str): The path to the directory to read.
-    """
-    db_session = setup_db(db_path)
-    for file_path in utils.get_python_files(start_dir):
-        create_code_objects(db_session, file_path)
-    db_session.commit()

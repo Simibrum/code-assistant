@@ -13,6 +13,8 @@ from llm.task_management import process_task
 from code_management import readme_manager
 from github_management.issue_management import GitHubIssues
 from git_management.git_handler import GitHandler
+from code_management.code_database import setup_db
+from code_management.code_reader import create_code_objects
 
 
 def generate_tests():
@@ -259,3 +261,15 @@ def update_todos():
     # Write the new readme text to the file
     with open("README.md", "w", encoding="utf-8") as readme_file:
         readme_file.write(new_readme_text)
+
+def populate_database(db_path: str, start_dir: str):
+    """Populate the database with the code in the project.
+
+    Args:
+        db_path (str): The path to the database to populate.
+        start_directory (str): The path to the directory to read.
+    """
+    db_session = setup_db(db_path)
+    for file_path in utils.get_python_files(start_dir):
+        create_code_objects(db_session, file_path)
+    db_session.commit()

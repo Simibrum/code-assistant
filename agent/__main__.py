@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("--update_readme", action="store_true")
     parser.add_argument("--run_task_from_issues", action="store_true")
     parser.add_argument("--no_branch_and_commit", action="store_true")
+    parser.add_argument("--populate_db", action="store_true")
     args = parser.parse_args()
 
     # Create new handler for git commands
@@ -68,3 +69,6 @@ if __name__ == "__main__":
 
     if args.run_task_from_issues:
         core.run_task_from_next_issue()
+
+    if args.populate_db:
+        core.populate_db()
