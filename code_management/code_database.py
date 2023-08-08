@@ -46,6 +46,26 @@ class CodeFunction(Base):
     def __repr__(self):
         return f'<CodeFunction({self.id}, {self.function_name})>'
 
+class CodeTest(Base):
+    """Model for a test in a Python file."""
+    __tablename__ = 'code_test'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    test_string: Mapped[str] = mapped_column()
+    test_name: Mapped[str] = mapped_column()
+    file_path: Mapped[str] = mapped_column(nullable=True)
+    doc_string: Mapped[str] = mapped_column(nullable=True)
+    test_status: Mapped[str] = mapped_column(nullable=True)  # e.g., "pass", "fail", etc.
+
+    # Foreign Key to function being tested
+    function_id: Mapped[int] = mapped_column(ForeignKey('code_function.id'), nullable=True)
+    tested_function = relationship('CodeFunction', backref='tests')
+
+    # Foreign Key to class being tested
+    class_id: Mapped[int] = mapped_column(ForeignKey('code_class.id'), nullable=True)
+    tested_class = relationship('CodeClass', backref='tests')
+
+    def __repr__(self):
+        return f'<CodeTest({self.id}, {self.test_name})>'
 
 
 def setup_db(db_path='sqlite:///code.db'):

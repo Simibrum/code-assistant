@@ -1,8 +1,11 @@
 """
 Module to read information from the code files.
 """
+import ast
+from sqlalchemy.orm import Session
 import llm.llm_interface as llm
 import utils
+from code_management.code_database import CodeClass, CodeFunction, CodeTest, setup_db
 
 
 def read_code_file_descriptions(start_dir: str) -> dict:
@@ -32,7 +35,7 @@ def read_function_descriptions(file_path: str) -> dict[str:str]:
         dict[str: str]: A dictionary of function name
          and function descriptions.
     """
-    function_descriptions = dict()
+    function_descriptions = {}
     for function_name, function_code in utils.extract_functions_from_file(file_path):
         function_descriptions[function_name] = utils.read_function_description(
             function_code
@@ -50,7 +53,7 @@ def read_all_function_descriptions(start_dir: str) -> dict[str : dict[str:str]]:
     Returns:
         dict[str: dict[str: str]]: A dictionary of file paths and function descriptions.
     """
-    all_function_descriptions = dict()
+    all_function_descriptions = {}
     for file_path in utils.get_python_files(start_dir):
         all_function_descriptions[file_path] = read_function_descriptions(file_path)
     return all_function_descriptions
@@ -94,3 +97,87 @@ def get_summary(start_directory: str) -> str:
     )
     summary = llm.generate_summary(prompt)
     return summary
+
+def extract_classes_and_functions(contents: str) -> tuple[
+    list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
+    """Extract classes and functions from a Python file.
+
+    Args:
+        contents (str): The contents of the Python file.
+
+    Returns:
+        tuple[list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
+            A tuple of classes and functions.
+    """
+    classes, functions = [], []
+    module = ast.parse(contents)
+    for node in module.body:
+        if isinstance(node, ast.ClassDef):
+            class_string = ast.get_source_segment(contents, node)
+            class_doc_string = ast.get_docstring(node) or ''
+            classes.append((node.name, class_string, class_doc_string, node.body))
+        elif isinstance(node, ast.FunctionDef):
+            function_string = ast.get_source_segment(contents, node)
+            function_doc_string = ast.get_docstring(node) or ''
+            functions.append((node.name, function_string, function_doc_string))
+    return classes, functions
+
+def create_code_objects(session: Session, file_path: str):
+    """Create CodeClass, CodeFunction, and CodeTest objects from a Python file.
+
+    Args:
+        session (Session): SQLAlchemy session to add the objects to the database.
+        file_path (str): The path to the Python file.
+    """
+    with open(file_path, "r", encoding="utf-8") as file:
+        contents = file.read()
+
+    classes, functions = extract_classes_and_functions(contents)
+
+    for class_name, class_string, class_doc_string, class_body in classes:
+        class_obj = CodeClass(class_string=class_string,
+                              class_name=class_name,
+                              file_path=file_path,
+                              doc_string=class_doc_string)
+        session.add(class_obj)
+
+        for node in class_body:
+            if isinstance(node, ast.FunctionDef):
+                function_string = ast.get_source_segment(contents, node)
+                function_doc_string = ast.get_docstring(node) or ''
+                function_obj = CodeFunction(function_string=function_string,
+                                            function_name=node.name,
+                                            file_path=file_path,
+                                            doc_string=function_doc_string,
+                                            code_class=class_obj,
+                                            is_function=True)
+                session.add(function_obj)
+
+    for function_name, function_string, function_doc_string in functions:
+        if function_name.startswith('test_') or file_path.startswith('test_'):
+            test_obj = CodeTest(test_string=function_string,
+                                test_name=function_name,
+                                file_path=file_path,
+                                doc_string=function_doc_string)
+            session.add(test_obj)
+        else:
+            function_obj = CodeFunction(function_string=function_string,
+                                        function_name=function_name,
+                                        file_path=file_path,
+                                        doc_string=function_doc_string,
+                                        is_function=True)
+            session.add(function_obj)
+
+    session.commit()
+
+def populate_database(db_path: str, start_dir: str):
+    """Populate the database with the code in the project.
+
+    Args:
+        db_path (str): The path to the database to populate.
+        start_directory (str): The path to the directory to read.
+    """
+    db_session = setup_db(db_path)
+    for file_path in utils.get_python_files(start_dir):
+        create_code_objects(db_session, file_path)
+    db_session.commit()
