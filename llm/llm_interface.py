@@ -8,6 +8,9 @@ from logging import Logger
 import json
 from typing import Tuple
 import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 from functions import logger, num_tokens_from_messages
 import llm.prompts as prompts
@@ -45,7 +48,7 @@ def api_request(
     model: str = GOOD_MODEL,
     max_tokens: int = None,
     gen_logger: Logger = logger,
-):
+) -> dict:
     """
     Make a request to the OpenAI API with exponential backoff.
 
@@ -79,10 +82,10 @@ def api_request(
 
     for attempt in range(1, max_tries + 1):
         try:
-            response = openai.ChatCompletion.create(**params)
-            return response
+            response = client.chat.completions.create(**params)
+            return response.model_dump()
         except (
-            openai.error.APIError,
+            openai.APIError,
             openai.error.Timeout,
             openai.error.RateLimitError,
             openai.error.APIConnectionError,
