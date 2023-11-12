@@ -7,6 +7,7 @@ pathspec
 markdown-it-py
 mdformat
 python-dotenv
+pre-commit
 
 # Code formatting
 black

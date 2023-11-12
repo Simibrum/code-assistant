@@ -1,8 +1,8 @@
 """File that runs the agent."""
 import argparse
+
 import agent.core as core
 from git_management.git_handler import GitHandler
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -29,7 +29,6 @@ if __name__ == "__main__":
             git_handler.add_files()
             # Commit changes
             git_handler.commit_changes("Auto add tests")
-
 
     if args.generate_module_docstrings:
         if not args.no_branch_and_commit:

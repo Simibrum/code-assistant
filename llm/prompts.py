@@ -1,6 +1,7 @@
 """Common prompt building functions."""
-import sys
 import os
+import sys
+
 import utils
 
 
@@ -55,11 +56,8 @@ def generate_requirements_prompt() -> str:
 
 
 def build_messages(
-        prompt,
-        messages=None,
-        add_dir: bool = True,
-        add_requirements: bool = True
-        ) -> list[dict]:
+        prompt, messages=None, add_dir: bool = True, add_requirements: bool = True
+) -> list[dict]:
     """Build a set of chat messages based around the prompt as the last message."""
     if not messages:
         messages = [
@@ -134,9 +132,7 @@ def create_module_docstring_prompt(module_code: str) -> str:
     prompt += "Please write a docstring for the above module. "
     prompt += "Do NOT include the module code in the docstring. "
     prompt += "Do NOT describe individual functions - just the module as a whole. "
-    prompt += (
-        "Documentation for individual functions will be provided in function docstrings. "
-    )
+    prompt += "Documentation for individual functions will be provided in function docstrings. "
     prompt += "Only return the docstring. "
     prompt += "Limit the total description to less than 250 words. "
     prompt += "Limit lines to a maximum of 90 characters.\n\n"
@@ -144,6 +140,7 @@ def create_module_docstring_prompt(module_code: str) -> str:
     prompt += '"""\n[docstring]\n"""\n\n'
 
     return prompt
+
 
 def create_function_docstring_prompt(function_code: str) -> str:
     """
@@ -166,13 +163,14 @@ def create_function_docstring_prompt(function_code: str) -> str:
     prompt += "Limit lines to a maximum of 90 characters.\n\n"
     prompt += "The docstring should be in the Google docstring format:\n\n"
     prompt += (
-        '\"\"\"\n[Short, concise function description]\n\n'
-        'Args:\n    [param1]: [desc]\n  [param2]:[desc]\n'
-        'Returns:\n    [Return value desc]\n\n'
-        '\"\"\"\n\n'
+        '"""\n[Short, concise function description]\n\n'
+        "Args:\n    [param1]: [desc]\n  [param2]:[desc]\n"
+        "Returns:\n    [Return value desc]\n\n"
+        '"""\n\n'
     )
 
     return prompt
+
 
 def create_todo_list_prompt() -> str:
     """
@@ -186,9 +184,10 @@ def create_todo_list_prompt() -> str:
     prompt += "Limit to 10 items."
     prompt += "Limit lines to a maximum of 90 characters.\n\n"
     prompt += "The TODO list should be in the following format:\n\n"
-    prompt += '##TODO list\n[ ]- Task 1\n[ ]- Task 2\n[ ]- Task 3\n\n'
+    prompt += "##TODO list\n[ ]- Task 1\n[ ]- Task 2\n[ ]- Task 3\n\n"
 
     return prompt
+
 
 def create_task_processing_prompt(task_description: str) -> str:
     """
@@ -204,12 +203,15 @@ def create_task_processing_prompt(task_description: str) -> str:
     prompt += "We now want to process a task description.\n\n"
     prompt += "We need to determine whether:\n"
     prompt += "1. The task is too complex and needs to be broken down into subtasks.\n"
-    prompt += "2. The task is too obscure and we need further information from the user.\n"
+    prompt += (
+        "2. The task is too obscure and we need further information from the user.\n"
+    )
     prompt += "3. The task is manageable and we can generate code for it.\n\n"
     prompt += "Here is the task description:\n\n"
     prompt += task_description + "\n\n"
     prompt += "Only use the functions you have been provided with.\n\n"
     return prompt
+
 
 def create_task_prompt_from_issue(issue) -> str:
     """
@@ -221,8 +223,11 @@ def create_task_prompt_from_issue(issue) -> str:
     Returns:
         str: the prompt
     """
-    task_description = f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+    task_description = (
+        f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+    )
     return create_task_processing_prompt(task_description)
+
 
 def create_reduce_module_descriptions_prompt(initial_description: str) -> str:
     """
@@ -240,6 +245,7 @@ def create_reduce_module_descriptions_prompt(initial_description: str) -> str:
     prompt += "Only use the functions you have been provided with.\n\n"
     prompt += "Keep the same format: '- [module_name]: [module_description]'\n\n"
     return prompt
+
 
 def create_issue_review_prompt(open_issues: list, titles_only: bool = False) -> str:
     """

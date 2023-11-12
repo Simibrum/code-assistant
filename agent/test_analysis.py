@@ -2,8 +2,10 @@
     Functions to analyse test results and improve the code.
 """
 import logging
+
 import utils
 from functions import logger
+
 
 def parse_node_id(node_id: str) -> tuple[tuple[str, str]]:
     """
@@ -13,7 +15,7 @@ def parse_node_id(node_id: str) -> tuple[tuple[str, str]]:
         node_id (str): The node ID to parse.
 
     Returns:
-        tuple[tuple[str, str]]: The file path and function name for the 
+        tuple[tuple[str, str]]: The file path and function name for the
         original function and the test function.
     """
     # Split the string at the "::" separator.
@@ -31,6 +33,7 @@ def parse_node_id(node_id: str) -> tuple[tuple[str, str]]:
         (test_filename, function_name),
     )
 
+
 def get_full_path(filename: str) -> str:
     """
     Get the full path to a file.
@@ -46,7 +49,7 @@ def get_full_path(filename: str) -> str:
         if python_file.endswith(filename):
             return python_file
     return ""
-    
+
 
 def run_tests_and_analyze_failures():
     """
@@ -54,7 +57,7 @@ def run_tests_and_analyze_failures():
     being tested, retrieves the code for both, and sends that information to an LLM for analysis.
     """
     # Run pytest and load test output from JSON
-    
+
     result = utils.run_pytest()
     logging.shutdown()
 
@@ -84,12 +87,22 @@ def run_tests_and_analyze_failures():
                 if not full_path:
                     logger.error("Could not find file %s", filename)
                     continue
-                logger.info("Retrieving code for function %s in file %s", function_name, full_path)
+                logger.info(
+                    "Retrieving code for function %s in file %s",
+                    function_name,
+                    full_path,
+                )
                 function_code = utils.get_function_code(full_path, function_name)
                 test_filename, test_function_name = test_details
                 test_full_path = get_full_path(test_filename)
-                logger.info("Retrieving code for function %s in file %s", function_name, full_path)
-                test_function_code = utils.get_function_code(test_full_path, test_function_name)
+                logger.info(
+                    "Retrieving code for function %s in file %s",
+                    function_name,
+                    full_path,
+                )
+                test_function_code = utils.get_function_code(
+                    test_full_path, test_function_name
+                )
                 logger.debug("Function code: %s", function_code)
                 logger.debug("Test function code: %s", test_function_code)
                 logger.error("Test failed.")

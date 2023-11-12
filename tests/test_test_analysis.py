@@ -1,8 +1,4 @@
-import logging
-from unittest.mock import patch
-
 from agent import test_analysis
-from agent.test_analysis import run_tests_and_analyze_failures
 
 
 def test_parse_node_id():
@@ -15,7 +11,10 @@ def test_parse_node_id():
     )
     assert parse_node_id(node_id) == expected_output
     node_id = "./agent/analysis.py::parse_node_id"
-    expected_output = (("analysis.py", "parse_node_id"), ("analysis.py", "parse_node_id"))
+    expected_output = (
+        ("analysis.py", "parse_node_id"),
+        ("analysis.py", "parse_node_id"),
+    )
     assert parse_node_id(node_id) == expected_output
 
 
@@ -37,10 +36,10 @@ def test_run_tests_and_analyze_failures(mocker):
     send that information to an LLM for analysis.
     """
     # Mocking the utils.run_pytest function to return a specific result
-    mocker.patch('utils.run_pytest', return_value={'collectors': [], 'tests': []})
+    mocker.patch("utils.run_pytest", return_value={"collectors": [], "tests": []})
 
     # Mocking the logging.shutdown function as it does not need to be tested
-    mocker.patch('logging.shutdown')
+    mocker.patch("logging.shutdown")
 
     # Importing the function to test
     from agent.test_analysis import run_tests_and_analyze_failures
@@ -50,5 +49,3 @@ def test_run_tests_and_analyze_failures(mocker):
 
     # There are no asserts in this test as the function does not return anything.
     # The test is for the function to run without any exceptions.
-
-

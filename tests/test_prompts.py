@@ -154,7 +154,9 @@ def test_create_task_prompt_from_issue(mocker):
     """
     Test the 'create_task_prompt_from_issue' function.
     """
-    mock_issue = mocker.Mock(number=123, title="Test Issue", body="This is a test issue.")
+    mock_issue = mocker.Mock(
+        number=123, title="Test Issue", body="This is a test issue."
+    )
     mock_create_task_processing_prompt = mocker.patch(
         "llm.prompts.create_task_processing_prompt"
     )
@@ -163,7 +165,9 @@ def test_create_task_prompt_from_issue(mocker):
     expected_task_description = (
         "* Task from Issue #123: Test Issue\nThis is a test issue.\n----\n"
     )
-    mock_create_task_processing_prompt.assert_called_once_with(expected_task_description)
+    mock_create_task_processing_prompt.assert_called_once_with(
+        expected_task_description
+    )
 
 
 def test_create_reduce_module_descriptions_prompt():
@@ -183,21 +187,21 @@ def test_create_issue_review_prompt():
     # Mocking an issue
     issue1 = MagicMock()
     issue1.number = 1
-    issue1.title = 'Test Issue 1'
-    issue1.body = 'Test Body 1'
+    issue1.title = "Test Issue 1"
+    issue1.body = "Test Body 1"
     issue2 = MagicMock()
     issue2.number = 2
-    issue2.title = 'Test Issue 2'
-    issue2.body = 'Test Body 2'
+    issue2.title = "Test Issue 2"
+    issue2.body = "Test Body 2"
 
     issues = [issue1, issue2]
 
     # Testing with titles_only = False
     result = prompts.create_issue_review_prompt(issues)
-    expected = 'Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\nTest Body 1\n----\n* Issue #2: Test Issue 2\nTest Body 2\n----\nOnly use the functions you have been provided with.\n\n'
+    expected = "Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\nTest Body 1\n----\n* Issue #2: Test Issue 2\nTest Body 2\n----\nOnly use the functions you have been provided with.\n\n"
     assert result == expected
 
     # Testing with titles_only = True
     result = prompts.create_issue_review_prompt(issues, titles_only=True)
-    expected = 'Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\n* Issue #2: Test Issue 2\nOnly use the functions you have been provided with.\n\n'
+    expected = "Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\n* Issue #2: Test Issue 2\nOnly use the functions you have been provided with.\n\n"
     assert result == expected

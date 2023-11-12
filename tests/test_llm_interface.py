@@ -228,24 +228,28 @@ def test_review_issues(mocker):
     """Test the review_issues function."""
 
     # Arrange
-    open_issues = ['issue1', 'issue2', 'issue3']
+    open_issues = ["issue1", "issue2", "issue3"]
     token_limit = 3800
     expected_issue_number = 1
 
     # Mock the dependencies
-    mocker.patch('llm.llm_interface.prompts.create_issue_review_prompt', return_value='prompt')
-    mocker.patch('llm.llm_interface.num_tokens_from_messages', return_value=3700)
-    mocker.patch('llm.llm_interface.api_request', return_value={
-        'choices': [{
-            'message': {
-                'function_call': {
-                    'arguments': '{"issue_number": 1}'
-                }
-            }
-        }]
-    })
-    mocker.patch('llm.llm_interface.load_json_string', return_value={'issue_number': expected_issue_number})
-    mocker.patch('llm.llm_interface.logger')
+    mocker.patch(
+        "llm.llm_interface.prompts.create_issue_review_prompt", return_value="prompt"
+    )
+    mocker.patch("llm.llm_interface.num_tokens_from_messages", return_value=3700)
+    mocker.patch(
+        "llm.llm_interface.api_request",
+        return_value={
+            "choices": [
+                {"message": {"function_call": {"arguments": '{"issue_number": 1}'}}}
+            ]
+        },
+    )
+    mocker.patch(
+        "llm.llm_interface.load_json_string",
+        return_value={"issue_number": expected_issue_number},
+    )
+    mocker.patch("llm.llm_interface.logger")
 
     # Act
     result = llm_interface.review_issues(open_issues, token_limit)

@@ -139,6 +139,7 @@ def test_get_further_information(mocker):
     result = agent.core.get_further_information(questions)
     assert result == "Question 1?\nResponse 1\nQuestion 2?\nResponse 2\n"
 
+
 def test_run_task_from_next_issue(mocker):
     """Test the run_task_from_next_issue function."""
     mock_gh_issues = mocker.patch("agent.core.GitHubIssues", autospec=True)
@@ -163,12 +164,18 @@ def test_update_readme(mocker):
     """Test the update_readme function."""
     # Mock the open and read calls
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
-    mock_open().read.return_value = ''
+    mock_open().read.return_value = ""
 
     # Mock the specific functions in readme_manager
-    mock_update_readme_summary = mocker.patch("agent.core.readme_manager.update_readme_summary")
-    mock_update_agent_structure = mocker.patch("agent.core.readme_manager.update_agent_structure")
-    mock_update_readme_todos = mocker.patch("agent.core.readme_manager.update_readme_todos")
+    mock_update_readme_summary = mocker.patch(
+        "agent.core.readme_manager.update_readme_summary"
+    )
+    mock_update_agent_structure = mocker.patch(
+        "agent.core.readme_manager.update_agent_structure"
+    )
+    mock_update_readme_todos = mocker.patch(
+        "agent.core.readme_manager.update_readme_todos"
+    )
 
     # Call the function you're testing
     agent.core.update_readme()
@@ -185,11 +192,12 @@ def test_update_readme(mocker):
 def test_update_todos(mocker):
     """Test the update_todos function."""
     # Mock the open() function
-    mock_open = mocker.patch('builtins.open', new_callable=mocker.mock_open)
+    mock_open = mocker.patch("builtins.open", new_callable=mocker.mock_open)
 
     # Mock the readme_manager.update_readme_todos() function
     mock_update_readme_todos = mocker.patch(
-        'code_management.readme_manager.update_readme_todos')
+        "code_management.readme_manager.update_readme_todos"
+    )
 
     # Call the function to test
     agent.core.update_todos()

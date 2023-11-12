@@ -3,18 +3,20 @@ This is the main script that uses all the other components to perform tasks.
 It would contain the main loop of the agent, where it determines the next task, 
 performs the task, evaluates the result, and repeats.
 """
-import os
 import ast
+import os
+
 import black
-import utils
-from functions import logger
+
 import llm.llm_interface as llm
-from llm.task_management import process_task
+import utils
 from code_management import readme_manager
-from github_management.issue_management import GitHubIssues
-from git_management.git_handler import GitHandler
 from code_management.code_database import setup_db
 from code_management.code_reader import create_code_objects
+from functions import logger
+from git_management.git_handler import GitHandler
+from github_management.issue_management import GitHubIssues
+from llm.task_management import process_task
 
 
 def generate_tests():
@@ -39,7 +41,9 @@ def generate_tests():
             existing_test_functions = set(
                 name for name, _ in utils.extract_functions_from_file(test_file_name)
             )
-            logger.info("Found %s existing test functions.", len(existing_test_functions))
+            logger.info(
+                "Found %s existing test functions.", len(existing_test_functions)
+            )
             logger.debug("Existing test functions: %s", existing_test_functions)
 
         # Iterate through the functions.
@@ -52,7 +56,9 @@ def generate_tests():
                     function_code, function_file=python_file
                 )
                 if test_code is None:
-                    logger.info("Failed to generate test for function %s", function_name)
+                    logger.info(
+                        "Failed to generate test for function %s", function_name
+                    )
                     continue
                 logger.debug("Test code: %s", test_code)
                 logger.info("Writing imports to file: %s", imports)
@@ -130,6 +136,7 @@ def format_modules():
         except black.NothingChanged:
             logger.info("No changes to file %s", file_path)
 
+
 def get_task_description():
     """Get a task description from the user."""
     print("Enter task description:")
@@ -137,16 +144,19 @@ def get_task_description():
     logger.debug("Task description: %s", task_description)
     return task_description
 
+
 def generate_function_for_task(task_description: str, function_file: str):
     """Generate a python function to perform a task.
 
     Args:
-        task_description (str): Description of task to allow LLM to 
+        task_description (str): Description of task to allow LLM to
         generate function code in Python.
         function_file (str): Path to file where function will be written.
     """
     # Generate code using the LLM.
-    function_code, imports = llm.generate_code(task_description, function_file=function_file)
+    function_code, imports = llm.generate_code(
+        task_description, function_file=function_file
+    )
 
     if not function_code:
         print("No code generated.")
@@ -161,11 +171,12 @@ def generate_function_for_task(task_description: str, function_file: str):
     with open(function_file, "a", encoding="utf-8") as file:
         file.write("\n" + function_code + "\n")
 
+
 def get_further_information(questions_for_user: list):
     """Get further information about a task from a user using chat.
 
     Args:
-        questions_for_user (list): List of strings containing 
+        questions_for_user (list): List of strings containing
         questions to consecutively ask the user to get further information.
     """
     # Ask user questions to get further information.
@@ -176,6 +187,7 @@ def get_further_information(questions_for_user: list):
         extra_info_string += f"{question}\n{user_response}\n"
         logger.debug("User response: %s", user_response)
     return extra_info_string
+
 
 def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
     """Main function."""
@@ -205,6 +217,7 @@ def run_task(task_description: str = None, depth: int = 0, max_depth: int = 3):
     elif function == "divide_and_process_sub_tasks":
         for subtask in parameters:
             run_task(subtask, depth=depth + 1)
+
 
 def run_task_from_next_issue():
     """Run a task based on the next easiest issue."""
@@ -249,6 +262,7 @@ def update_readme():
     with open("README.md", "w", encoding="utf-8") as readme_file:
         readme_file.write(new_readme_text)
 
+
 def update_todos():
     """Update the To Do section of the readme."""
     # Read the readme
@@ -261,6 +275,7 @@ def update_todos():
     # Write the new readme text to the file
     with open("README.md", "w", encoding="utf-8") as readme_file:
         readme_file.write(new_readme_text)
+
 
 def populate_db(start_dir: str = "."):
     """Populate the database with the code in the project.

@@ -2,19 +2,21 @@
 This script would handle interactions with the LLM, 
 such as querying the LLM to generate new code or tests.
 """
-import time
-import random
-from logging import Logger
 import json
+import random
+import time
+from logging import Logger
 from typing import Tuple
+
 import openai
 from openai import OpenAI
+
 from config import OPENAI_API_KEY
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-from functions import logger, num_tokens_from_messages
 import llm.prompts as prompts
+from functions import logger, num_tokens_from_messages
 
 GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
@@ -340,7 +342,10 @@ def review_issues(open_issues: list, token_limit: int = 3800) -> int:
     """
     prompt = prompts.create_issue_review_prompt(open_issues, titles_only=False)
     messages = [
-        {"role": "system", "content": "You are a helpful Python programming assistant."},
+        {
+            "role": "system",
+            "content": "You are a helpful Python programming assistant.",
+        },
         {"role": "user", "content": prompt},
     ]
     # Check the token limit

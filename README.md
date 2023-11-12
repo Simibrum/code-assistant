@@ -125,7 +125,23 @@ If you are working with an organisation repository there are a few extra steps:
 
 ## Testing
 
-Performed via GitHub Actions.
+Pre-commit hooks are used to run tests before committing. Tests are run using pytest.
+
+Pre-commit hooks are run using pre-commit. To install pre-commit, run `pip install pre-commit`. To install the
+pre-commit hooks, run `pre-commit install`.
+The hooks are as follows:
+
+* `black`: Runs black to format the code.
+* `flake8`: Runs flake8 to lint the code.
+* `pylint`: Runs pylint to lint the code (again but covering different aspects).
+* `bandit`: Runs bandit to check for security issues.
+* `pydocstyle`: Runs pydocstyle to check docstrings.
+
+Run `pre-commit autoupdate` to update the hooks.
+Run `pre-commit run --all-files` to run the hooks on all files.
+Run `pre-commit run --all-files > pre_commit_results.txt 2>&1` to log the output to a file.
+
+Testing with Pytest is performed via GitHub Actions.
 
 ## License
 

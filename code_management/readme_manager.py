@@ -12,17 +12,17 @@ The `replace_section_in_markdown` function replaces a portion of text in a Markd
 These functions provide convenient utilities for working with Markdown files and can be used to extract specific information or modify the contents of Markdown files programmatically.
 """
 
-from typing import List
 import os
+from typing import List
 
 from markdown_it import MarkdownIt
 from mdformat.renderer import MDRenderer
 
-import utils
-from github_management.issue_management import GitHubIssues
-from code_management import code_reader
 import llm.llm_interface as llm
+import utils
+from code_management import code_reader
 from functions import logger
+from github_management.issue_management import GitHubIssues
 
 
 def parse_readme(readme_path):
@@ -106,7 +106,9 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     end_index = None
     for i, token in enumerate(tokens):
         if token.type == "heading_open":
-            if (i < (len(tokens) - 1)) and tokens[i+1].content.lower() == heading.lower():
+            if (i < (len(tokens) - 1)) and tokens[
+                i + 1
+            ].content.lower() == heading.lower():
                 start_index = i
             elif start_index is not None:
                 end_index = i
@@ -114,13 +116,14 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     if start_index is None or end_index is None:
         return markdown_text
     replaced_tokens = (
-        tokens[:start_index + 3] + markdown.parse(new_text) + tokens[end_index:]
+            tokens[: start_index + 3] + markdown.parse(new_text) + tokens[end_index:]
     )
     renderer = MDRenderer()
     options = {}
     env = {}
     output_markdown = renderer.render(replaced_tokens, options, env)
     return output_markdown
+
 
 def update_readme_summary(readme_text: str) -> str:
     """
@@ -136,7 +139,8 @@ def update_readme_summary(readme_text: str) -> str:
     summary = code_reader.get_summary(".")
     # Replace the Summary section in the readme text
     new_readme_text = replace_section_in_markdown(
-        readme_text, "Auto Generated Summary", summary)
+        readme_text, "Auto Generated Summary", summary
+    )
 
     return new_readme_text
 
@@ -153,7 +157,8 @@ def update_readme_todos(readme_text: str) -> str:
     """
     # Initialize GitHubIssues and MarkdownManager
     github_issues = GitHubIssues(
-        token=os.environ['GITHUB_TOKEN'], repo_name='simibrum/code-assistant')
+        token=os.environ["GITHUB_TOKEN"], repo_name="simibrum/code-assistant"
+    )
 
     # Get all issues from the GitHub repository
     issues = github_issues.get_all_issues()
@@ -165,13 +170,14 @@ def update_readme_todos(readme_text: str) -> str:
         "(https://github.com/Simibrum/code-assistant/issues):\n\n"
     )
     for issue in issues:
-        status = 'X' if issue.state == 'closed' else ' '
+        status = "X" if issue.state == "closed" else " "
         todo_str += f"- [{status}] {issue.title}\n"
 
     # Replace the To Do section in the readme text
     new_readme_text = replace_section_in_markdown(readme_text, "To do", todo_str)
 
     return new_readme_text
+
 
 def update_agent_structure(readme_text: str) -> str:
     """
@@ -197,10 +203,13 @@ def update_agent_structure(readme_text: str) -> str:
     # Reduce the descriptions using LLM
     reduced_string = llm.reduce_module_descriptions(description_string)
     # Add the reduced descriptions to the Agent Structure section
-    section_string += f"""The following files are included in the repository:\n\n{reduced_string}"""
+    section_string += (
+        f"""The following files are included in the repository:\n\n{reduced_string}"""
+    )
 
     # Replace the Agent Structure section in the readme text
     new_readme_text = replace_section_in_markdown(
-        readme_text, "Agent Structure", section_string)
+        readme_text, "Agent Structure", section_string
+    )
 
     return new_readme_text

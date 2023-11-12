@@ -11,9 +11,10 @@ Please note that the `num_tokens_from_messages` function is currently implemente
 The module also includes a pre-initialized logger named `logger`.
 
 This module can be used to load environment variables, initialize a logger, and calculate the number of tokens used in a conversation."""
+import logging
 import os
 import sys
-import logging
+
 import tiktoken
 
 

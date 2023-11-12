@@ -2,6 +2,7 @@
 Test the functions in code_reader.py.
 """
 from unittest import mock
+
 from code_management import code_reader
 
 
@@ -18,7 +19,9 @@ def test_read_code_file_descriptions(mocker):
     mock_read_file_description.return_value = "Test file description"
     result = code_reader.read_code_file_descriptions("./")
     mock_get_python_files.assert_called_once_with("./")
-    mock_read_file_description.assert_called_once_with("./code_management/code_reader.py")
+    mock_read_file_description.assert_called_once_with(
+        "./code_management/code_reader.py"
+    )
     assert result == {"./code_management/code_reader.py": "Test file description"}
 
 
@@ -72,7 +75,10 @@ def test_generate_project_summary_prompt():
     """
     Test the function generate_project_summary_prompt in code_management/code_reader.py
     """
-    code_file_descriptions = {"file1.py": "This is file1.", "file2.py": "This is file2."}
+    code_file_descriptions = {
+        "file1.py": "This is file1.",
+        "file2.py": "This is file2.",
+    }
     all_function_descriptions = {
         "file1.py": {
             "function1": "This is function1 in file1.",

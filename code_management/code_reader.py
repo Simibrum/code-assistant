@@ -2,11 +2,13 @@
 Module to read information from the code files.
 """
 import ast
+
 from sqlalchemy.orm import Session
+
 import llm.llm_interface as llm
 import utils
-from functions import logger
 from code_management.code_database import CodeClass, CodeFunction, CodeTest
+from functions import logger
 
 
 def read_code_file_descriptions(start_dir: str) -> dict:
@@ -99,8 +101,10 @@ def get_summary(start_directory: str) -> str:
     summary = llm.generate_summary(prompt)
     return summary
 
-def extract_classes_and_functions(contents: str) -> tuple[
-    list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
+
+def extract_classes_and_functions(
+        contents: str,
+) -> tuple[list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
     """Extract classes and functions from a Python file.
 
     Args:
@@ -115,13 +119,14 @@ def extract_classes_and_functions(contents: str) -> tuple[
     for node in module.body:
         if isinstance(node, ast.ClassDef):
             class_string = ast.get_source_segment(contents, node)
-            class_doc_string = ast.get_docstring(node) or ''
+            class_doc_string = ast.get_docstring(node) or ""
             classes.append((node.name, class_string, class_doc_string, node.body))
         elif isinstance(node, ast.FunctionDef):
             function_string = ast.get_source_segment(contents, node)
-            function_doc_string = ast.get_docstring(node) or ''
+            function_doc_string = ast.get_docstring(node) or ""
             functions.append((node.name, function_string, function_doc_string))
     return classes, functions
+
 
 def create_code_objects(session: Session, file_path: str):
     """Create CodeClass, CodeFunction, and CodeTest objects from a Python file.
@@ -130,7 +135,7 @@ def create_code_objects(session: Session, file_path: str):
         session (Session): SQLAlchemy session to add the objects to the database.
         file_path (str): The path to the Python file.
     """
-    logger.info('Extracting classes and functions from %s', file_path)
+    logger.info("Extracting classes and functions from %s", file_path)
     with open(file_path, "r", encoding="utf-8") as file:
         contents = file.read()
 
@@ -138,14 +143,19 @@ def create_code_objects(session: Session, file_path: str):
 
     for class_name, class_string, class_doc_string, class_body in classes:
         # Check for existing class
-        existing_class = session.query(CodeClass).filter_by(
-            class_name=class_name, file_path=file_path).first()
+        existing_class = (
+            session.query(CodeClass)
+            .filter_by(class_name=class_name, file_path=file_path)
+            .first()
+        )
         if existing_class is None:
-            logger.debug('Creating CodeClass object for %s', class_name)
-            class_obj = CodeClass(class_string=class_string,
-                                class_name=class_name,
-                                file_path=file_path,
-                                doc_string=class_doc_string)
+            logger.debug("Creating CodeClass object for %s", class_name)
+            class_obj = CodeClass(
+                class_string=class_string,
+                class_name=class_name,
+                file_path=file_path,
+                doc_string=class_doc_string,
+            )
             session.add(class_obj)
             session.commit()
             session.refresh(class_obj)
@@ -155,45 +165,62 @@ def create_code_objects(session: Session, file_path: str):
         for node in class_body:
             if isinstance(node, ast.FunctionDef):
                 # Check for existing function
-                existing_function = session.query(CodeFunction).filter_by(
-                    function_name=node.name, file_path=file_path,
-                    code_class=class_obj
-                    ).first()
+                existing_function = (
+                    session.query(CodeFunction)
+                    .filter_by(
+                        function_name=node.name,
+                        file_path=file_path,
+                        code_class=class_obj,
+                    )
+                    .first()
+                )
                 if existing_function is None:
-                    logger.debug('Creating CodeFunction object for %s', node.name)
+                    logger.debug("Creating CodeFunction object for %s", node.name)
                     function_string = ast.get_source_segment(contents, node)
-                    function_doc_string = ast.get_docstring(node) or ''
-                    function_obj = CodeFunction(function_string=function_string,
-                                                function_name=node.name,
-                                                file_path=file_path,
-                                                doc_string=function_doc_string,
-                                                code_class=class_obj,
-                                                is_function=True)
+                    function_doc_string = ast.get_docstring(node) or ""
+                    function_obj = CodeFunction(
+                        function_string=function_string,
+                        function_name=node.name,
+                        file_path=file_path,
+                        doc_string=function_doc_string,
+                        code_class=class_obj,
+                        is_function=True,
+                    )
                     session.add(function_obj)
 
     for function_name, function_string, function_doc_string in functions:
-        if function_name.startswith('test_') or file_path.startswith('test_'):
+        if function_name.startswith("test_") or file_path.startswith("test_"):
             # Check for existing test
-            existing_test = session.query(CodeTest).filter_by(
-                test_name=function_name, file_path=file_path).first()
+            existing_test = (
+                session.query(CodeTest)
+                .filter_by(test_name=function_name, file_path=file_path)
+                .first()
+            )
             if existing_test is None:
-                logger.debug('Creating CodeTest object for %s', function_name)
-                test_obj = CodeTest(test_string=function_string,
-                                    test_name=function_name,
-                                    file_path=file_path,
-                                    doc_string=function_doc_string)
+                logger.debug("Creating CodeTest object for %s", function_name)
+                test_obj = CodeTest(
+                    test_string=function_string,
+                    test_name=function_name,
+                    file_path=file_path,
+                    doc_string=function_doc_string,
+                )
                 session.add(test_obj)
         else:
             # Check for existing function
-            existing_function = session.query(CodeFunction).filter_by(
-                function_name=function_name, file_path=file_path).first()
+            existing_function = (
+                session.query(CodeFunction)
+                .filter_by(function_name=function_name, file_path=file_path)
+                .first()
+            )
             if existing_function is None:
-                logger.debug('Creating CodeFunction object for %s', function_name)
-                function_obj = CodeFunction(function_string=function_string,
-                                            function_name=function_name,
-                                            file_path=file_path,
-                                            doc_string=function_doc_string,
-                                            is_function=True)
+                logger.debug("Creating CodeFunction object for %s", function_name)
+                function_obj = CodeFunction(
+                    function_string=function_string,
+                    function_name=function_name,
+                    file_path=file_path,
+                    doc_string=function_doc_string,
+                    is_function=True,
+                )
                 session.add(function_obj)
 
     session.commit()

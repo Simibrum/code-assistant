@@ -16,6 +16,7 @@ These test functions ensure the functionality and correctness of the `readme_man
 import os
 import tempfile
 from unittest.mock import patch
+
 from markdown_it.token import Token
 
 from code_management import readme_manager
@@ -141,13 +142,15 @@ def test_update_agent_structure():
     Test the function update_agent_structure.
     """
     # Arrange
-    readme_text = '## Agent Structure\nOld Content\n## Another section\nMore content'
+    readme_text = "## Agent Structure\nOld Content\n## Another section\nMore content"
 
     # Act
-    with patch('llm.llm_interface.reduce_module_descriptions', return_value='New Content'):
+    with patch(
+            "llm.llm_interface.reduce_module_descriptions", return_value="New Content"
+    ):
         new_readme_text = readme_manager.update_agent_structure(readme_text)
         logger.debug("New Readme Text: %s", new_readme_text)
 
     # Assert
-    assert '# Agent Structure' in new_readme_text
-    assert 'Old Content' not in new_readme_text
+    assert "# Agent Structure" in new_readme_text
+    assert "Old Content" not in new_readme_text

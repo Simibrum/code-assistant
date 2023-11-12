@@ -1,6 +1,2 @@
 """Package for agent functions."""
-from agent.core import (
-    generate_module_docstrings,
-    generate_tests,
-    format_modules
-)
+from agent.core import format_modules, generate_module_docstrings, generate_tests
