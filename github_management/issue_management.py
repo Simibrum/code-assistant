@@ -2,13 +2,11 @@
 
 See https://pygithub.readthedocs.io/ for documentation on the GitHub API wrapper.
 """
-import os
 import re
 from github import Github
 import llm.llm_interface as llm
+from config import GITHUB_TOKEN
 
-
-GITHUB_TOKEN = os.environ.get('TOKEN_GH')
 
 class IssueAlreadyExistsError(Exception):
     """Raised when an issue with the same title already exists."""

@@ -29,8 +29,9 @@ def test_setup_db(mocker):
     # Assert that Session was called
     mock_Session.assert_called_once()
 
-    # Delete the test database file
-    os.remove('test.db')
+    # Delete the test database file if it exists
+    if os.path.exists('test.db'):
+        os.remove('test.db')
 
 
 def test_code_storage():

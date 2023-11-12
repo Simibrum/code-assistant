@@ -6,6 +6,7 @@ tiktoken
 pathspec
 markdown-it-py
 mdformat
+python-dotenv
 
 # Code formatting
 black
