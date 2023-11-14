@@ -10,9 +10,7 @@ python-dotenv
 pre-commit
 
 # Code formatting
-black
-pylint
-isort
+ruff
 
 # Testing
 pytest
