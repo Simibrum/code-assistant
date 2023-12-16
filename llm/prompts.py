@@ -56,7 +56,7 @@ def generate_requirements_prompt() -> str:
 
 
 def build_messages(
-        prompt, messages=None, add_dir: bool = True, add_requirements: bool = True
+    prompt, messages=None, add_dir: bool = True, add_requirements: bool = True
 ) -> list[dict]:
     """Build a set of chat messages based around the prompt as the last message."""
     if not messages:

@@ -146,7 +146,7 @@ def test_update_agent_structure():
 
     # Act
     with patch(
-            "llm.llm_interface.reduce_module_descriptions", return_value="New Content"
+        "llm.llm_interface.reduce_module_descriptions", return_value="New Content"
     ):
         new_readme_text = readme_manager.update_agent_structure(readme_text)
         logger.debug("New Readme Text: %s", new_readme_text)

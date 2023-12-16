@@ -105,7 +105,7 @@ def api_request(
                 return results
 
             delay = min(initial_delay * (backoff_factor ** (attempt - 1)), max_delay)
-            jitter = random.uniform(jitter_range[0], jitter_range[1])
+            jitter = random.uniform(jitter_range[0], jitter_range[1])  # nosec B311
             sleep_time = delay + jitter
             gen_logger.error("API request failed. Error: %s.", str(err))
             gen_logger.error("Retrying in %s seconds.", sleep_time)

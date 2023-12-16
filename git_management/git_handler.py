@@ -1,6 +1,7 @@
 """File to manage git operations for the repository."""
 
-import subprocess
+# Remember to routinely check subprocess calls for shell injection vulnerabilities
+import subprocess  # nosec
 from typing import List
 
 
@@ -27,7 +28,7 @@ class GitHandler:
             GitCommandError: If the git command fails.
         """
         try:
-            subprocess.check_output(command)
+            subprocess.check_output(command, shell=False)  # nosec - subprocess is not vulnerable to shell injection
         except subprocess.CalledProcessError as error:
             raise GitCommandError(
                 f"An error occurred while running the git command: {' '.join(command)}"

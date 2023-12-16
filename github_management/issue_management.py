@@ -25,7 +25,7 @@ class GitHubIssues:
     """Class to manage issues on GitHub for the repository."""
 
     def __init__(
-            self, token: str = GITHUB_TOKEN, repo_name: str = "simibrum/code-assistant"
+        self, token: str = GITHUB_TOKEN, repo_name: str = "simibrum/code-assistant"
     ):
         self.github = Github(token)
         self.repo = self.github.get_repo(repo_name)

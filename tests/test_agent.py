@@ -24,7 +24,7 @@ import os
 import tempfile
 from unittest import mock
 
-import agent
+import agent.core as agent
 
 
 def test_generate_tests():
@@ -88,4 +88,4 @@ def test_format_modules(mocker):
     mock_open().write.assert_any_call("formatted_file2")
 
     # Assert logger called
-    agent.core.logger.info.assert_called()
+    agent.logger.info.assert_called()

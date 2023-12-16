@@ -116,7 +116,7 @@ def replace_section_in_markdown(markdown_text: str, heading: str, new_text: str)
     if start_index is None or end_index is None:
         return markdown_text
     replaced_tokens = (
-            tokens[: start_index + 3] + markdown.parse(new_text) + tokens[end_index:]
+        tokens[: start_index + 3] + markdown.parse(new_text) + tokens[end_index:]
     )
     renderer = MDRenderer()
     options = {}

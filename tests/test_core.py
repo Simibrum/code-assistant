@@ -34,13 +34,9 @@ def test_generate_tests():
     ), patch(
         "agent.core.utils.extract_functions_from_file",
         return_value=[("func1", "code1"), ("func2", "code2")],
-    ), patch(
-        "agent.core.os.path.exists", return_value=True
-    ), patch(
+    ), patch("agent.core.os.path.exists", return_value=True), patch(
         "agent.core.llm.generate_test", return_value=("test_code", "imports")
-    ), patch(
-        "agent.core.utils.add_imports"
-    ), patch(
+    ), patch("agent.core.utils.add_imports"), patch(
         "agent.core.open", new_callable=MagicMock
     ):
         agent.core.generate_tests()
@@ -144,7 +140,7 @@ def test_run_task_from_next_issue(mocker):
     """Test the run_task_from_next_issue function."""
     mock_gh_issues = mocker.patch("agent.core.GitHubIssues", autospec=True)
     mock_git_handler = mocker.patch("agent.core.GitHandler", autospec=True)
-    mock_logger = mocker.patch("agent.core.logger", autospec=True)
+    # mock_logger = mocker.patch("agent.core.logger", autospec=True)
     mock_run_task = mocker.patch("agent.core.run_task", autospec=True)
     mock_generate_tests = mocker.patch("agent.core.generate_tests", autospec=True)
     mock_issue = mock_gh_issues.return_value.get_next_issue.return_value
