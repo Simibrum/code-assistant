@@ -281,8 +281,7 @@ def populate_db(start_dir: str = "."):
     """Populate the database with the code in the project.
 
     Args:
-        db_path (str): The path to the database to populate.
-        start_directory (str): The path to the directory to read.
+        start_dir (str): The path to the directory to read.
     """
     db_session = setup_db()
     for file_path in utils.get_python_files(start_dir, skip_tests=False):

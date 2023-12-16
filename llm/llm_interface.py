@@ -13,12 +13,14 @@ from openai import OpenAI
 
 from config import OPENAI_API_KEY
 
-client = OpenAI(api_key=OPENAI_API_KEY)
-
 import llm.prompts as prompts
 from functions import logger, num_tokens_from_messages
 
-GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+
+GOOD_MODEL = "gpt-4-1106-preview"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
 
 
@@ -27,7 +29,7 @@ def load_json_string(str_in: str) -> dict:
     Load a JSON string into a dictionary.
 
     Args:
-        s (str): The JSON string to load.
+        str_in (str): The JSON string to load.
 
     Returns:
         dict: The JSON string as a dictionary.
@@ -43,13 +45,13 @@ def load_json_string(str_in: str) -> dict:
 
 
 def api_request(
-        messages: list[dict],
-        functions: list[dict],
-        function_call: str | dict = "auto",
-        temperature: int = 0.7,
-        model: str = GOOD_MODEL,
-        max_tokens: int = None,
-        gen_logger: Logger = logger,
+    messages: list[dict],
+    functions: list[dict],
+    function_call: str | dict = "auto",
+    temperature: int = 0.7,
+    model: str = GOOD_MODEL,
+    max_tokens: int = None,
+    gen_logger: Logger = logger,
 ) -> dict:
     """
     Make a request to the OpenAI API with exponential backoff.
@@ -87,11 +89,11 @@ def api_request(
             response = client.chat.completions.create(**params)
             return response.model_dump()
         except (
-                openai.APIError,
-                openai.error.Timeout,
-                openai.error.RateLimitError,
-                openai.error.APIConnectionError,
-                openai.error.ServiceUnavailableError,
+            openai.APIError,
+            openai.error.Timeout,
+            openai.error.RateLimitError,
+            openai.error.APIConnectionError,
+            openai.error.ServiceUnavailableError,
         ) as err:
             if attempt == max_tries:
                 gen_logger.error(

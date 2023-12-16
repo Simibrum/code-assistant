@@ -1,0 +1,29 @@
+# This is a sample docker-compose.yml file for running two agents on the same machine.
+services:
+  agent1:
+    build:
+      context: .
+      args:
+        - REPO_URL=${REPO_URL}
+        - BRANCH_NAME=${BRANCH_NAME}
+    image: general_agent
+    container_name: agent1
+    # Env file contains values that apply for all agents
+    env_file:
+      - .env
+    environment:
+      AGENT_CONFIG: config1
+    volumes:
+      - agent1data:/data
+
+  agent2:
+    image: general_agent
+    container_name: agent2
+    environment:
+      AGENT_CONFIG: config2
+    volumes:
+      - agent2data:/data
+
+volumes:
+  agent1data:
+  agent2data:
