@@ -16,6 +16,7 @@ services:
       AGENT_CONFIG: config1
     volumes:
       - project_manager_data:/data
+      - .:/agent
 
   agent2:
     image: general_agent
@@ -28,6 +29,7 @@ services:
       AGENT_CONFIG: config2
     volumes:
       - agent2data:/data
+      - .:/agent
 
 volumes:
   project_manager_data:
