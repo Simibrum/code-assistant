@@ -10,6 +10,7 @@ python-dotenv
 pre-commit
 
 # Code formatting
+black
 ruff
 
 # Testing

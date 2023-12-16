@@ -8,6 +8,7 @@ services:
         - BRANCH_NAME=${BRANCH_NAME}
     image: general_agent
     container_name: agent1
+    command: ["python", "-m", "agent.loop"]
     # Env file contains values that apply for all agents
     env_file:
       - .env
@@ -19,6 +20,10 @@ services:
   agent2:
     image: general_agent
     container_name: agent2
+    command: ["python", "-m", "agent.loop"]
+    # Env file contains values that apply for all agents
+    env_file:
+      - .env
     environment:
       AGENT_CONFIG: config2
     volumes:
