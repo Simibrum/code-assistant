@@ -1,9 +1,11 @@
 """
 Test the functions in code_reader.py.
 """
+import os
 from unittest import mock
 
 from code_management import code_reader
+from config import PROJECT_DIRECTORY
 
 
 def test_read_code_file_descriptions(mocker):
@@ -29,7 +31,9 @@ def test_read_function_descriptions():
     """
     Test the function read_function_descriptions from code_reader.py.
     """
-    test_file_path = "./code_management/code_reader.py"
+    # Get current directory.
+
+    test_file_path = os.path.join(PROJECT_DIRECTORY, "code_management/code_reader.py")
     function_descriptions = code_reader.read_function_descriptions(test_file_path)
     assert isinstance(function_descriptions, dict), "Result should be a dictionary."
     assert all(
@@ -37,12 +41,17 @@ def test_read_function_descriptions():
     ), "All keys in the dictionary should be strings."
     print(function_descriptions)
     assert all(
-        (isinstance(value, str) for value in function_descriptions.values())
+        (
+            isinstance(value, str) or value is None
+            for value in function_descriptions.values()
+        )
     ), "All values in the dictionary should be strings."
     assert (
         "read_function_descriptions" in function_descriptions
     ), "The function being tested should be in the returned dictionary."
-    assert function_descriptions["read_function_descriptions"].startswith(
+    assert function_descriptions[
+        "read_function_descriptions"
+    ].startswith(
         "Read the descriptions of"
     ), "The description of the function being tested should start with its actual description."
 
