@@ -23,6 +23,7 @@ These tests help ensure the correctness and functionality of the `agent` module.
 import os
 import tempfile
 from unittest import mock
+
 import agent
 
 
@@ -69,7 +70,9 @@ def test_format_modules(mocker):
     )
 
     # Mock open function
-    mock_open = mocker.patch("builtins.open", mocker.mock_open(read_data="original_code"))
+    mock_open = mocker.patch(
+        "builtins.open", mocker.mock_open(read_data="original_code")
+    )
     # Mock logger
     mocker.patch("agent.core.logger")
 

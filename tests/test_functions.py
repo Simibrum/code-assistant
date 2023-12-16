@@ -17,10 +17,12 @@ of tokens, and another for an unsupported model, where it raises a `NotImplement
 
 These test functions ensure that the functions in the `functions` module are 
 working correctly and provide proper test coverage."""
+import logging
 import os
 import sys
-import logging
+
 import pytest
+
 import functions
 
 

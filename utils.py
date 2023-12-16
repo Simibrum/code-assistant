@@ -10,15 +10,15 @@ from a README file.
 This module is part of the Agent project, which uses a Language Learning Model (LLM) to generate 
 code, tests, and manage a GitHub repository.
 """
-from typing import Any, Dict
 import ast
 import json
 import os
 import re
-import pytest
+from typing import Any, Dict
 
 import black
 import isort
+import pytest
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
@@ -93,7 +93,12 @@ def should_use_file(file_path: str, ignore_patterns=None):
     pathspec = PathSpec.from_lines(GitWildMatchPattern, ignore_patterns)
     if pathspec.match_file(file_path):
         return False
-    if os.path.basename(file_path) in [".git", ".github", "__pycache__", ".pytest_cache"]:
+    if os.path.basename(file_path) in [
+        ".git",
+        ".github",
+        "__pycache__",
+        ".pytest_cache",
+    ]:
         return False
     return True
 
@@ -316,6 +321,7 @@ def add_docstring_to_function(file_path: str, function_name: str, docstring: str
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(new_code)
 
+
 def run_pytest() -> Dict[str, Any]:
     """Run pytest with the pytest-json-report plug-in and return the results as a dictionary.
 
@@ -324,7 +330,7 @@ def run_pytest() -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: The dictionary with the test results.
     """
-    pytest.main(['--json-report', '--json-report-file=temp_test_results.json'])
-    with open('temp_test_results.json', 'r', encoding="utf-8") as file:
+    pytest.main(["--json-report", "--json-report-file=temp_test_results.json"])
+    with open("temp_test_results.json", "r", encoding="utf-8") as file:
         test_results = json.load(file)
     return test_results

@@ -2,19 +2,21 @@
 This script would handle interactions with the LLM, 
 such as querying the LLM to generate new code or tests.
 """
-import time
-import random
-from logging import Logger
 import json
+import random
+import time
+from logging import Logger
 from typing import Tuple
+
 import openai
 from openai import OpenAI
 
-client = OpenAI()
+from config import OPENAI_API_KEY
 
-from functions import logger, num_tokens_from_messages
+client = OpenAI(api_key=OPENAI_API_KEY)
+
 import llm.prompts as prompts
-
+from functions import logger, num_tokens_from_messages
 
 GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
@@ -41,13 +43,13 @@ def load_json_string(str_in: str) -> dict:
 
 
 def api_request(
-    messages: list[dict],
-    functions: list[dict],
-    function_call: str | dict = "auto",
-    temperature: int = 0.7,
-    model: str = GOOD_MODEL,
-    max_tokens: int = None,
-    gen_logger: Logger = logger,
+        messages: list[dict],
+        functions: list[dict],
+        function_call: str | dict = "auto",
+        temperature: int = 0.7,
+        model: str = GOOD_MODEL,
+        max_tokens: int = None,
+        gen_logger: Logger = logger,
 ) -> dict:
     """
     Make a request to the OpenAI API with exponential backoff.
@@ -85,11 +87,11 @@ def api_request(
             response = client.chat.completions.create(**params)
             return response.model_dump()
         except (
-            openai.APIError,
-            openai.error.Timeout,
-            openai.error.RateLimitError,
-            openai.error.APIConnectionError,
-            openai.error.ServiceUnavailableError,
+                openai.APIError,
+                openai.error.Timeout,
+                openai.error.RateLimitError,
+                openai.error.APIConnectionError,
+                openai.error.ServiceUnavailableError,
         ) as err:
             if attempt == max_tries:
                 gen_logger.error(
@@ -200,6 +202,7 @@ def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
         {"function_code": function_code, "function_file": function_file},
     )
 
+
 def generate_todo_list() -> str:
     """
     Use the LLM to generate a to-do list.
@@ -216,6 +219,7 @@ def generate_todo_list() -> str:
         model=GOOD_MODEL,
     )
     return response["choices"][0]["message"]["content"]
+
 
 def generate_summary(prompt: str) -> str:
     """
@@ -259,6 +263,7 @@ def generate_module_docstring(module_code: str) -> str:
     )
     return response["choices"][0]["message"]["content"]
 
+
 def generate_function_docstring(function_code: str) -> str:
     """
     Use the LLM to generate a docstring for a Python function.
@@ -279,6 +284,7 @@ def generate_function_docstring(function_code: str) -> str:
         max_tokens=600,
     )
     return response["choices"][0]["message"]["content"]
+
 
 def reduce_module_descriptions(initial_description: str) -> str:
     """Reduce module descriptions to single sentence.
@@ -324,7 +330,8 @@ ISSUE_REVIEW_FUNCTIONS = [
     }
 ]
 
-def review_issues(open_issues: list, token_limit:int = 3800) -> int:
+
+def review_issues(open_issues: list, token_limit: int = 3800) -> int:
     """Review issues and assign labels.
 
     Args:
@@ -335,7 +342,10 @@ def review_issues(open_issues: list, token_limit:int = 3800) -> int:
     """
     prompt = prompts.create_issue_review_prompt(open_issues, titles_only=False)
     messages = [
-        {"role": "system", "content": "You are a helpful Python programming assistant."},
+        {
+            "role": "system",
+            "content": "You are a helpful Python programming assistant.",
+        },
         {"role": "user", "content": prompt},
     ]
     # Check the token limit
@@ -355,7 +365,7 @@ def review_issues(open_issues: list, token_limit:int = 3800) -> int:
     response = api_request(
         messages=messages,
         functions=ISSUE_REVIEW_FUNCTIONS,
-        function_call={"name":"label_easiest_issue"},
+        function_call={"name": "label_easiest_issue"},
         model=QUICK_MODEL,
     )
     response_message = response["choices"][0]["message"]

@@ -229,15 +229,18 @@ def test_run_pytest(mocker):
 
     # Arrange
     # Mock the pytest.main call
-    mocker.patch('pytest.main', return_value=None)
+    mocker.patch("pytest.main", return_value=None)
     # Mock the opening and reading of the file
-    mocked_open = mocker.patch('builtins.open', mocker.mock_open(read_data=json.dumps({'success': True})))
+    mocked_open = mocker.patch(
+        "builtins.open", mocker.mock_open(read_data=json.dumps({"success": True}))
+    )
 
     # Act
     result = utils.run_pytest()
 
     # Assert
-    pytest.main.assert_called_once_with(['--json-report', '--json-report-file=temp_test_results.json'])
-    mocked_open.assert_called_once_with('temp_test_results.json', 'r', encoding='utf-8')
-    assert result == {'success': True}
-
+    pytest.main.assert_called_once_with(
+        ["--json-report", "--json-report-file=temp_test_results.json"]
+    )
+    mocked_open.assert_called_once_with("temp_test_results.json", "r", encoding="utf-8")
+    assert result == {"success": True}

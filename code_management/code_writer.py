@@ -3,8 +3,8 @@ This script would handle writing code to your Python files,
 including adding new functions or refactoring existing ones.
 """
 import llm.llm_interface as llm
-from functions import logger
 import utils
+from functions import logger
 
 
 def add_function_to_file(file_path: str, task_description: str):
@@ -16,7 +16,9 @@ def add_function_to_file(file_path: str, task_description: str):
         task_description (str): The description of the task for the new function.
     """
     # Generate code using the LLM.
-    function_code, imports = llm.generate_code(task_description, function_file=file_path)
+    function_code, imports = llm.generate_code(
+        task_description, function_file=file_path
+    )
 
     if not function_code:
         print("No code generated.")

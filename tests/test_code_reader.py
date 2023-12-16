@@ -2,6 +2,7 @@
 Test the functions in code_reader.py.
 """
 from unittest import mock
+
 from code_management import code_reader
 
 
@@ -18,7 +19,9 @@ def test_read_code_file_descriptions(mocker):
     mock_read_file_description.return_value = "Test file description"
     result = code_reader.read_code_file_descriptions("./")
     mock_get_python_files.assert_called_once_with("./")
-    mock_read_file_description.assert_called_once_with("./code_management/code_reader.py")
+    mock_read_file_description.assert_called_once_with(
+        "./code_management/code_reader.py"
+    )
     assert result == {"./code_management/code_reader.py": "Test file description"}
 
 
@@ -55,7 +58,6 @@ def test_read_all_function_descriptions(mocker):
         "code_management.code_reader.read_function_descriptions",
         return_value={"func1": "description1", "func2": "description2"},
     )
-
     result = code_reader.read_all_function_descriptions("some_directory")
     mock_get_python_files.assert_called_once_with("some_directory")
     assert mock_read_function_descriptions.call_args_list == [
@@ -73,7 +75,10 @@ def test_generate_project_summary_prompt():
     """
     Test the function generate_project_summary_prompt in code_management/code_reader.py
     """
-    code_file_descriptions = {"file1.py": "This is file1.", "file2.py": "This is file2."}
+    code_file_descriptions = {
+        "file1.py": "This is file1.",
+        "file2.py": "This is file2.",
+    }
     all_function_descriptions = {
         "file1.py": {
             "function1": "This is function1 in file1.",
@@ -90,37 +95,25 @@ def test_generate_project_summary_prompt():
 
 def test_get_summary():
     """Test the get_summary function."""
-
-    # Mocking the dependencies
     with mock.patch(
-        'code_management.code_reader.read_code_file_descriptions'
-        ) as mock_read_code_file_descriptions, \
-         mock.patch(
-        'code_management.code_reader.read_all_function_descriptions'
-        ) as mock_read_all_function_descriptions, \
-         mock.patch(
-        'code_management.code_reader.generate_project_summary_prompt'
-        ) as mock_generate_project_summary_prompt, \
-         mock.patch(
-        'code_management.code_reader.llm.generate_summary'
-        ) as mock_llm_generate_summary:
-
-        # Set the return values of the mocked functions
-        mock_read_code_file_descriptions.return_value = 'code_file_descriptions'
-        mock_read_all_function_descriptions.return_value = 'all_function_descriptions'
-        mock_generate_project_summary_prompt.return_value = 'prompt'
-        mock_llm_generate_summary.return_value = 'summary'
-
-        # Run the function with a test input
-        start_directory = '/path/to/directory'
+        "code_management.code_reader.read_code_file_descriptions"
+    ) as mock_read_code_file_descriptions, mock.patch(
+        "code_management.code_reader.read_all_function_descriptions"
+    ) as mock_read_all_function_descriptions, mock.patch(
+        "code_management.code_reader.generate_project_summary_prompt"
+    ) as mock_generate_project_summary_prompt, mock.patch(
+        "code_management.code_reader.llm.generate_summary"
+    ) as mock_llm_generate_summary:
+        mock_read_code_file_descriptions.return_value = "code_file_descriptions"
+        mock_read_all_function_descriptions.return_value = "all_function_descriptions"
+        mock_generate_project_summary_prompt.return_value = "prompt"
+        mock_llm_generate_summary.return_value = "summary"
+        start_directory = "/path/to/directory"
         result = code_reader.get_summary(start_directory)
-
-        # Check the calls to the mocked functions
         mock_read_code_file_descriptions.assert_called_once_with(start_directory)
         mock_read_all_function_descriptions.assert_called_once_with(start_directory)
         mock_generate_project_summary_prompt.assert_called_once_with(
-            'code_file_descriptions', 'all_function_descriptions')
-        mock_llm_generate_summary.assert_called_once_with('prompt')
-
-        # Check the result
-        assert result == 'summary'
+            "code_file_descriptions", "all_function_descriptions"
+        )
+        mock_llm_generate_summary.assert_called_once_with("prompt")
+        assert result == "summary"

@@ -2,13 +2,13 @@
 
 See https://pygithub.readthedocs.io/ for documentation on the GitHub API wrapper.
 """
-import os
 import re
+
 from github import Github
+
 import llm.llm_interface as llm
+from config import GITHUB_TOKEN
 
-
-GITHUB_TOKEN = os.environ.get('TOKEN_GH')
 
 class IssueAlreadyExistsError(Exception):
     """Raised when an issue with the same title already exists."""
@@ -16,27 +16,28 @@ class IssueAlreadyExistsError(Exception):
 
 def slugify(title, max_length=30):
     """Converts a title to a slug."""
-    slug = re.sub(r'[^\w\s-]', '', title)  # Remove non-alphanumeric characters
-    slug = re.sub(r'\s+', '_', slug)      # Replace spaces and hyphens with underscores
+    slug = re.sub(r"[^\w\s-]", "", title)  # Remove non-alphanumeric characters
+    slug = re.sub(r"\s+", "_", slug)  # Replace spaces and hyphens with underscores
     return slug[:max_length]
-
-
 
 
 class GitHubIssues:
     """Class to manage issues on GitHub for the repository."""
-    def __init__(self, token: str = GITHUB_TOKEN, repo_name: str = 'simibrum/code-assistant'):
+
+    def __init__(
+            self, token: str = GITHUB_TOKEN, repo_name: str = "simibrum/code-assistant"
+    ):
         self.github = Github(token)
         self.repo = self.github.get_repo(repo_name)
 
     def get_open_issues(self):
         """Fetch the open issues for the repository."""
-        open_issues = self.repo.get_issues(state='open')
+        open_issues = self.repo.get_issues(state="open")
         return open_issues
 
     def get_all_issues(self):
         """Fetch all issues for the repository."""
-        issues = self.repo.get_issues(state='all', sort='created', direction='asc')
+        issues = self.repo.get_issues(state="all", sort="created", direction="asc")
         return issues
 
     def print_issue_details(self, issue):
@@ -70,7 +71,9 @@ class GitHubIssues:
         issues = self.get_all_issues()
         for issue in issues:
             if issue.title == title:
-                raise IssueAlreadyExistsError("Issue with the same title already exists.")
+                raise IssueAlreadyExistsError(
+                    "Issue with the same title already exists."
+                )
         self.repo.create_issue(title=title, body=body)
 
     def add_label_to_issue(self, issue_number: int, label_name: str):
@@ -86,14 +89,14 @@ class GitHubIssues:
         issue_number = llm.review_issues(open_issues, token_limit)
 
         # Assign the label 'next-to-do' to the selected issue
-        self.add_label_to_issue(issue_number, 'next-to-do')
+        self.add_label_to_issue(issue_number, "next-to-do")
 
     def get_next_issue(self):
         """Fetch the next issue to work on."""
-        next_to_do_issues = self.repo.get_issues(labels=['next-to-do'])
+        next_to_do_issues = self.repo.get_issues(labels=["next-to-do"])
         if not list(next_to_do_issues):
             self.select_easiest_issue()
-            next_to_do_issues = self.repo.get_issues(labels=['next-to-do'])
+            next_to_do_issues = self.repo.get_issues(labels=["next-to-do"])
         # Get the first issue in the list
         issues = list(next_to_do_issues)
         if issues:
@@ -103,5 +106,7 @@ class GitHubIssues:
 
     def task_from_issue(self, issue) -> str:
         """Create a task description from an issue."""
-        task_description = f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+        task_description = (
+            f"* Task from Issue #{issue.number}: {issue.title}\n{issue.body}\n----\n"
+        )
         return task_description

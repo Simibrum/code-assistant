@@ -3,6 +3,7 @@
 import subprocess
 from typing import List
 
+
 class GitCommandError(Exception):
     """
     An error that occurs while executing a Git command.
@@ -21,7 +22,7 @@ class GitHandler:
 
         Args:
             command (List[str]): The git command to run as a list of strings.
-        
+
         Raises:
             GitCommandError: If the git command fails.
         """
@@ -38,7 +39,7 @@ class GitHandler:
 
         Args:
             branch_name (str): The name of the new branch.
-        
+
         Raises:
             GitCommandError: If the git command fails.
         """
@@ -47,7 +48,7 @@ class GitHandler:
     def add_files(self) -> None:
         """
         Add all modified and new (untracked) files to git.
-        
+
         Raises:
             GitCommandError: If the git command fails.
         """
@@ -59,7 +60,7 @@ class GitHandler:
 
         Args:
             commit_message (str): The commit message.
-        
+
         Raises:
             GitCommandError: If the git command fails.
         """
@@ -71,7 +72,7 @@ class GitHandler:
 
         Args:
             branch_name (str): The name of the branch to push to.
-        
+
         Raises:
             GitCommandError: If the git command fails.
         """

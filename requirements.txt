@@ -6,11 +6,11 @@ tiktoken
 pathspec
 markdown-it-py
 mdformat
+python-dotenv
+pre-commit
 
 # Code formatting
-black
-pylint
-isort
+ruff
 
 # Testing
 pytest
@@ -19,3 +19,6 @@ pytest-json-report
 
 # GitHub Integration
 pygithub
+
+# Code Database
+sqlalchemy
