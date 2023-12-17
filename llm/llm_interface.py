@@ -6,7 +6,7 @@ import json
 import random
 import time
 from logging import Logger
-from typing import Tuple
+from typing import Tuple, List
 
 import openai
 from openai import OpenAI
@@ -170,7 +170,7 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
         return response_message["content"]
 
 
-def generate_code(task_description: str, function_file: str) -> Tuple[str, str]:
+def generate_code(task_description: str, function_file: str) -> Tuple[str, List[str]]:
     """
     Use the LLM to generate Python code for a given task.
 

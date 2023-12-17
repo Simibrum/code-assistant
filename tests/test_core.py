@@ -1,4 +1,4 @@
-'''"""
+"""
 This module contains test functions for the `agent.core` module. It includes tests for the
 `generate_tests`, `generate_module_docstrings`, and `format_modules` functions.
 
@@ -14,15 +14,14 @@ It mocks the necessary functions and methods to simulate the formatting of Pytho
 
 These test functions ensure the correct behavior and functionality of the `agent.core` module.
 """
-'''
 import ast
-import logging
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import agent.core
-
-logger = logging.getLogger(__name__)
+from agent.core import generate_test_from_function
+from functions import logger
+import llm.llm_interface as llm
 
 
 def test_generate_tests():
@@ -203,3 +202,50 @@ def test_update_todos(mocker):
 
     # Check that the update_readme_todos function was called once
     assert mock_update_readme_todos.call_count == 1
+
+
+def test_generate_test_from_function(mocker):
+    """Test generate_test_from_function."""
+
+    # Success case
+    mock_function = mocker.Mock()
+    mock_function.function_name = "test_function"
+    mock_function.function_string = "def test_function(): pass"
+    mock_function.file_path = "test_file_path"
+
+    mocker.patch(
+        "llm.llm_interface.generate_test", return_value=("test_code", "imports")
+    )
+    mocker.patch("functions.logger.info")
+
+    output = generate_test_from_function(mock_function)
+
+    # Check that logger.info is called with appropriate parameters
+    calls = [mocker.call("Generating test for function %s", "test_function")]
+    logger.info.assert_has_calls(calls, any_order=True)
+
+    # Check that llm.generate_test is called with appropriate parameters
+    llm.generate_test.assert_called_once_with(
+        mock_function.function_string, function_file=mock_function.file_path
+    )
+
+    assert output == ("test_code", "imports")
+
+    # Failure case
+    mocker.patch("llm.llm_interface.generate_test", return_value=(None, "imports"))
+
+    output = generate_test_from_function(mock_function)
+
+    # Check that logger.info is called with appropriate parameters
+    calls = [
+        mocker.call("Generating test for function %s", "test_function"),
+        mocker.call("Failed to generate test for function %s", "test_function"),
+    ]
+    logger.info.assert_has_calls(calls, any_order=True)
+
+    # Check that llm.generate_test is called with appropriate parameters
+    llm.generate_test.assert_called_once_with(
+        mock_function.function_string, function_file=mock_function.file_path
+    )
+
+    assert output is None

@@ -98,3 +98,16 @@ def setup_db(db_path: str = "sqlite:///code.db"):
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
+
+
+def add_test_to_db(db_session, function, test_code, test_file_name):
+    new_test = CodeTest(
+        test_string=test_code,
+        test_name=f"test_{function.function_name}",
+        file_path=test_file_name,
+        doc_string="",
+        test_status="",
+        function_id=function.id,
+        class_id=function.class_id,
+    )
+    db_session.add(new_test)

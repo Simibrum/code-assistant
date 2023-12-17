@@ -11,7 +11,7 @@ import black
 import llm.llm_interface as llm
 import utils
 from code_management import readme_manager
-from code_management.code_database import setup_db
+from code_management.code_database import setup_db, CodeFunction, add_test_to_db
 from code_management.code_reader import create_code_objects
 from functions import logger
 from git_management.git_handler import GitHandler
@@ -287,3 +287,50 @@ def populate_db(start_dir: str = "."):
     for file_path in utils.get_python_files(start_dir, skip_tests=False):
         create_code_objects(db_session, file_path)
     db_session.commit()
+    db_session.close()
+
+
+def generate_test_from_function(function):
+    logger.info("Generating test for function %s", function.function_name)
+    test_code, imports = llm.generate_test(
+        function.function_string, function_file=function.file_path
+    )
+    if test_code is None:
+        logger.info("Failed to generate test for function %s", function.function_name)
+        return None
+    return test_code, imports
+
+
+def write_test_to_file(function, test_code, imports):
+    test_file_name = f"tests/test_{function.file_path.split('/')[-1]}"
+    logger.debug("Test code: %s", test_code)
+    logger.info("Writing imports to file: %s", imports)
+    utils.add_imports(test_file_name, imports)
+    logger.info("Writing test to file %s", function.file_path)
+    with open(test_file_name, "a", encoding="utf-8") as file:
+        file.write("\n\n" + test_code + "\n\n")
+    return test_file_name
+
+
+def generate_tests_from_db():
+    """Generate tests for all functions in the database."""
+    # Get all the functions from the database.
+    db_session = setup_db()
+    functions = db_session.query(CodeFunction).all()
+    # Iterate through the functions.
+    for function in functions:
+        # Check for existing tests.
+        if function.tests:
+            logger.info("Function %s already has a test.", function.function_name)
+            continue
+        # Generate a test for the function.
+        outputs = generate_test_from_function(function)
+        if outputs is None:
+            continue
+        test_code, imports = outputs
+        # Write tests to file
+        test_file_name = write_test_to_file(function, test_code, imports)
+        # Add the test to the database
+        add_test_to_db(db_session, function, test_code, test_file_name)
+    db_session.commit()
+    db_session.close()

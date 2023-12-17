@@ -138,6 +138,8 @@ def create_code_objects(session: Session, file_path: str):
     for function_params in functions:
         handle_function_processing(session, function_params, file_path)
     session.commit()
+    # Link tests to the functions they test
+    link_tests(session)
 
 
 def handle_class_processing(
@@ -264,3 +266,16 @@ def handle_non_test_function_processing(
 
 def _is_test(function_name: str, file_path: str) -> bool:
     return function_name.startswith("test_") or file_path.startswith("test_")
+
+
+def link_tests(session: Session):
+    """Link tests to the functions they test."""
+    tests = session.query(CodeTest).all()
+    for test in tests:
+        function_name = test.test_name.replace("test_", "")
+        function = (
+            session.query(CodeFunction).filter_by(function_name=function_name).first()
+        )
+        if function is not None:
+            test.tested_function = function
+    session.commit()
