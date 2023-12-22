@@ -105,7 +105,7 @@ def test_create_test_prompt():
     """
     function_code = "def test_function():\n    pass"
     function_file = "./llm/prompts.py"
-    expected_output = "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\ndef test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\nImport the function in the test file using the [function_file].[function_name] syntax.\n\nCall the test `test_[function_name]`."
+    expected_output = "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\ndef test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\nImport the function in the test file using the [function_file].[function_name] syntax.\n\nCall the test: `test_[function_name]`."
     output = prompts.create_test_prompt(function_code, function_file)
     assert output == expected_output, f"Expected: {expected_output}, but got: {output}"
 
@@ -199,30 +199,3 @@ def test_create_issue_review_prompt():
     result = prompts.create_issue_review_prompt(issues, titles_only=True)
     expected = "Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\n* Issue #2: Test Issue 2\nOnly use the functions you have been provided with.\n\n"
     assert result == expected
-
-
-def test_create_test_prompt():
-    """
-    Test the create_test_prompt function to ensure it generates the correct prompt.
-
-    """
-    from llm.prompts import create_test_prompt
-
-    function_code_example = (
-        "def example_function(param1, param2):\n    return param1 + param2"
-    )
-    function_file_example = "./llm/example.py"
-
-    expected_prompt = (
-        "I would like you to write a pytest unit test.\n\n"
-        "Here is code for the function to test:\n\n" + function_code_example + "\n\n"
-        "The function to test is in the file " + function_file_example + "\n\n"
-        "Import the function in the test file using the "
-        "[function_file].[function_name] syntax.\n\n"
-        "Call the test: `test_[function_name]`."
-    )
-
-    actual_prompt = create_test_prompt(function_code_example, function_file_example)
-    assert (
-        actual_prompt == expected_prompt
-    ), "create_test_prompt did not generate the expected prompt."

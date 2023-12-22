@@ -115,7 +115,7 @@ def api_request(
 CODE_FUNCTIONS = [
     {
         "name": "add_function_to_file",
-        "description": "Add a new function to a Python file.",
+        "description": "Add a new or revised function to a Python file.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -146,7 +146,7 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
         prepare_prompt_args (dict): Arguments to pass to the prepare prompt function.
 
     Returns:
-        str: The generated Python code or test.
+        Tuple[str, str]: The generated Python code or test and the import statements.
     """
     prompt = prepare_prompt_func(**prepare_prompt_args)
     messages = prompts.build_messages(prompt)
@@ -167,7 +167,7 @@ def generate_from_prompt(prepare_prompt_func, prepare_prompt_args):
         imports = function_args.get("import_statements").split("\n")
         return function_args.get("function_code"), imports
     else:
-        return response_message["content"]
+        return response_message["content"], None
 
 
 def generate_code(task_description: str, function_file: str) -> Tuple[str, List[str]]:
@@ -208,6 +208,33 @@ def generate_test(
             "function_code": function_code,
             "function_file": function_file,
             "test_name": test_name,
+        },
+    )
+
+
+def revise_test(
+    original_test_code: str,
+    function_code: str,
+    test_output: str,
+) -> Tuple[str, str]:
+    """
+    Use the LLM to revise a Python test based on a given prompt.
+
+    Args:
+        original_test_code (str): Original generated test code.
+        function_code (str): Code of function to build a test for.
+        test_output (str): Output of the test.
+
+    Returns:
+        Tuple[str, str]: A tuple containing the generated
+        Python test and import statements.
+    """
+    return generate_from_prompt(
+        prompts.revise_test_prompt,
+        {
+            "original_test_code": original_test_code,
+            "function_code": function_code,
+            "test_output": test_output,
         },
     )
 

@@ -22,7 +22,7 @@ def test_main_loop(mocker):
     Test the main_loop function to ensure it handles exceptions and continues execution.
     """
     mocker.patch("agent.loop.time.sleep", return_value=None)
-    log_mock = mocker.patch("agent.loop.logger.error")
+    mocker.patch("agent.loop.logger.error")
 
     def handler(signum, frame):
         raise Exception("Test Error")

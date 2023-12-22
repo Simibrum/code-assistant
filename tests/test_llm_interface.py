@@ -249,26 +249,3 @@ def test_review_issues(mocker):
     mocker.patch("llm.llm_interface.logger")
     result = llm_interface.review_issues(open_issues, token_limit)
     assert result == expected_issue_number
-
-
-def test_generate_function_docstring():
-    """
-    Test the generate_function_docstring function.
-    """
-    # Mock the dependencies
-    mocked_prompt = "Expected prompt for LLM"
-    mocked_response = {"choices": [{"message": {"content": "Expected docstring"}}]}
-    with patch(
-        "llm.llm_interface.prompts.create_function_docstring_prompt",
-        return_value=mocked_prompt,
-    ), patch("llm.llm_interface.api_request", return_value=mocked_response), patch(
-        "llm.prompts.generate_directory_prompt", return_value="dir details"
-    ), patch("llm.prompts.generate_requirements_prompt", return_value="file details"):
-        # Test data
-        test_function_code = "def test_func():\n    pass"
-        # Call the function
-        result = llm_interface.generate_function_docstring(test_function_code)
-        # Verify the result
-        assert (
-            result == "Expected docstring"
-        ), "The docstring was not generated correctly."

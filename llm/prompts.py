@@ -101,6 +101,22 @@ def create_test_prompt(
     return prompt
 
 
+def revise_test_prompt(
+    original_test_code: str, function_code: str, test_output: str
+) -> str:
+    """Get a prompt for the LLM to revise a test."""
+    prompt = "I have an LLM that has generated the test code for the function below."
+    prompt += "The test is currently failing with the failure message as below."
+    prompt += "Can you revise the test code so that the test passes?"
+    prompt += "* Please do not use fixtures at this stage, so that the test code functions independently."
+    prompt += "* Please keep the test function name the same."
+    prompt += "\n\n"
+    prompt += f"Original generated test code: {original_test_code}\n\n"
+    prompt += f"Function code: {function_code}\n\n"
+    prompt += f"Pytest output: {test_output}\n\n"
+    return prompt
+
+
 def create_function_prompt(task_description: str, function_file: str) -> str:
     """
     Create a prompt for the LLM to generate a function based on the provided task description.

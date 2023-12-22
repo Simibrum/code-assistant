@@ -333,12 +333,12 @@ def test__is_test():
     from code_management.code_reader import _is_test
 
     # Test cases where the function should return True
-    assert _is_test("test_function", "some_file.py") == True
-    assert _is_test("regular_function", "test_file.py") == True
+    assert _is_test("test_function", "some_file.py") is True
+    assert _is_test("regular_function", "test_file.py") is True
 
     # Test cases where the function should return False
-    assert _is_test("regular_function", "some_file.py") == False
-    assert _is_test("testfunction", "some_file.py") == False
+    assert _is_test("regular_function", "some_file.py") is False
+    assert _is_test("testfunction", "some_file.py") is False
 
     # Test cases with mixed prefixes should still return True
-    assert _is_test("test_function", "test_file.py") == True
+    assert _is_test("test_function", "test_file.py") is True

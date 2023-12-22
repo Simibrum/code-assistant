@@ -1,5 +1,5 @@
 import pytest
-import subprocess
+import subprocess  # nosec
 # from pytest import mocker
 
 import git_management.git_handler
