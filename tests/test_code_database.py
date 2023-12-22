@@ -60,7 +60,7 @@ def test_code_storage():
     os.remove("test.db")
 
 
-def test_link_tests():
+def test_link_tests(mocker):
     session = create_autospec(Session, instance=True)
     mock_function = create_autospec(CodeFunction, instance=True)
     mock_function.function_name = "mock_func"
@@ -72,11 +72,22 @@ def test_link_tests():
     mock_test.test_name = "test_mock_func"
     mock_test.class_test = False
     mock_test.function_id = None
+
+    mock_class = create_autospec(CodeClass, instance=True)
+    mock_class.class_name = "mock_class"  # Note this addition
+
+    session.query(CodeClass).all.return_value = [mock_class]
     session.query(CodeTest).all.return_value = [mock_test]
+
     session.query(CodeFunction).filter_by(
         function_name="mock_func"
     ).first.return_value = mock_function
-    link_tests(session)
+
+    with mocker.patch(
+        "code_management.code_database.get_class_names", return_value=["mock_class"]
+    ):
+        link_tests(session)
+
     session.query(CodeTest).all.assert_called_once()
     session.query(CodeFunction).filter_by.assert_called_with(function_name="mock_func")
 

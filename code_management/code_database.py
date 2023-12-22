@@ -9,6 +9,7 @@ from sqlalchemy.orm import (
     sessionmaker,
     Session,
 )
+from functions import logger
 
 Base = declarative_base()
 
@@ -139,35 +140,68 @@ def add_test_to_db(db_session, function, test_code, test_file_name):
     db_session.add(new_test)
 
 
+def is_class_name_in_test_string(class_names, test_string):
+    """
+    Checks if any of the class names are present in the test string.
+
+    :param class_names: A list of class names (e.g., ['GitHandler', 'MyClass'])
+    :param test_string: A test string of the format 'test_[ClassName]_[function_name]'
+    :return: True if any class name is in the test string, False otherwise
+    """
+    for class_name in class_names:
+        if class_name in test_string:
+            return True
+    return False
+
+
+def get_class_names(session: Session):
+    """Get the names of the classes in the database."""
+    classes = session.query(CodeClass).all()
+    class_names = [c.class_name for c in classes]
+    return class_names
+
+
 def link_tests(session: Session):
     """Link tests to the functions they test."""
+    class_names = get_class_names(session)
     tests = session.query(CodeTest).all()
     for test in tests:
+        if test.class_test is None:
+            logger.debug("Setting class_test for %s", test.test_name)
+            test.class_test = is_class_name_in_test_string(class_names, test.test_name)
+            session.commit()
         if not test.class_test and not test.function_id:
             function_name = test.test_name.replace("test_", "")
+            logger.debug("Looking for function %s", function_name)
             function = (
                 session.query(CodeFunction)
                 .filter_by(function_name=function_name)
                 .first()
             )
             if function is not None:
+                logger.debug("Found function %s", function.function_name)
                 test.function_id = function.id
                 session.commit()
         if test.class_test and (not test.class_id or not test.function_id):
             class_name = test.test_name.replace("test_", "").split("_")[0]
+            logger.debug("Looking for class %s", class_name)
             class_obj = (
                 session.query(CodeClass).filter_by(class_name=class_name).first()
             )
             if class_obj is not None:
+                logger.debug("Found class %s", class_obj.class_name)
                 test.class_id = class_obj.id
                 session.commit()
-            function_name = test.test_name.replace("test_", "").split("_")[1]
+            function_name = "_".join(test.test_name.replace("test_", "").split("_")[1:])
+            logger.debug("Looking for function %s", function_name)
             function = (
                 session.query(CodeFunction)
                 .filter_by(function_name=function_name)
+                .filter_by(class_id=class_obj.id)
                 .first()
             )
             if function is not None:
+                logger.debug("Found function %s", function.function_name)
                 test.function_id = function.id
                 session.commit()
 
