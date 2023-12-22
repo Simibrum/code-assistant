@@ -20,7 +20,7 @@ from functions import logger, num_tokens_from_messages
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-GOOD_MODEL = "gpt-4-1106-preview"  # or whatever model you are using
+GOOD_MODEL = "gpt-4-0613"  # or whatever model you are using
 QUICK_MODEL = "gpt-3.5-turbo-0613"
 
 
@@ -187,13 +187,16 @@ def generate_code(task_description: str, function_file: str) -> Tuple[str, List[
     )
 
 
-def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
+def generate_test(
+    function_code: str, function_file: str, test_name: str = None
+) -> Tuple[str, str]:
     """
     Use the LLM to generate a Python test based on a given prompt.
 
     Args:
         function_code (str): Code of function to build a test for.
         function_file (str): File containing the function to build a test for.
+        test_name (str, optional): The name of the test. Defaults to None.
 
     Returns:
         Tuple[str, str]: A tuple containing the generated
@@ -201,7 +204,11 @@ def generate_test(function_code: str, function_file: str) -> Tuple[str, str]:
     """
     return generate_from_prompt(
         prompts.create_test_prompt,
-        {"function_code": function_code, "function_file": function_file},
+        {
+            "function_code": function_code,
+            "function_file": function_file,
+            "test_name": test_name,
+        },
     )
 
 

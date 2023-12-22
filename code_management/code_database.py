@@ -7,6 +7,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
     sessionmaker,
+    Session,
 )
 
 Base = declarative_base()
@@ -100,10 +101,26 @@ def setup_db(db_path: str = "sqlite:///code.db"):
     return session
 
 
+def compute_test_name(db_session, function):
+    """Compute the name of the test for a function."""
+    # Check whether function is part of a class
+    if function.class_id:
+        # Get the class name
+        class_obj = db_session.query(CodeClass).filter_by(id=function.class_id).first()
+        class_name = class_obj.class_name
+        # Set the test name
+        test_name = f"test_{class_name.lower()}_{function.function_name}"
+    else:
+        test_name = f"test_{function.function_name}"
+    return test_name
+
+
 def add_test_to_db(db_session, function, test_code, test_file_name):
+    """Add a test to the database."""
+    test_name = compute_test_name(db_session, function)
     new_test = CodeTest(
         test_string=test_code,
-        test_name=f"test_{function.function_name}",
+        test_name=test_name,
         file_path=test_file_name,
         doc_string="",
         test_status="",
@@ -111,3 +128,16 @@ def add_test_to_db(db_session, function, test_code, test_file_name):
         class_id=function.class_id,
     )
     db_session.add(new_test)
+
+
+def link_tests(session: Session):
+    """Link tests to the functions they test."""
+    tests = session.query(CodeTest).all()
+    for test in tests:
+        function_name = test.test_name.replace("test_", "")
+        function = (
+            session.query(CodeFunction).filter_by(function_name=function_name).first()
+        )
+        if function is not None:
+            test.function_id = function.id
+            session.commit()

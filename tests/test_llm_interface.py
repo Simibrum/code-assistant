@@ -9,6 +9,7 @@ import json
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
+
 from llm import llm_interface
 
 
@@ -75,7 +76,7 @@ def test_generate_from_prompt():
                 }
             ]
         }
-        function_code, imports = llm_interface.generate_from_prompt(
+        (function_code, imports) = llm_interface.generate_from_prompt(
             prepare_prompt_func, prepare_prompt_args
         )
         prepare_prompt_func.assert_called_once_with(arg1="value1", arg2="value2")
@@ -106,7 +107,7 @@ def test_generate_code():
                 }
             ]
         }
-        code, imports = llm_interface.generate_code(task_description, function_file)
+        (code, imports) = llm_interface.generate_code(task_description, function_file)
     assert isinstance(code, str), f"Expected str, got {type(code).__name__}"
     assert isinstance(imports, list), f"Expected str, got {type(imports).__name__}"
     assert code == 'print("Hello World")'
@@ -136,7 +137,7 @@ def test_generate_test():
                 }
             ]
         }
-        test_code, imports = llm_interface.generate_test(function_code, function_file)
+        (test_code, imports) = llm_interface.generate_test(function_code, function_file)
     assert isinstance(test_code, str), f"Expected str, got {type(test_code).__name__}"
     assert isinstance(imports, list), f"Expected str, got {type(imports).__name__}"
     assert test_code == 'print("Testing Hello World")'
@@ -226,13 +227,9 @@ def test_reduce_module_descriptions():
 
 def test_review_issues(mocker):
     """Test the review_issues function."""
-
-    # Arrange
     open_issues = ["issue1", "issue2", "issue3"]
     token_limit = 3800
     expected_issue_number = 1
-
-    # Mock the dependencies
     mocker.patch(
         "llm.llm_interface.prompts.create_issue_review_prompt", return_value="prompt"
     )
@@ -250,9 +247,28 @@ def test_review_issues(mocker):
         return_value={"issue_number": expected_issue_number},
     )
     mocker.patch("llm.llm_interface.logger")
-
-    # Act
     result = llm_interface.review_issues(open_issues, token_limit)
-
-    # Assert
     assert result == expected_issue_number
+
+
+def test_generate_function_docstring():
+    """
+    Test the generate_function_docstring function.
+    """
+    # Mock the dependencies
+    mocked_prompt = "Expected prompt for LLM"
+    mocked_response = {"choices": [{"message": {"content": "Expected docstring"}}]}
+    with patch(
+        "llm.llm_interface.prompts.create_function_docstring_prompt",
+        return_value=mocked_prompt,
+    ), patch("llm.llm_interface.api_request", return_value=mocked_response), patch(
+        "llm.prompts.generate_directory_prompt", return_value="dir details"
+    ), patch("llm.prompts.generate_requirements_prompt", return_value="file details"):
+        # Test data
+        test_function_code = "def test_func():\n    pass"
+        # Call the function
+        result = llm_interface.generate_function_docstring(test_function_code)
+        # Verify the result
+        assert (
+            result == "Expected docstring"
+        ), "The docstring was not generated correctly."

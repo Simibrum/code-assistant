@@ -4,7 +4,12 @@ Test the functions in code_reader.py.
 import os
 from unittest import mock
 
+
 from code_management import code_reader
+from code_management.code_reader import (
+    create_code_objects,
+    handle_non_test_function_processing,
+)
 from config import PROJECT_DIRECTORY
 
 
@@ -31,8 +36,6 @@ def test_read_function_descriptions():
     """
     Test the function read_function_descriptions from code_reader.py.
     """
-    # Get current directory.
-
     test_file_path = os.path.join(PROJECT_DIRECTORY, "code_management/code_reader.py")
     function_descriptions = code_reader.read_function_descriptions(test_file_path)
     assert isinstance(function_descriptions, dict), "Result should be a dictionary."
@@ -126,3 +129,216 @@ def test_get_summary():
         )
         mock_llm_generate_summary.assert_called_once_with("prompt")
         assert result == "summary"
+
+
+def test_create_code_objects(mocker):
+    """
+    Test the create_code_objects function to ensure it processes classes and functions.
+    """
+    import code_management.code_reader
+
+    session_mock = mocker.MagicMock()
+    file_path = "path/to/file.py"
+    file_contents = "class TestClass:\n    pass\n\ndef test_func():\n    pass"
+    mocker.patch("builtins.open", mocker.mock_open(read_data=file_contents))
+    mocker.patch(
+        "code_management.code_reader.extract_classes_and_functions",
+        return_value=([("TestClass",)], [("test_func",)]),
+    )
+    mocker.patch("code_management.code_reader.handle_class_processing")
+    mocker.patch("code_management.code_reader.handle_function_processing")
+    mocker.patch("code_management.code_reader.link_tests")
+    create_code_objects(session_mock, file_path)
+    code_management.code_reader.extract_classes_and_functions.assert_called_once_with(
+        file_contents
+    )
+    code_management.code_reader.handle_class_processing.assert_called_once_with(
+        session_mock, ("TestClass",), file_path, file_contents
+    )
+    code_management.code_reader.handle_function_processing.assert_called_once_with(
+        session_mock, ("test_func",), file_path
+    )
+    code_management.code_reader.link_tests.assert_called_once_with(session_mock)
+    session_mock.commit.assert_called_once()
+
+
+def test_handle_class_processing(mocker):
+    """Test handle_class_processing function for managing class data."""
+
+    from sqlalchemy.orm import Session
+    from code_management.code_reader import handle_class_processing
+
+    mock_session = mocker.MagicMock(spec=Session)
+    mock_query = mock_session.query.return_value
+    mock_filter_by = mock_query.filter_by.return_value
+    mock_first = mock_filter_by.first
+    class_params = ("TestClass", "class TestClass:", '"""A test class."""', [])
+    file_path = "test_file.py"
+    contents = 'class TestClass:\n    """A test class."""'
+    mock_first.return_value = None
+
+    handle_class_processing(mock_session, class_params, file_path, contents)
+
+    assert mock_session.add.called
+    assert mock_session.commit.called
+    assert mock_session.refresh.called
+
+
+def test_handle_function_in_class_processing(mocker):
+    """Tests the handle_function_in_class_processing function for proper processing of
+    CodeFunction objects within a class."""
+    import code_management.code_reader
+
+    mock_session = mocker.MagicMock()
+    mock_node = mocker.MagicMock()
+    mock_node.name = "test_function"
+    mock_contents = "def test_function(): pass"
+    mock_class_obj = mocker.MagicMock()
+    mock_class_obj.functions = []
+    mock_query = mock_session.query.return_value
+    mock_filter_by = mock_query.filter_by.return_value
+    mock_filter_by.first.return_value = None
+    mocker.patch(
+        "code_management.code_reader.ast.get_source_segment", return_value=mock_contents
+    )
+    mocker.patch("code_management.code_reader.ast.get_docstring", return_value="")
+    code_management.code_reader.handle_function_in_class_processing(
+        mock_session, mock_node, "path/to/file.py", mock_contents, mock_class_obj
+    )
+    mock_session.add.assert_called_once()
+
+
+def test_handle_function_processing(mocker):
+    """
+    Test handle_function_processing to ensure it delegates to the correct handler.
+
+    This test verifies that handle_function_processing correctly determines whether a
+    function is a test function or not and calls the appropriate handler function
+    based on the function name and file path provided.
+    """
+    from sqlalchemy.orm import Session
+    import code_management.code_reader
+    from code_management.code_reader import handle_function_processing
+
+    mock_session = mocker.MagicMock(spec=Session)
+    function_params = (
+        "test_example",
+        "def test_example(): pass",
+        "Example test function",
+    )
+    file_path = "tests/test_example.py"
+    mocker.patch("code_management.code_reader.handle_test_function_processing")
+    mocker.patch("code_management.code_reader.handle_non_test_function_processing")
+    handle_function_processing(mock_session, function_params, file_path)
+    code_management.code_reader.handle_test_function_processing.assert_called_once_with(
+        mock_session,
+        "test_example",
+        "def test_example(): pass",
+        "tests/test_example.py",
+        "Example test function",
+    )
+    code_management.code_reader.handle_non_test_function_processing.assert_not_called()
+
+
+def test_handle_test_function_processing(mocker):
+    """
+    Test handle_test_function_processing to ensure it creates a new CodeTest object and
+    adds it to the session when an existing test is not found.
+    """
+    from unittest.mock import MagicMock
+
+    from sqlalchemy.orm import Session
+
+    from code_management.code_reader import handle_test_function_processing
+
+    mock_session = MagicMock(spec=Session)
+    mock_query = mock_session.query.return_value
+    mock_filter_by = mock_query.filter_by.return_value
+    mock_filter_by.first.return_value = None
+    function_name = "new_test_function"
+    function_string = "def new_test_function(): pass"
+    file_path = "tests/test_new.py"
+    function_doc_string = "This is a test function."
+    handle_test_function_processing(
+        mock_session, function_name, function_string, file_path, function_doc_string
+    )
+    mock_session.add.assert_called_once()
+
+
+def test_handle_non_test_function_processing(mocker):
+    """Test handle_non_test_function_processing when the function does not exist."""
+    session_mock = mocker.MagicMock()
+    query_mock = session_mock.query.return_value
+    filter_by_mock = query_mock.filter_by.return_value
+    filter_by_mock.first.return_value = None
+    code_function_mock = mocker.patch("code_management.code_reader.CodeFunction")
+    function_name = "test_func"
+    function_string = "def test_func(): pass"
+    file_path = "some/file/path.py"
+    function_doc_string = "Test function docstring."
+    handle_non_test_function_processing(
+        session=session_mock,
+        function_name=function_name,
+        function_string=function_string,
+        file_path=file_path,
+        function_doc_string=function_doc_string,
+    )
+    code_function_mock.assert_called_once_with(
+        function_string=function_string,
+        function_name=function_name,
+        file_path=file_path,
+        doc_string=function_doc_string,
+        is_function=True,
+    )
+    session_mock.add.assert_called_once_with(code_function_mock.return_value)
+
+
+def test_extract_classes_and_functions():
+    from code_management.code_reader import extract_classes_and_functions
+
+    dummy_code = '''
+class DummyClass:
+    """This is a dummy class."""
+    def dummy_method(self):
+        pass
+
+def dummy_function():
+    """This is a dummy function."""
+    pass
+'''
+    expected_classes = [
+        (
+            "DummyClass",
+            'class DummyClass:\n    """This is a dummy class."""\n    def dummy_method(self):\n        pass',
+            "This is a dummy class.",
+            [],
+        )
+    ]
+    expected_functions = [
+        (
+            "dummy_function",
+            'def dummy_function():\n    """This is a dummy function."""\n    pass',
+            "This is a dummy function.",
+        )
+    ]
+    classes, functions = extract_classes_and_functions(dummy_code)
+    assert classes[0][0:3] == expected_classes[0][0:3]
+    assert functions == expected_functions
+
+
+def test__is_test():
+    """
+    Test the _is_test function to ensure it correctly identifies test functions and files.
+    """
+    from code_management.code_reader import _is_test
+
+    # Test cases where the function should return True
+    assert _is_test("test_function", "some_file.py") == True
+    assert _is_test("regular_function", "test_file.py") == True
+
+    # Test cases where the function should return False
+    assert _is_test("regular_function", "some_file.py") == False
+    assert _is_test("testfunction", "some_file.py") == False
+
+    # Test cases with mixed prefixes should still return True
+    assert _is_test("test_function", "test_file.py") == True

@@ -18,10 +18,11 @@ import ast
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
+
 import agent.core
-from agent.core import generate_test_from_function
-from functions import logger
 import llm.llm_interface as llm
+from agent.core import generate_test_from_function, populate_db
+from functions import logger
 
 
 def test_generate_tests():
@@ -139,14 +140,11 @@ def test_run_task_from_next_issue(mocker):
     """Test the run_task_from_next_issue function."""
     mock_gh_issues = mocker.patch("agent.core.GitHubIssues", autospec=True)
     mock_git_handler = mocker.patch("agent.core.GitHandler", autospec=True)
-    # mock_logger = mocker.patch("agent.core.logger", autospec=True)
     mock_run_task = mocker.patch("agent.core.run_task", autospec=True)
     mock_generate_tests = mocker.patch("agent.core.generate_tests", autospec=True)
     mock_issue = mock_gh_issues.return_value.get_next_issue.return_value
     mock_issue.number = 123
-
     agent.core.run_task_from_next_issue()
-
     mock_gh_issues.return_value.get_next_issue.assert_called_once()
     mock_gh_issues.return_value.task_from_issue.assert_called_once_with(mock_issue)
     mock_gh_issues.return_value.generate_branch_name.assert_called_once_with(mock_issue)
@@ -157,11 +155,8 @@ def test_run_task_from_next_issue(mocker):
 
 def test_update_readme(mocker):
     """Test the update_readme function."""
-    # Mock the open and read calls
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     mock_open().read.return_value = ""
-
-    # Mock the specific functions in readme_manager
     mock_update_readme_summary = mocker.patch(
         "agent.core.readme_manager.update_readme_summary"
     )
@@ -171,14 +166,8 @@ def test_update_readme(mocker):
     mock_update_readme_todos = mocker.patch(
         "agent.core.readme_manager.update_readme_todos"
     )
-
-    # Call the function you're testing
     agent.core.update_readme()
-
-    # Verify that the file was opened twice
     assert mock_open.call_count == 3
-
-    # Verify that the functions were called with the correct arguments
     mock_update_readme_summary.assert_called_once()
     mock_update_agent_structure.assert_called_once()
     mock_update_readme_todos.assert_called_once()
@@ -186,66 +175,87 @@ def test_update_readme(mocker):
 
 def test_update_todos(mocker):
     """Test the update_todos function."""
-    # Mock the open() function
     mock_open = mocker.patch("builtins.open", new_callable=mocker.mock_open)
-
-    # Mock the readme_manager.update_readme_todos() function
     mock_update_readme_todos = mocker.patch(
         "code_management.readme_manager.update_readme_todos"
     )
-
-    # Call the function to test
     agent.core.update_todos()
-
-    # Check that the file was opened twice
     assert mock_open.call_count == 2
-
-    # Check that the update_readme_todos function was called once
     assert mock_update_readme_todos.call_count == 1
 
 
 def test_generate_test_from_function(mocker):
-    """Test generate_test_from_function."""
+    """Test the generate_test_from_function function."""
 
-    # Success case
     mock_function = mocker.Mock()
     mock_function.function_name = "test_function"
     mock_function.function_string = "def test_function(): pass"
     mock_function.file_path = "test_file_path"
-
     mocker.patch(
         "llm.llm_interface.generate_test", return_value=("test_code", "imports")
     )
     mocker.patch("functions.logger.info")
 
-    output = generate_test_from_function(mock_function)
+    test_name = "test_test"
+    output = generate_test_from_function(mock_function, test_name)
 
-    # Check that logger.info is called with appropriate parameters
     calls = [mocker.call("Generating test for function %s", "test_function")]
     logger.info.assert_has_calls(calls, any_order=True)
-
-    # Check that llm.generate_test is called with appropriate parameters
     llm.generate_test.assert_called_once_with(
-        mock_function.function_string, function_file=mock_function.file_path
+        mock_function.function_string,
+        function_file=mock_function.file_path,
+        test_name=test_name,
     )
-
     assert output == ("test_code", "imports")
 
-    # Failure case
     mocker.patch("llm.llm_interface.generate_test", return_value=(None, "imports"))
-
-    output = generate_test_from_function(mock_function)
-
-    # Check that logger.info is called with appropriate parameters
+    output = generate_test_from_function(mock_function, test_name)
     calls = [
         mocker.call("Generating test for function %s", "test_function"),
         mocker.call("Failed to generate test for function %s", "test_function"),
     ]
     logger.info.assert_has_calls(calls, any_order=True)
-
-    # Check that llm.generate_test is called with appropriate parameters
     llm.generate_test.assert_called_once_with(
-        mock_function.function_string, function_file=mock_function.file_path
+        mock_function.function_string,
+        function_file=mock_function.file_path,
+        test_name=test_name,
     )
-
     assert output is None
+
+
+def test_run_task(mocker):
+    """Test the run_task function."""
+    mocker.patch("agent.core.get_task_description", return_value="task description")
+    mocker.patch(
+        "agent.core.process_task",
+        return_value=("generate_function_for_task", {"param1": "value1"}),
+    )
+    mocker.patch("agent.core.generate_function_for_task")
+    mocker.patch("agent.core.logger")
+    agent.core.run_task()
+    agent.core.process_task.assert_called_once_with("task description")
+    agent.core.generate_function_for_task.assert_called_once_with(param1="value1")
+    agent.core.logger.debug.assert_any_call(
+        "Function: %s", "generate_function_for_task"
+    )
+    agent.core.logger.debug.assert_any_call("Parameters: %s", {"param1": "value1"})
+
+
+def test_populate_db(mocker):
+    """Test the populate_db function to ensure it correctly populates the database."""
+
+    # Arrange
+    mock_setup_db = mocker.patch("agent.core.setup_db")
+    mock_get_python_files = mocker.patch("agent.core.utils.get_python_files")
+    mock_get_python_files.return_value = ["test_file.py"]
+    mock_create_code_objects = mocker.patch("agent.core.create_code_objects")
+    mock_link_tests = mocker.patch("agent.core.link_tests")
+
+    # Act
+    populate_db(start_dir="test_dir")
+
+    # Assert
+    mock_setup_db.assert_called_once()
+    mock_get_python_files.assert_called_once_with("test_dir", skip_tests=False)
+    mock_create_code_objects.assert_called()
+    mock_link_tests.assert_called_once()

@@ -1,54 +1,45 @@
 """Test the code_database module."""
-
 import os
+from unittest.mock import create_autospec, Mock
 
-from code_management.code_database import CodeClass, CodeFunction, setup_db
+
+from code_management.code_database import (
+    CodeClass,
+    CodeFunction,
+    CodeTest,
+    Session,
+    add_test_to_db,
+    link_tests,
+    setup_db,
+)
 
 
 def test_setup_db(mocker):
     """Test the setup_db function."""
-    # Mock the create_engine, sessionmaker and Session functions
     mock_create_engine = mocker.patch("code_management.code_database.create_engine")
     mock_sessionmaker = mocker.patch("code_management.code_database.sessionmaker")
     mock_Session = mocker.MagicMock()
     mock_sessionmaker.return_value = mock_Session
-
-    # Call the function
     db_path = "sqlite:///test.db"
     setup_db(db_path)
-
-    # Assert that create_engine was called with the default DB path
     mock_create_engine.assert_called_once_with("sqlite:///test.db", echo=True)
-
-    # Assert that sessionmaker was called with the mocked engine
     mock_sessionmaker.assert_called_once_with(bind=mock_create_engine.return_value)
-
-    # Assert that Session was called
     mock_Session.assert_called_once()
-
-    # Delete the test database file if it exists
     if os.path.exists("test.db"):
         os.remove("test.db")
 
 
 def test_code_storage():
     """Test the storage of code in the database."""
-    # Set up the test database
     db_path = "sqlite:///test.db"
     session = setup_db(db_path)
-
-    # Define the class and function strings
     class_name = "MyClass"
     class_string = "class MyClass: ..."
     function_name = "my_function"
     function_string = "def my_function(): ..."
-
-    # Create and add a new class
     new_class = CodeClass(class_name=class_name, class_string=class_string)
     session.add(new_class)
-    session.commit()  # Commit to get the new_class.id
-
-    # Create and add a new function related to the class
+    session.commit()
     new_function = CodeFunction(
         function_name=function_name,
         function_string=function_string,
@@ -56,20 +47,104 @@ def test_code_storage():
     )
     session.add(new_function)
     session.commit()
-
-    # Query the database to verify the added class
     added_class = session.query(CodeClass).filter_by(class_name=class_name).first()
     assert added_class.class_name == class_name
     assert added_class.class_string == class_string
-
-    # Query the database to verify the added function
     added_function = (
         session.query(CodeFunction).filter_by(function_name=function_name).first()
     )
     assert added_function.function_name == function_name
     assert added_function.function_string == function_string
     assert added_function.class_id == new_class.id
-
-    # Close the session and delete the test database file
     session.close()
     os.remove("test.db")
+
+
+def test_link_tests():
+    session = create_autospec(Session, instance=True)
+    mock_function = create_autospec(CodeFunction, instance=True)
+    mock_function.function_name = "mock_func"
+
+    # Give a unique 'id' attribute to the mock_function object
+    mock_function.id = 1
+
+    mock_test = create_autospec(CodeTest, instance=True)
+    mock_test.test_name = "test_mock_func"
+    session.query(CodeTest).all.return_value = [mock_test]
+    session.query(CodeFunction).filter_by(
+        function_name="mock_func"
+    ).first.return_value = mock_function
+    link_tests(session)
+    session.query(CodeTest).all.assert_called_once()
+    session.query(CodeFunction).filter_by.assert_called_with(function_name="mock_func")
+
+    # Assert mock_test.function_id equals the id of the returned function object
+    assert mock_test.function_id == mock_function.id
+    session.commit.assert_called_once()
+
+
+def test_add_test_to_db(monkeypatch):
+    """
+    Test the add_test_to_db function to ensure it properly adds a test entry to the database.
+    """
+
+    def mock_compute_test_name(*args, **kwargs):
+        return "test_example_function"
+
+    monkeypatch.setattr(
+        "code_management.code_database.compute_test_name", mock_compute_test_name
+    )
+
+    db_session_mock = Mock(spec=Session)
+    function_mock = Mock(spec=CodeFunction)
+    function_mock.id = 1
+    function_mock.class_id = 2
+    function_mock.function_name = "example_function"
+
+    test_code = "assert True"
+    test_file_name = "test_function.py"
+    add_test_to_db(db_session_mock, function_mock, test_code, test_file_name)
+    db_session_mock.add.assert_called_once()
+    new_test = db_session_mock.add.call_args[0][0]
+    assert new_test.test_string == test_code
+    assert new_test.test_name == "test_example_function"
+    assert new_test.file_path == test_file_name
+    assert new_test.function_id == function_mock.id
+    assert new_test.class_id == function_mock.class_id
+
+
+def test_CodeClass___repr__():
+    """
+    Test the __repr__ method of the CodeClass.
+    """
+
+    # Creating instance of CodeClass
+    code_class_instance = CodeClass()
+    code_class_instance.id = 1
+    code_class_instance.class_name = "TestClass"
+
+    result = code_class_instance.__repr__()
+    expected = "<CodeClass(1, TestClass)>"
+    assert result == expected
+
+
+def test_CodeFunction___repr__():
+    """
+    Test the __repr__ method of the CodeFunction class.
+    """
+    # Create a CodeFunction instance
+    code_function_instance = CodeFunction()
+    code_function_instance.id = 1
+    code_function_instance.function_name = "test_function"
+
+    result = repr(code_function_instance)
+    expected_result = f"<CodeFunction({code_function_instance.id}, {code_function_instance.function_name})>"
+    assert result == expected_result
+
+
+def test_CodeTest___repr__():
+    """Unit test for the __repr__ method of the CodeTest class."""
+    test_instance = CodeTest(id=1, test_name="test_repr")
+    result = test_instance.__repr__()
+    expected_repr = "<CodeTest(1, test_repr)>"
+    assert result == expected_repr, f"Expected repr: {expected_repr}, but got: {result}"
