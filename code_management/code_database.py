@@ -84,6 +84,11 @@ class CodeTest(Base):
     def __repr__(self):
         return f"<CodeTest({self.id}, {self.test_name})>"
 
+    @property
+    def identifier(self):
+        """Return a string identifier for the test."""
+        return f"{self.file_path}::{self.test_name}"
+
 
 def setup_db(db_path: str = "sqlite:///code.db"):
     """Set up an SQLite DB with SQLAlchemy to store code as strings and classes.

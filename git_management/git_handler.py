@@ -131,3 +131,15 @@ class GitHandler:
         self.temp_branches.append(branch_name)
         self.pre_temp_branch = current_branch
         return branch_name
+
+    def merge_temp_test_branch(self):
+        """
+        Merge the temp branch into the original branch.
+        """
+        self.run_command([self.git_path, "checkout", self.pre_temp_branch])
+        self.run_command(
+            [self.git_path, "merge", "--no-ff", "--no-edit", self.temp_branches[-1]]
+        )
+        self.run_command([self.git_path, "branch", "-d", self.temp_branches[-1]])
+        self.temp_branches.pop()
+        self.pre_temp_branch = None
