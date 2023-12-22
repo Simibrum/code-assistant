@@ -153,3 +153,5 @@ def get_revised_test(test_id: int):
     revised_test_code, imports = llm.llm_interface.revise_test(
         test_code, function_code, output
     )
+    # Return the revised test code
+    return revised_test_code, imports

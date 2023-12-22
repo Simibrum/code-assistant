@@ -1,9 +1,12 @@
 import pytest
 import subprocess  # nosec
+import shutil
 # from pytest import mocker
 
 import git_management.git_handler
 from git_management.git_handler import GitHandler
+
+GIT_PATH = shutil.which("git")
 
 
 def test_GitHandler_run_command(mocker):
@@ -34,7 +37,7 @@ def test_GitHandler_create_new_branch(mocker):
     """
     git_handler = GitHandler()
     branch_name = "feature/new-branch"
-    expected_command = ["git", "checkout", "-b", branch_name]
+    expected_command = [GIT_PATH, "checkout", "-b", branch_name]
     mocker.patch.object(git_handler, "run_command")
     git_handler.create_new_branch(branch_name)
     git_handler.run_command.assert_called_once_with(expected_command)
@@ -47,7 +50,7 @@ def test_GitHandler_add_files(mocker):
     git_handler = GitHandler()  # Instantiate the real class
     git_handler.run_command = mocker.Mock()  # Mock only the run_command method
     git_handler.add_files()
-    git_handler.run_command.assert_called_once_with(["git", "add", "."])
+    git_handler.run_command.assert_called_once_with([GIT_PATH, "add", "."])
 
 
 def test_GitHandler_push_changes(mocker):
@@ -68,4 +71,4 @@ def test_GitHandler_push_changes(mocker):
     git_handler.push_changes(branch_name)
 
     # Assert
-    mock_run_command.assert_called_once_with(["git", "push", "origin", branch_name])
+    mock_run_command.assert_called_once_with([GIT_PATH, "push", "origin", branch_name])
