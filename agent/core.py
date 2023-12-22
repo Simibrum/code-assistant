@@ -17,6 +17,7 @@ from code_management.code_database import (
     add_test_to_db,
     link_tests,
     compute_test_name,
+    reset_db,
 )
 from code_management.code_reader import create_code_objects
 from functions import logger
@@ -283,12 +284,14 @@ def update_todos():
         readme_file.write(new_readme_text)
 
 
-def populate_db(start_dir: str = "."):
+def populate_db(start_dir: str = ".", with_reset: bool = False):
     """Populate the database with the code in the project.
 
     Args:
         start_dir (str): The path to the directory to read.
     """
+    if with_reset:
+        reset_db()
     db_session = setup_db()
     for file_path in utils.get_python_files(start_dir, skip_tests=False):
         create_code_objects(db_session, file_path)

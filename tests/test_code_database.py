@@ -70,6 +70,8 @@ def test_link_tests():
 
     mock_test = create_autospec(CodeTest, instance=True)
     mock_test.test_name = "test_mock_func"
+    mock_test.class_test = False
+    mock_test.function_id = None
     session.query(CodeTest).all.return_value = [mock_test]
     session.query(CodeFunction).filter_by(
         function_name="mock_func"
