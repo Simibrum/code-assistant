@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 import llm.llm_interface as llm
 import utils
-from code_management.code_database import CodeClass, CodeFunction, CodeTest
+from code_management.code_database import CodeClass, CodeFunction, CodeTest, link_tests
 from functions import logger
 
 
@@ -138,6 +138,8 @@ def create_code_objects(session: Session, file_path: str):
     for function_params in functions:
         handle_function_processing(session, function_params, file_path)
     session.commit()
+    # Link tests to the functions they test
+    link_tests(session)
 
 
 def handle_class_processing(

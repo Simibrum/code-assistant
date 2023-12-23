@@ -71,13 +71,16 @@ def build_messages(
     return messages
 
 
-def create_test_prompt(function_code: str, function_file: str) -> str:
+def create_test_prompt(
+    function_code: str, function_file: str, test_name: str = None
+) -> str:
     """
     Create a prompt for the LLM to generate a test based on the provided function code.
 
     Args:
         function_code (str): The source code of the function to test.
         function_file (str): The file containing the function to test.
+        test_name (str, optional): The name of the test. Defaults to None.
 
     Returns:
         str: The generated prompt.
@@ -90,8 +93,27 @@ def create_test_prompt(function_code: str, function_file: str) -> str:
         "Import the function in the test file using the"
         " [function_file].[function_name] syntax.\n\n"
     )
-    prompt += "Call the test `test_[function_name]`."
+    if test_name:
+        prompt += "Call the test: `" + test_name + "`."
+    else:
+        prompt += "Call the test: `test_[function_name]`."
 
+    return prompt
+
+
+def revise_test_prompt(
+    original_test_code: str, function_code: str, test_output: str
+) -> str:
+    """Get a prompt for the LLM to revise a test."""
+    prompt = "I have an LLM that has generated the test code for the function below."
+    prompt += "The test is currently failing with the failure message as below."
+    prompt += "Can you revise the test code so that the test passes?"
+    prompt += "* Please do not use fixtures at this stage, so that the test code functions independently."
+    prompt += "* Please keep the test function name the same."
+    prompt += "\n\n"
+    prompt += f"Original generated test code: {original_test_code}\n\n"
+    prompt += f"Function code: {function_code}\n\n"
+    prompt += f"Pytest output: {test_output}\n\n"
     return prompt
 
 

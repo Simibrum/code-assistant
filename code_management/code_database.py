@@ -7,7 +7,9 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
     sessionmaker,
+    Session,
 )
+from functions import logger
 
 Base = declarative_base()
 
@@ -69,6 +71,8 @@ class CodeTest(Base):
     test_status: Mapped[str] = mapped_column(
         nullable=True
     )  # e.g., "pass", "fail", etc.
+    # Does the test relate to a class method
+    class_test: Mapped[bool] = mapped_column(nullable=True)
 
     # Foreign Key to function being tested
     function_id: Mapped[int] = mapped_column(
@@ -83,6 +87,11 @@ class CodeTest(Base):
     def __repr__(self):
         return f"<CodeTest({self.id}, {self.test_name})>"
 
+    @property
+    def identifier(self):
+        """Return a string identifier for the test."""
+        return f"{self.file_path}::{self.test_name}"
+
 
 def setup_db(db_path: str = "sqlite:///code.db"):
     """Set up an SQLite DB with SQLAlchemy to store code as strings and classes.
@@ -95,6 +104,110 @@ def setup_db(db_path: str = "sqlite:///code.db"):
     # Create tables for the CodeClass and CodeFunction models
     Base.metadata.create_all(engine)
 
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    session_maker = sessionmaker(bind=engine)
+    session = session_maker()
     return session
+
+
+def compute_test_name(db_session, function):
+    """Compute the name of the test for a function."""
+    # Check whether function is part of a class
+    if function.class_id:
+        # Get the class name
+        class_obj = db_session.query(CodeClass).filter_by(id=function.class_id).first()
+        class_name = class_obj.class_name
+        # Set the test name
+        test_name = f"test_{class_name}_{function.function_name}"
+    else:
+        test_name = f"test_{function.function_name}"
+    return test_name
+
+
+def add_test_to_db(db_session, function, test_code, test_file_name):
+    """Add a test to the database."""
+    test_name = compute_test_name(db_session, function)
+    class_test = True if function.class_id else False
+    new_test = CodeTest(
+        test_string=test_code,
+        test_name=test_name,
+        file_path=test_file_name,
+        doc_string="",
+        test_status="",
+        function_id=function.id,
+        class_id=function.class_id,
+        class_test=class_test,
+    )
+    db_session.add(new_test)
+
+
+def is_class_name_in_test_string(class_names, test_string):
+    """
+    Checks if any of the class names are present in the test string.
+
+    :param class_names: A list of class names (e.g., ['GitHandler', 'MyClass'])
+    :param test_string: A test string of the format 'test_[ClassName]_[function_name]'
+    :return: True if any class name is in the test string, False otherwise
+    """
+    for class_name in class_names:
+        if class_name in test_string:
+            return True
+    return False
+
+
+def get_class_names(session: Session):
+    """Get the names of the classes in the database."""
+    classes = session.query(CodeClass).all()
+    class_names = [c.class_name for c in classes]
+    return class_names
+
+
+def link_tests(session: Session):
+    """Link tests to the functions they test."""
+    class_names = get_class_names(session)
+    tests = session.query(CodeTest).all()
+    for test in tests:
+        if test.class_test is None:
+            logger.debug("Setting class_test for %s", test.test_name)
+            test.class_test = is_class_name_in_test_string(class_names, test.test_name)
+            session.commit()
+        if not test.class_test and not test.function_id:
+            function_name = test.test_name.replace("test_", "")
+            logger.debug("Looking for function %s", function_name)
+            function = (
+                session.query(CodeFunction)
+                .filter_by(function_name=function_name)
+                .first()
+            )
+            if function is not None:
+                logger.debug("Found function %s", function.function_name)
+                test.function_id = function.id
+                session.commit()
+        if test.class_test and (not test.class_id or not test.function_id):
+            class_name = test.test_name.replace("test_", "").split("_")[0]
+            logger.debug("Looking for class %s", class_name)
+            class_obj = (
+                session.query(CodeClass).filter_by(class_name=class_name).first()
+            )
+            if class_obj is not None:
+                logger.debug("Found class %s", class_obj.class_name)
+                test.class_id = class_obj.id
+                session.commit()
+            function_name = "_".join(test.test_name.replace("test_", "").split("_")[1:])
+            logger.debug("Looking for function %s", function_name)
+            function = (
+                session.query(CodeFunction)
+                .filter_by(function_name=function_name)
+                .filter_by(class_id=class_obj.id)
+                .first()
+            )
+            if function is not None:
+                logger.debug("Found function %s", function.function_name)
+                test.function_id = function.id
+                session.commit()
+
+
+def reset_db(db_path: str = "sqlite:///code.db"):
+    """Reset the database."""
+    engine = create_engine(db_path, echo=True)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)

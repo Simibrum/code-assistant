@@ -27,8 +27,9 @@ class GitHubIssues:
     def __init__(
         self, token: str = GITHUB_TOKEN, repo_name: str = "simibrum/code-assistant"
     ):
-        self.github = Github(token)
-        self.repo = self.github.get_repo(repo_name)
+        if token and repo_name:
+            self.github = Github(token)
+            self.repo = self.github.get_repo(repo_name)
 
     def get_open_issues(self):
         """Fetch the open issues for the repository."""
@@ -55,7 +56,7 @@ class GitHubIssues:
         """Generate a branch name for a given issue."""
         issue_number = issue.number
         issue_title_slug = slugify(issue.title)
-        branch_name = f"issue_{issue_number}_{issue_title_slug}"
+        branch_name = f"issue_{issue_number}_{issue_title_slug}".lower()
         return branch_name
 
     def print_all_open_issue_details(self):

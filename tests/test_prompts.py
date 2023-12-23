@@ -4,6 +4,7 @@ Tests for the prompts.
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
+
 import llm.prompts as prompts
 
 
@@ -104,7 +105,7 @@ def test_create_test_prompt():
     """
     function_code = "def test_function():\n    pass"
     function_file = "./llm/prompts.py"
-    expected_output = "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\ndef test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\nImport the function in the test file using the [function_file].[function_name] syntax.\n\nCall the test `test_[function_name]`."
+    expected_output = "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\ndef test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\nImport the function in the test file using the [function_file].[function_name] syntax.\n\nCall the test: `test_[function_name]`."
     output = prompts.create_test_prompt(function_code, function_file)
     assert output == expected_output, f"Expected: {expected_output}, but got: {output}"
 
@@ -160,7 +161,6 @@ def test_create_task_prompt_from_issue(mocker):
     mock_create_task_processing_prompt = mocker.patch(
         "llm.prompts.create_task_processing_prompt"
     )
-
     prompts.create_task_prompt_from_issue(mock_issue)
     expected_task_description = (
         "* Task from Issue #123: Test Issue\nThis is a test issue.\n----\n"
@@ -184,7 +184,6 @@ def test_create_issue_review_prompt():
     """
     Tests the function create_issue_review_prompt.
     """
-    # Mocking an issue
     issue1 = MagicMock()
     issue1.number = 1
     issue1.title = "Test Issue 1"
@@ -193,15 +192,10 @@ def test_create_issue_review_prompt():
     issue2.number = 2
     issue2.title = "Test Issue 2"
     issue2.body = "Test Body 2"
-
     issues = [issue1, issue2]
-
-    # Testing with titles_only = False
     result = prompts.create_issue_review_prompt(issues)
     expected = "Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\nTest Body 1\n----\n* Issue #2: Test Issue 2\nTest Body 2\n----\nOnly use the functions you have been provided with.\n\n"
     assert result == expected
-
-    # Testing with titles_only = True
     result = prompts.create_issue_review_prompt(issues, titles_only=True)
     expected = "Can you select the easiest issue to solve?\n----\n* Issue #1: Test Issue 1\n* Issue #2: Test Issue 2\nOnly use the functions you have been provided with.\n\n"
     assert result == expected
