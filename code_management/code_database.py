@@ -25,6 +25,8 @@ class AbstractCode(Base):
     doc_string: Mapped[str] = mapped_column(nullable=True)
     test_status: Mapped[str] = mapped_column(nullable=True)
     imports: Mapped[str] = mapped_column(nullable=True)
+    start_line: Mapped[int] = mapped_column(nullable=True)
+    end_line: Mapped[int] = mapped_column(nullable=True)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}({self.id}, {self.name})>"

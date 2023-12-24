@@ -192,6 +192,8 @@ def handle_class_processing(
             name=class_info.name,
             file_path=file_path,
             doc_string=class_info.docstring,
+            start_line=class_info.start_line,
+            end_line=class_info.end_line,
         )
         session.add(class_obj)
         session.commit()
@@ -233,6 +235,8 @@ def handle_function_in_class_processing(
             doc_string=function_doc_string,
             code_class=class_obj,
             is_function=True,
+            start_line=node.lineno,
+            end_line=getattr(node, "end_lineno", None),
         )
         session.add(function_obj)
 
@@ -263,6 +267,8 @@ def handle_test_function_processing(
             name=function_params.name,
             file_path=file_path,
             doc_string=function_params.docstring,
+            start_line=function_params.start_line,
+            end_line=function_params.end_line,
         )
         session.add(test_obj)
 
@@ -285,6 +291,8 @@ def handle_non_test_function_processing(
             file_path=file_path,
             doc_string=function_params.docstring,
             is_function=True,
+            start_line=function_params.start_line,
+            end_line=function_params.end_line,
         )
         session.add(function_obj)
 

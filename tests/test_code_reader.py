@@ -311,6 +311,8 @@ def test_handle_non_test_function_processing(mocker):
         file_path=file_path,
         doc_string=function_doc_string,
         is_function=True,
+        start_line=1,
+        end_line=2,
     )
     session_mock.add.assert_called_once_with(code_function_mock.return_value)
 
