@@ -37,24 +37,22 @@ def test_code_storage():
     class_string = "class MyClass: ..."
     function_name = "my_function"
     function_string = "def my_function(): ..."
-    new_class = CodeClass(class_name=class_name, class_string=class_string)
+    new_class = CodeClass(name=class_name, code_string=class_string)
     session.add(new_class)
     session.commit()
     new_function = CodeFunction(
-        function_name=function_name,
-        function_string=function_string,
+        name=function_name,
+        code_string=function_string,
         class_id=new_class.id,
     )
     session.add(new_function)
     session.commit()
-    added_class = session.query(CodeClass).filter_by(class_name=class_name).first()
-    assert added_class.class_name == class_name
-    assert added_class.class_string == class_string
-    added_function = (
-        session.query(CodeFunction).filter_by(function_name=function_name).first()
-    )
-    assert added_function.function_name == function_name
-    assert added_function.function_string == function_string
+    added_class = session.query(CodeClass).filter_by(name=class_name).first()
+    assert added_class.name == class_name
+    assert added_class.code_string == class_string
+    added_function = session.query(CodeFunction).filter_by(name=function_name).first()
+    assert added_function.name == function_name
+    assert added_function.code_string == function_string
     assert added_function.class_id == new_class.id
     session.close()
     os.remove("test.db")
@@ -69,18 +67,18 @@ def test_link_tests(mocker):
     mock_function.id = 1
 
     mock_test = create_autospec(CodeTest, instance=True)
-    mock_test.test_name = "test_mock_func"
+    mock_test.name = "test_mock_func"
     mock_test.class_test = False
     mock_test.function_id = None
 
     mock_class = create_autospec(CodeClass, instance=True)
-    mock_class.class_name = "mock_class"  # Note this addition
+    mock_class.name = "mock_class"  # Note this addition
 
     session.query(CodeClass).all.return_value = [mock_class]
     session.query(CodeTest).all.return_value = [mock_test]
 
     session.query(CodeFunction).filter_by(
-        function_name="mock_func"
+        name="mock_func"
     ).first.return_value = mock_function
 
     with mocker.patch(
@@ -89,7 +87,7 @@ def test_link_tests(mocker):
         link_tests(session)
 
     session.query(CodeTest).all.assert_called_once()
-    session.query(CodeFunction).filter_by.assert_called_with(function_name="mock_func")
+    session.query(CodeFunction).filter_by.assert_called_with(name="mock_func")
 
     # Assert mock_test.function_id equals the id of the returned function object
     assert mock_test.function_id == mock_function.id
@@ -112,15 +110,15 @@ def test_add_test_to_db(monkeypatch):
     function_mock = Mock(spec=CodeFunction)
     function_mock.id = 1
     function_mock.class_id = 2
-    function_mock.function_name = "example_function"
+    function_mock.name = "example_function"
 
     test_code = "assert True"
     test_file_name = "test_function.py"
     add_test_to_db(db_session_mock, function_mock, test_code, test_file_name)
     db_session_mock.add.assert_called_once()
     new_test = db_session_mock.add.call_args[0][0]
-    assert new_test.test_string == test_code
-    assert new_test.test_name == "test_example_function"
+    assert new_test.code_string == test_code
+    assert new_test.name == "test_example_function"
     assert new_test.file_path == test_file_name
     assert new_test.function_id == function_mock.id
     assert new_test.class_id == function_mock.class_id
@@ -134,7 +132,7 @@ def test_CodeClass___repr__():
     # Creating instance of CodeClass
     code_class_instance = CodeClass()
     code_class_instance.id = 1
-    code_class_instance.class_name = "TestClass"
+    code_class_instance.name = "TestClass"
 
     result = code_class_instance.__repr__()
     expected = "<CodeClass(1, TestClass)>"
@@ -148,16 +146,18 @@ def test_CodeFunction___repr__():
     # Create a CodeFunction instance
     code_function_instance = CodeFunction()
     code_function_instance.id = 1
-    code_function_instance.function_name = "test_function"
+    code_function_instance.name = "test_function"
 
     result = repr(code_function_instance)
-    expected_result = f"<CodeFunction({code_function_instance.id}, {code_function_instance.function_name})>"
+    expected_result = (
+        f"<CodeFunction({code_function_instance.id}, {code_function_instance.name})>"
+    )
     assert result == expected_result
 
 
 def test_CodeTest___repr__():
     """Unit test for the __repr__ method of the CodeTest class."""
-    test_instance = CodeTest(id=1, test_name="test_repr")
+    test_instance = CodeTest(id=1, name="test_repr")
     result = test_instance.__repr__()
     expected_repr = "<CodeTest(1, test_repr)>"
     assert result == expected_repr, f"Expected repr: {expected_repr}, but got: {result}"

@@ -14,38 +14,37 @@ from functions import logger
 Base = declarative_base()
 
 
-class CodeClass(Base):
+class AbstractCode(Base):
+    """Abstract base class for code objects."""
+
+    __abstract__ = True
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column()
+    code_string: Mapped[str] = mapped_column()
+    file_path: Mapped[str] = mapped_column(nullable=True)
+    doc_string: Mapped[str] = mapped_column(nullable=True)
+    test_status: Mapped[str] = mapped_column(nullable=True)
+    imports: Mapped[str] = mapped_column(nullable=True)
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}({self.id}, {self.name})>"
+
+
+class CodeClass(AbstractCode):
     """Model for a class in a Python file."""
 
     __tablename__ = "code_class"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    class_string: Mapped[str] = mapped_column()
-    class_name: Mapped[str] = mapped_column()
-    file_path: Mapped[str] = mapped_column(nullable=True)
-    doc_string: Mapped[str] = mapped_column(nullable=True)
-    imports: Mapped[str] = mapped_column(nullable=True)
-    test_status: Mapped[str] = mapped_column(nullable=True)
     # Other fields as needed...
 
     # Relationship to functions
     functions = relationship("CodeFunction", back_populates="code_class")
 
-    def __repr__(self):
-        return f"<CodeClass({self.id}, {self.class_name})>"
 
-
-class CodeFunction(Base):
+class CodeFunction(AbstractCode):
     """Model for a function in a Python file."""
 
     __tablename__ = "code_function"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    function_string: Mapped[str] = mapped_column()
-    function_name: Mapped[str] = mapped_column()
-    file_path: Mapped[str] = mapped_column(nullable=True)
-    doc_string: Mapped[str] = mapped_column(nullable=True)
     vector: Mapped[str] = mapped_column(nullable=True)
-    test_status: Mapped[str] = mapped_column(nullable=True)
-    imports: Mapped[str] = mapped_column(nullable=True)
     # Can be "function" or "test"
     code_type: Mapped[str] = mapped_column(nullable=True)
     is_test: Mapped[bool] = mapped_column(nullable=True)
@@ -55,22 +54,11 @@ class CodeFunction(Base):
     class_id: Mapped[int] = mapped_column(ForeignKey("code_class.id"), nullable=True)
     code_class = relationship("CodeClass", back_populates="functions")
 
-    def __repr__(self):
-        return f"<CodeFunction({self.id}, {self.function_name})>"
 
-
-class CodeTest(Base):
+class CodeTest(AbstractCode):
     """Model for a test in a Python file."""
 
     __tablename__ = "code_test"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    test_string: Mapped[str] = mapped_column()
-    test_name: Mapped[str] = mapped_column()
-    file_path: Mapped[str] = mapped_column(nullable=True)
-    doc_string: Mapped[str] = mapped_column(nullable=True)
-    test_status: Mapped[str] = mapped_column(
-        nullable=True
-    )  # e.g., "pass", "fail", etc.
     # Does the test relate to a class method
     class_test: Mapped[bool] = mapped_column(nullable=True)
 
@@ -84,13 +72,10 @@ class CodeTest(Base):
     class_id: Mapped[int] = mapped_column(ForeignKey("code_class.id"), nullable=True)
     tested_class = relationship("CodeClass", backref="tests")
 
-    def __repr__(self):
-        return f"<CodeTest({self.id}, {self.test_name})>"
-
     @property
     def identifier(self):
         """Return a string identifier for the test."""
-        return f"{self.file_path}::{self.test_name}"
+        return f"{self.file_path}::{self.name}"
 
 
 def setup_db(db_path: str = "sqlite:///code.db"):
@@ -115,11 +100,11 @@ def compute_test_name(db_session, function):
     if function.class_id:
         # Get the class name
         class_obj = db_session.query(CodeClass).filter_by(id=function.class_id).first()
-        class_name = class_obj.class_name
+        class_name = class_obj.name
         # Set the test name
-        test_name = f"test_{class_name}_{function.function_name}"
+        test_name = f"test_{class_name}_{function.name}"
     else:
-        test_name = f"test_{function.function_name}"
+        test_name = f"test_{function.name}"
     return test_name
 
 
@@ -128,8 +113,8 @@ def add_test_to_db(db_session, function, test_code, test_file_name):
     test_name = compute_test_name(db_session, function)
     class_test = True if function.class_id else False
     new_test = CodeTest(
-        test_string=test_code,
-        test_name=test_name,
+        code_string=test_code,
+        name=test_name,
         file_path=test_file_name,
         doc_string="",
         test_status="",
@@ -157,7 +142,7 @@ def is_class_name_in_test_string(class_names, test_string):
 def get_class_names(session: Session):
     """Get the names of the classes in the database."""
     classes = session.query(CodeClass).all()
-    class_names = [c.class_name for c in classes]
+    class_names = [c.name for c in classes]
     return class_names
 
 
@@ -167,41 +152,35 @@ def link_tests(session: Session):
     tests = session.query(CodeTest).all()
     for test in tests:
         if test.class_test is None:
-            logger.debug("Setting class_test for %s", test.test_name)
-            test.class_test = is_class_name_in_test_string(class_names, test.test_name)
+            logger.debug("Setting class_test for %s", test.name)
+            test.class_test = is_class_name_in_test_string(class_names, test.name)
             session.commit()
         if not test.class_test and not test.function_id:
-            function_name = test.test_name.replace("test_", "")
+            function_name = test.name.replace("test_", "")
             logger.debug("Looking for function %s", function_name)
-            function = (
-                session.query(CodeFunction)
-                .filter_by(function_name=function_name)
-                .first()
-            )
+            function = session.query(CodeFunction).filter_by(name=function_name).first()
             if function is not None:
-                logger.debug("Found function %s", function.function_name)
+                logger.debug("Found function %s", function.name)
                 test.function_id = function.id
                 session.commit()
         if test.class_test and (not test.class_id or not test.function_id):
-            class_name = test.test_name.replace("test_", "").split("_")[0]
+            class_name = test.name.replace("test_", "").split("_")[0]
             logger.debug("Looking for class %s", class_name)
-            class_obj = (
-                session.query(CodeClass).filter_by(class_name=class_name).first()
-            )
+            class_obj = session.query(CodeClass).filter_by(name=class_name).first()
             if class_obj is not None:
-                logger.debug("Found class %s", class_obj.class_name)
+                logger.debug("Found class %s", class_obj.name)
                 test.class_id = class_obj.id
                 session.commit()
-            function_name = "_".join(test.test_name.replace("test_", "").split("_")[1:])
+            function_name = "_".join(test.name.replace("test_", "").split("_")[1:])
             logger.debug("Looking for function %s", function_name)
             function = (
                 session.query(CodeFunction)
-                .filter_by(function_name=function_name)
+                .filter_by(name=function_name)
                 .filter_by(class_id=class_obj.id)
                 .first()
             )
             if function is not None:
-                logger.debug("Found function %s", function.function_name)
+                logger.debug("Found function %s", function.name)
                 test.function_id = function.id
                 session.commit()
 

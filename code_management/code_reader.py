@@ -2,6 +2,8 @@
 Module to read information from the code files.
 """
 import ast
+from dataclasses import dataclass
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -102,29 +104,62 @@ def get_summary(start_directory: str) -> str:
     return summary
 
 
+@dataclass
+class ClassInfo:
+    name: str
+    source: str
+    docstring: str
+    body: List[ast.AST]
+    start_line: int
+    end_line: Optional[int]
+
+
+@dataclass
+class FunctionInfo:
+    name: str
+    source: str
+    docstring: str
+    start_line: int
+    end_line: Optional[int]
+
+
 def extract_classes_and_functions(
     contents: str,
-) -> tuple[list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
+) -> tuple[list[ClassInfo], list[FunctionInfo]]:
     """Extract classes and functions from a Python file.
 
     Args:
         contents (str): The contents of the Python file.
 
     Returns:
-        tuple[list[tuple[str, str, str, list[ast.AST]]], list[tuple[str, str, str]]]:
+        tuple[list[tuple[str, str, str, list[ast.AST], int, int]], list[tuple[str, str, str, int, int]]]:
             A tuple of classes and functions.
     """
     classes, functions = [], []
     module = ast.parse(contents)
     for node in module.body:
         if isinstance(node, ast.ClassDef):
-            class_string = ast.get_source_segment(contents, node)
-            class_doc_string = ast.get_docstring(node) or ""
-            classes.append((node.name, class_string, class_doc_string, node.body))
+            classes.append(
+                ClassInfo(
+                    name=node.name,
+                    source=ast.get_source_segment(contents, node),
+                    docstring=ast.get_docstring(node) or "",
+                    body=node.body,
+                    start_line=node.lineno,
+                    end_line=getattr(node, "end_lineno", None),
+                )
+            )
         elif isinstance(node, ast.FunctionDef):
-            function_string = ast.get_source_segment(contents, node)
-            function_doc_string = ast.get_docstring(node) or ""
-            functions.append((node.name, function_string, function_doc_string))
+            functions.append(
+                FunctionInfo(
+                    name=node.name,
+                    source=ast.get_source_segment(contents, node),
+                    docstring=ast.get_docstring(node) or "",
+                    start_line=node.lineno,
+                    end_line=getattr(node, "end_lineno", None),
+                )
+            )
+
     return classes, functions
 
 
@@ -143,28 +178,28 @@ def create_code_objects(session: Session, file_path: str):
 
 
 def handle_class_processing(
-    session: Session, class_params: tuple, file_path: str, contents: str
+    session: Session, class_info: ClassInfo, file_path: str, contents: str
 ):
-    class_name, class_string, class_doc_string, class_body = class_params
     existing_class = (
         session.query(CodeClass)
-        .filter_by(class_name=class_name, file_path=file_path)
+        .filter_by(name=class_info.name, file_path=file_path)
         .first()
     )
     if existing_class is None:
-        logger.debug("Creating CodeClass object for %s", class_name)
+        logger.debug("Creating CodeClass object for %s", class_info.name)
         class_obj = CodeClass(
-            class_string=class_string,
-            class_name=class_name,
+            code_string=class_info.source,
+            name=class_info.name,
             file_path=file_path,
-            doc_string=class_doc_string,
+            doc_string=class_info.docstring,
         )
         session.add(class_obj)
         session.commit()
         session.refresh(class_obj)
     else:
         class_obj = existing_class
-    for node in class_body:
+
+    for node in class_info.body:
         if isinstance(node, ast.FunctionDef):
             handle_function_in_class_processing(
                 session, node, file_path, contents, class_obj
@@ -181,7 +216,7 @@ def handle_function_in_class_processing(
     existing_function = (
         session.query(CodeFunction)
         .filter_by(
-            function_name=node.name,
+            name=node.name,
             file_path=file_path,
             code_class=class_obj,
         )
@@ -192,8 +227,8 @@ def handle_function_in_class_processing(
         function_string = ast.get_source_segment(contents, node)
         function_doc_string = ast.get_docstring(node) or ""
         function_obj = CodeFunction(
-            function_string=function_string,
-            function_name=node.name,
+            code_string=function_string,
+            name=node.name,
             file_path=file_path,
             doc_string=function_doc_string,
             code_class=class_obj,
@@ -203,62 +238,52 @@ def handle_function_in_class_processing(
 
 
 def handle_function_processing(
-    session: Session, function_params: tuple, file_path: str
+    session: Session, function_params: FunctionInfo, file_path: str
 ):
-    function_name, function_string, function_doc_string = function_params
-
-    if _is_test(function_name, file_path):
-        handle_test_function_processing(
-            session, function_name, function_string, file_path, function_doc_string
-        )
+    if _is_test(function_params.name, file_path):
+        handle_test_function_processing(session, function_params, file_path)
     else:
-        handle_non_test_function_processing(
-            session, function_name, function_string, file_path, function_doc_string
-        )
+        handle_non_test_function_processing(session, function_params, file_path)
 
 
 def handle_test_function_processing(
     session: Session,
-    function_name: str,
-    function_string: str,
+    function_params: FunctionInfo,
     file_path: str,
-    function_doc_string: str,
 ):
     existing_test = (
         session.query(CodeTest)
-        .filter_by(test_name=function_name, file_path=file_path)
+        .filter_by(name=function_params.name, file_path=file_path)
         .first()
     )
     if existing_test is None:
-        logger.debug("Creating CodeTest object for %s", function_name)
+        logger.debug("Creating CodeTest object for %s", function_params.name)
         test_obj = CodeTest(
-            test_string=function_string,
-            test_name=function_name,
+            code_string=function_params.source,
+            name=function_params.name,
             file_path=file_path,
-            doc_string=function_doc_string,
+            doc_string=function_params.docstring,
         )
         session.add(test_obj)
 
 
 def handle_non_test_function_processing(
     session: Session,
-    function_name: str,
-    function_string: str,
+    function_params: FunctionInfo,
     file_path: str,
-    function_doc_string: str,
 ):
     existing_function = (
         session.query(CodeFunction)
-        .filter_by(function_name=function_name, file_path=file_path)
+        .filter_by(name=function_params.name, file_path=file_path)
         .first()
     )
     if existing_function is None:
-        logger.debug("Creating CodeFunction object for %s", function_name)
+        logger.debug("Creating CodeFunction object for %s", function_params.name)
         function_obj = CodeFunction(
-            function_string=function_string,
-            function_name=function_name,
+            code_string=function_params.source,
+            name=function_params.name,
             file_path=file_path,
-            doc_string=function_doc_string,
+            doc_string=function_params.docstring,
             is_function=True,
         )
         session.add(function_obj)

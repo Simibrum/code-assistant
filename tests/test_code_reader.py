@@ -9,6 +9,8 @@ from code_management import code_reader
 from code_management.code_reader import (
     create_code_objects,
     handle_non_test_function_processing,
+    FunctionInfo,
+    ClassInfo,
 )
 from config import PROJECT_DIRECTORY
 
@@ -166,13 +168,20 @@ def test_handle_class_processing(mocker):
     """Test handle_class_processing function for managing class data."""
 
     from sqlalchemy.orm import Session
-    from code_management.code_reader import handle_class_processing
+    from code_management.code_reader import handle_class_processing, ClassInfo
 
     mock_session = mocker.MagicMock(spec=Session)
     mock_query = mock_session.query.return_value
     mock_filter_by = mock_query.filter_by.return_value
     mock_first = mock_filter_by.first
-    class_params = ("TestClass", "class TestClass:", '"""A test class."""', [])
+    class_params = ClassInfo(
+        name="TestClass",
+        source="class TestClass:",
+        docstring='"""A test class."""',
+        body=[],
+        start_line=1,
+        end_line=2,
+    )
     file_path = "test_file.py"
     contents = 'class TestClass:\n    """A test class."""'
     mock_first.return_value = None
@@ -218,13 +227,15 @@ def test_handle_function_processing(mocker):
     """
     from sqlalchemy.orm import Session
     import code_management.code_reader
-    from code_management.code_reader import handle_function_processing
+    from code_management.code_reader import handle_function_processing, FunctionInfo
 
     mock_session = mocker.MagicMock(spec=Session)
-    function_params = (
-        "test_example",
-        "def test_example(): pass",
-        "Example test function",
+    function_params = FunctionInfo(
+        name="test_example",
+        source="def test_example(): pass",
+        docstring="Example test function",
+        start_line=1,
+        end_line=2,
     )
     file_path = "tests/test_example.py"
     mocker.patch("code_management.code_reader.handle_test_function_processing")
@@ -232,10 +243,8 @@ def test_handle_function_processing(mocker):
     handle_function_processing(mock_session, function_params, file_path)
     code_management.code_reader.handle_test_function_processing.assert_called_once_with(
         mock_session,
-        "test_example",
-        "def test_example(): pass",
+        function_params,
         "tests/test_example.py",
-        "Example test function",
     )
     code_management.code_reader.handle_non_test_function_processing.assert_not_called()
 
@@ -249,7 +258,10 @@ def test_handle_test_function_processing(mocker):
 
     from sqlalchemy.orm import Session
 
-    from code_management.code_reader import handle_test_function_processing
+    from code_management.code_reader import (
+        handle_test_function_processing,
+        FunctionInfo,
+    )
 
     mock_session = MagicMock(spec=Session)
     mock_query = mock_session.query.return_value
@@ -259,9 +271,14 @@ def test_handle_test_function_processing(mocker):
     function_string = "def new_test_function(): pass"
     file_path = "tests/test_new.py"
     function_doc_string = "This is a test function."
-    handle_test_function_processing(
-        mock_session, function_name, function_string, file_path, function_doc_string
+    function_params = FunctionInfo(
+        name=function_name,
+        source=function_string,
+        docstring=function_doc_string,
+        start_line=1,
+        end_line=2,
     )
+    handle_test_function_processing(mock_session, function_params, file_path)
     mock_session.add.assert_called_once()
 
 
@@ -276,16 +293,21 @@ def test_handle_non_test_function_processing(mocker):
     function_string = "def test_func(): pass"
     file_path = "some/file/path.py"
     function_doc_string = "Test function docstring."
+    function_params = FunctionInfo(
+        name=function_name,
+        source=function_string,
+        docstring=function_doc_string,
+        start_line=1,
+        end_line=2,
+    )
     handle_non_test_function_processing(
         session=session_mock,
-        function_name=function_name,
-        function_string=function_string,
+        function_params=function_params,
         file_path=file_path,
-        function_doc_string=function_doc_string,
     )
     code_function_mock.assert_called_once_with(
-        function_string=function_string,
-        function_name=function_name,
+        code_string=function_string,
+        name=function_name,
         file_path=file_path,
         doc_string=function_doc_string,
         is_function=True,
@@ -307,22 +329,30 @@ def dummy_function():
     pass
 '''
     expected_classes = [
-        (
-            "DummyClass",
-            'class DummyClass:\n    """This is a dummy class."""\n    def dummy_method(self):\n        pass',
-            "This is a dummy class.",
-            [],
+        ClassInfo(
+            name="DummyClass",
+            source='class DummyClass:\n    """This is a dummy class."""\n    def dummy_method(self):\n        pass',
+            docstring="This is a dummy class.",
+            body=[],
+            start_line=2,
+            end_line=5,
         )
     ]
     expected_functions = [
-        (
-            "dummy_function",
-            'def dummy_function():\n    """This is a dummy function."""\n    pass',
-            "This is a dummy function.",
+        FunctionInfo(
+            name="dummy_function",
+            source='def dummy_function():\n    """This is a dummy function."""\n    pass',
+            docstring="This is a dummy function.",
+            start_line=7,
+            end_line=9,
         )
     ]
     classes, functions = extract_classes_and_functions(dummy_code)
-    assert classes[0][0:3] == expected_classes[0][0:3]
+    assert classes[0].name == expected_classes[0].name
+    assert classes[0].source == expected_classes[0].source
+    assert classes[0].docstring == expected_classes[0].docstring
+    assert classes[0].start_line == expected_classes[0].start_line
+    assert classes[0].end_line == expected_classes[0].end_line
     assert functions == expected_functions
 
 

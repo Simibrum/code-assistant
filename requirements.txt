@@ -17,6 +17,7 @@ ruff
 pytest
 pytest-mock
 pytest-json-report
+coverage
 
 # GitHub Integration
 pygithub
