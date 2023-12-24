@@ -5,6 +5,8 @@ from typing import Dict, Any
 from code_management.code_database import setup_db, CodeClass, CodeFunction
 from config import PROJECT_DIRECTORY
 from functions import logger
+import llm.llm_interface
+from code_management.test_writer import write_revised_test_to_file
 
 
 COVERAGE_JSON_PATH = f"{PROJECT_DIRECTORY}/coverage.json"
@@ -103,3 +105,54 @@ def run_coverage_and_update_db():
     update_code_coverage(coverage_data, checked_objects, db_session)
     # Close the database session
     db_session.close()
+
+
+def get_objects_needing_extra_testing(db_session):
+    """Get the code objects that need extra tests."""
+    code_objects = db_session.query(CodeFunction).all()
+    return [obj for obj in code_objects if obj.needs_extra_testing]
+
+
+def revise_tests_to_increase_coverage():
+    """Revise tests to increase coverage."""
+    # Get the database session
+    db_session = setup_db()
+    # Get the code objects that need extra testing
+    code_objects = get_objects_needing_extra_testing(db_session)
+    # Iterate over the code objects
+    for obj in code_objects:
+        # Get original test
+        original_test_obj = obj.tests[0] if obj.tests else None
+        if not original_test_obj:
+            # Generate a new test using existing logic
+            continue
+        else:
+            # Get the original test code
+            original_test_code = original_test_obj.code_string
+            # Use the LLM to generate a new test
+            (
+                revised_test_code,
+                imports,
+            ) = llm.llm_interface.cover_missing_lines_with_tests(
+                original_test_code=original_test_code,
+                function_code=obj.code_string,
+                start_line=obj.start_line,
+                end_line=obj.end_line,
+                missing_lines=obj.get_missing_lines(),
+            )
+            # Write the amended test to file
+            write_revised_test_to_file(
+                test_name=original_test_obj.name,
+                test_file_name=original_test_obj.file_path,
+                revised_test_code=revised_test_code,
+                imports=imports,
+            )
+            # Update the database
+            original_test_obj.code_string = revised_test_code
+            original_test_obj.imports = imports
+            db_session.add(original_test_obj)
+            db_session.commit()
+            # TODO - common code here with the iterative test writer?
+    # TODO - we need to run the tests after the loop and fix any failing
+    # tests, we then need to re-run the coverage checker and update the
+    # database again

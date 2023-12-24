@@ -239,6 +239,39 @@ def revise_test(
     )
 
 
+def cover_missing_lines_with_tests(
+    original_test_code: str,
+    function_code: str,
+    start_line: int,
+    end_line: int,
+    missing_lines: list[int],
+) -> Tuple[str, str]:
+    """
+    Use the LLM to cover missing lines with tests based on a given prompt.
+
+    Args:
+        original_test_code (str): Original generated test code.
+        function_code (str): Code of function to build a test for.
+        start_line (int): The start line of the missing lines.
+        end_line (int): The end line of the missing lines.
+        missing_lines (list[int]): The missing lines.
+
+    Returns:
+        Tuple[str, str]: A tuple containing the generated
+        Python test and import statements.
+    """
+    return generate_from_prompt(
+        prompts.cover_missing_lines_prompt,
+        {
+            "original_test_code": original_test_code,
+            "function_code": function_code,
+            "start_line": start_line,
+            "end_line": end_line,
+            "missing_lines": missing_lines,
+        },
+    )
+
+
 def generate_todo_list() -> str:
     """
     Use the LLM to generate a to-do list.

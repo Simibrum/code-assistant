@@ -117,6 +117,27 @@ def revise_test_prompt(
     return prompt
 
 
+def cover_missing_lines_prompt(
+    original_test_code: str,
+    function_code: str,
+    start_line: int,
+    end_line: int,
+    missing_lines: list[int],
+) -> str:
+    """Get a prompt for the LLM to test missing lines from coverage."""
+    prompt = "I need help adding to an existing test.\n\n"
+    prompt += "The existing test code is:\n\n"
+    prompt += f"{original_test_code}\n\n"
+    prompt += "The function code is:\n\n"
+    prompt += f"{function_code}\n\n"
+    prompt += (
+        f"The function starts on line {start_line} and ends on line {end_line}.\n\n"
+        f"The untested lines of the function are: {missing_lines}\n\n"
+    )
+    prompt += "Can you amend the existing test to add assertions that cover the untested lines?"
+    return prompt
+
+
 def create_function_prompt(task_description: str, function_file: str) -> str:
     """
     Create a prompt for the LLM to generate a function based on the provided task description.

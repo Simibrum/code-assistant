@@ -264,9 +264,7 @@ def revise_and_test_loop(max_attempts_per_test):
                 )
 
             # Update test status in the database
-            update_test_in_db(
-                test.id, revised_test_code, passed
-            )  # Placeholder function
+            update_test_in_db(test.id, revised_test_code, passed)
 
         if not success:
             print(
@@ -276,7 +274,7 @@ def revise_and_test_loop(max_attempts_per_test):
         # Commit changes to Git for each test
         # Create a commit message that refers to the test name and number of attempts
         commit_message = f"Revised test {test.identifier} after {attempts} attempts."
-        git_handler.commit_changes(commit_message)  # Placeholder function
+        git_handler.commit_changes(commit_message)
 
     # Check for any remaining failing tests
     if any_tests_still_failing():

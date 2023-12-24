@@ -41,6 +41,10 @@ class AbstractCode(Base):
         """Get the missing lines from testing for the object."""
         return [missing_line.line_number for missing_line in self.missing_lines]
 
+    def needs_extra_testing(self):
+        """Check whether the object needs extra testing."""
+        return len(self.missing_lines) > 0
+
 
 class CodeClass(AbstractCode):
     """Model for a class in a Python file."""
