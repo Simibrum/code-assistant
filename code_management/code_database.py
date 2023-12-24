@@ -23,13 +23,23 @@ class AbstractCode(Base):
     code_string: Mapped[str] = mapped_column()
     file_path: Mapped[str] = mapped_column(nullable=True)
     doc_string: Mapped[str] = mapped_column(nullable=True)
+    # Below is set to pass or fail
     test_status: Mapped[str] = mapped_column(nullable=True)
     imports: Mapped[str] = mapped_column(nullable=True)
     start_line: Mapped[int] = mapped_column(nullable=True)
     end_line: Mapped[int] = mapped_column(nullable=True)
+    missing_lines: list = []
 
     def __repr__(self):
         return f"<{self.__class__.__name__}({self.id}, {self.name})>"
+
+    def add_missing_line(self, line: int):
+        """Add a missing line to the object."""
+        raise NotImplementedError
+
+    def get_missing_lines(self):
+        """Get the missing lines from testing for the object."""
+        return [missing_line.line_number for missing_line in self.missing_lines]
 
 
 class CodeClass(AbstractCode):
@@ -37,9 +47,17 @@ class CodeClass(AbstractCode):
 
     __tablename__ = "code_class"
     # Other fields as needed...
+    missing_lines = relationship(
+        "ClassMissingLine", backref="class", cascade="all, delete-orphan"
+    )
 
     # Relationship to functions
     functions = relationship("CodeFunction", back_populates="code_class")
+
+    def add_missing_line(self, line: int):
+        """Add a missing line to the class."""
+        missing_line = ClassMissingLine(line_number=line, parent_id=self.id)
+        self.missing_lines.append(missing_line)
 
 
 class CodeFunction(AbstractCode):
@@ -55,6 +73,15 @@ class CodeFunction(AbstractCode):
     # Foreign Key to class
     class_id: Mapped[int] = mapped_column(ForeignKey("code_class.id"), nullable=True)
     code_class = relationship("CodeClass", back_populates="functions")
+
+    missing_lines = relationship(
+        "FunctionMissingLine", backref="function", cascade="all, delete-orphan"
+    )
+
+    def add_missing_line(self, line: int):
+        """Add a missing line to the function."""
+        missing_line = FunctionMissingLine(line_number=line, parent_id=self.id)
+        self.missing_lines.append(missing_line)
 
 
 class CodeTest(AbstractCode):
@@ -74,10 +101,44 @@ class CodeTest(AbstractCode):
     class_id: Mapped[int] = mapped_column(ForeignKey("code_class.id"), nullable=True)
     tested_class = relationship("CodeClass", backref="tests")
 
+    missing_lines = relationship(
+        "TestMissingLine", backref="test", cascade="all, delete-orphan"
+    )
+
     @property
     def identifier(self):
         """Return a string identifier for the test."""
         return f"{self.file_path}::{self.name}"
+
+    def add_missing_line(self, line):
+        """Add a missing line to the test."""
+        missing_line = TestMissingLine(line_number=line, parent_id=self.id)
+        self.missing_lines.append(missing_line)
+
+
+class AbstractMissingLine(Base):
+    __abstract__ = True
+    id: Mapped[int] = mapped_column(primary_key=True)
+    line_number: Mapped[int] = mapped_column()
+    parent_id: Mapped[int] = mapped_column()
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}({self.id}, {self.line_number})>"
+
+
+class ClassMissingLine(AbstractMissingLine):
+    __tablename__ = "class_missing_line"
+    parent_id: Mapped[int] = mapped_column(ForeignKey("code_class.id"))
+
+
+class FunctionMissingLine(AbstractMissingLine):
+    __tablename__ = "function_missing_line"
+    parent_id: Mapped[int] = mapped_column(ForeignKey("code_function.id"))
+
+
+class TestMissingLine(AbstractMissingLine):
+    __tablename__ = "test_missing_line"
+    parent_id: Mapped[int] = mapped_column(ForeignKey("code_test.id"))
 
 
 def setup_db(db_path: str = "sqlite:///code.db"):
