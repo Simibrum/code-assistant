@@ -179,14 +179,20 @@ def write_revised_test_to_file(test_name, test_file_name, revised_test_code, imp
     :param test_file_name: Path to the test file.
     :param revised_test_code: The revised test code to insert.
     :param imports: The imports to add to the test file.
+
+    :return: True if replacement is successful, False otherwise.
     """
     logger.info("Writing revised test to file: %s", test_file_name)
     if imports:
         logger.info("Writing imports to file: %s", imports)
-        utils.add_imports(test_file_name, imports)
+        try:
+            utils.add_imports(test_file_name, imports)
+        except SyntaxError as e:
+            logger.error("Failed to write imports to file due to syntax error: %s", e)
     success = replace_test_in_file(test_file_name, test_name, revised_test_code)
     if not success:
         logger.error("Failed to write revised test to file: %s", test_file_name)
+    return success
 
 
 def update_test_in_db(test_id, new_test_code, passed):

@@ -7,6 +7,7 @@ from config import PROJECT_DIRECTORY
 from functions import logger
 import llm.llm_interface
 from code_management.test_writer import write_revised_test_to_file
+from git_management.git_handler import GitHandler
 
 
 COVERAGE_JSON_PATH = f"{PROJECT_DIRECTORY}/coverage.json"
@@ -87,6 +88,7 @@ def update_code_coverage(coverage_data, code_objects, session):
 
 def run_coverage_and_update_db():
     """Run coverage and update the database."""
+    logger.info("Running coverage and updating the database with missing lines...")
     # Get the database session
     db_session = setup_db()
     # Get the code objects from the database
@@ -109,12 +111,14 @@ def run_coverage_and_update_db():
 
 def get_objects_needing_extra_testing(db_session):
     """Get the code objects that need extra tests."""
+    logger.info("Getting code objects that need extra testing...")
     code_objects = db_session.query(CodeFunction).all()
     return [obj for obj in code_objects if obj.needs_extra_testing]
 
 
 def revise_tests_to_increase_coverage():
     """Revise tests to increase coverage."""
+    logger.info("Revising tests to increase coverage...")
     # Get the database session
     db_session = setup_db()
     # Get the code objects that need extra testing
@@ -129,6 +133,7 @@ def revise_tests_to_increase_coverage():
         else:
             # Get the original test code
             original_test_code = original_test_obj.code_string
+            logger.info("Getting revised test for %s from LLM...", obj.name)
             # Use the LLM to generate a new test
             (
                 revised_test_code,
@@ -140,19 +145,41 @@ def revise_tests_to_increase_coverage():
                 end_line=obj.end_line,
                 missing_lines=obj.get_missing_lines(),
             )
+            logger.debug("Revised test for %s: %s", obj.name, revised_test_code)
             # Write the amended test to file
-            write_revised_test_to_file(
+            success = write_revised_test_to_file(
                 test_name=original_test_obj.name,
                 test_file_name=original_test_obj.file_path,
                 revised_test_code=revised_test_code,
                 imports=imports,
             )
             # Update the database
+            if not success:
+                logger.error(
+                    "Failed to write revised test for %s to file",
+                    original_test_obj.name,
+                )
+                continue
+            logger.info("Updating the database with revised test...")
             original_test_obj.code_string = revised_test_code
-            original_test_obj.imports = imports
+            original_test_obj.imports = "\n".join(imports)
             db_session.add(original_test_obj)
             db_session.commit()
             # TODO - common code here with the iterative test writer?
     # TODO - we need to run the tests after the loop and fix any failing
     # tests, we then need to re-run the coverage checker and update the
     # database again
+
+
+def agent_process():
+    """Run the agent process."""
+    logger.info("Running the agent process...")
+    # Initiate the git handler
+    git_handler = GitHandler()
+    # Run coverage and update the database
+    run_coverage_and_update_db()
+    # Create a new temporary branch
+    temp_branch_name = git_handler.create_temp_test_branch()
+    logger.info("Created temporary branch %s", temp_branch_name)
+    # Revise tests to increase coverage
+    revise_tests_to_increase_coverage()

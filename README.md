@@ -7,8 +7,8 @@ A tool to help code with ChatGPT.
 The aim is to build an agent that can code itself using an LLM. 
 
 The LLM will return clear and concise Python code.
-Simplicity is key. Functions will be returned with docstrings summarising the function. Python typing is to be used.
-A test driven development strategy will be used. Testing is with pytest. Lines are limited to 100 characters.
+Simplicity is key. Functions will be returned with docstrings summarising the function. Python `typing` is to be used.
+A test driven development strategy will be used. Testing is with `pytest`. Lines are limited to 100 characters.
 
 ## Auto Generated Summary
 
