@@ -105,7 +105,19 @@ def test_create_test_prompt():
     """
     function_code = "def test_function():\n    pass"
     function_file = "./llm/prompts.py"
-    expected_output = "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\ndef test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\nImport the function in the test file using the [function_file].[function_name] syntax.\n\nCall the test: `test_[function_name]`."
+    expected_output = (
+        "I would like you to write a pytest unit test.\n\nHere is code for the function to test:\n\n"
+        "def test_function():\n    pass\n\nThe function to test is in the file ./llm/prompts.py\n\n"
+        "Import the function in the test file using the [function_file].[function_name] syntax.\n\n"
+        "Call the test: `test_[function_name]`."
+        "\n\n"
+        "For multiline strings, please use brackets and single quotes. Please escape "
+        "relevant characters inside the string. E.g. expected_string = (\n"
+        '\t`First part of \\"string\\".`\n'
+        "\t`Second part of string.`\n"
+        ")\n"
+        "\n"
+    )
     output = prompts.create_test_prompt(function_code, function_file)
     assert output == expected_output, f"Expected: {expected_output}, but got: {output}"
 

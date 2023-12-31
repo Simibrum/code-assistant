@@ -5,6 +5,13 @@ import sys
 import utils
 
 
+multi_line_string_syntax_prompt = (
+    "For multiline strings, please use brackets and single quotes. "
+    "Please escape relevant characters inside the string. "
+    'E.g. expected_string = (\n\t`First part of \\"string\\".`\n\t`Second part of string.`\n)'
+)
+
+
 def generate_system_prompt() -> str:
     """
     Generate a system prompt for the LLM.
@@ -97,6 +104,7 @@ def create_test_prompt(
         prompt += "Call the test: `" + test_name + "`."
     else:
         prompt += "Call the test: `test_[function_name]`."
+    prompt += "\n\n" + multi_line_string_syntax_prompt + "\n\n"
 
     return prompt
 
@@ -106,11 +114,11 @@ def revise_test_prompt(
 ) -> str:
     """Get a prompt for the LLM to revise a test."""
     prompt = "I have an LLM that has generated the test code for the function below."
-    prompt += "The test is currently failing with the failure message as below."
-    prompt += "Can you revise the test code so that the test passes?"
-    prompt += "* Please do not use fixtures at this stage, so that the test code functions independently."
-    prompt += "* Please keep the test function name the same."
-    prompt += "\n\n"
+    prompt += "The test is currently failing with the failure message as below.\n\n"
+    prompt += "Can you revise the test code so that the test passes?\n\n"
+    prompt += "* Please do not use fixtures at this stage, so that the test code functions independently.\n"
+    prompt += "* Please keep the test function name the same.\n"
+    prompt += "* " + multi_line_string_syntax_prompt + "\n\n"
     prompt += f"Original generated test code: {original_test_code}\n\n"
     prompt += f"Function code: {function_code}\n\n"
     prompt += f"Pytest output: {test_output}\n\n"
@@ -135,6 +143,7 @@ def cover_missing_lines_prompt(
         f"The untested lines of the function are: {missing_lines}\n\n"
     )
     prompt += "Can you amend the existing test to add assertions that cover the untested lines?"
+    prompt += "\n\n" + multi_line_string_syntax_prompt + "\n\n"
     return prompt
 
 
