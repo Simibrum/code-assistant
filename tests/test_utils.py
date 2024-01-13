@@ -11,7 +11,14 @@ import utils
 
 def test_extract_functions_from_file():
     """Test the extract_functions_from_file function."""
-    code = "\ndef func1(a, b):\n    return a + b\n\ndef func2(x):\n    return x * 2\n"
+    code = (
+        "\n"
+        "def func1(a, b):\n"
+        "    return a + b\n"
+        "\n"
+        "def func2(x):\n"
+        "    return x * 2\n"
+    )
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
         temp.write(code)
         temp_path = temp.name
@@ -19,6 +26,13 @@ def test_extract_functions_from_file():
     assert len(functions) == 2
     assert functions[0][0] == "func1" and "def func1(a, b):" in functions[0][1]
     assert functions[1][0] == "func2" and "def func2(x):" in functions[1][1]
+    os.remove(temp_path)
+
+    # Test with an empty file
+    with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
+        temp_path = temp.name
+    functions = utils.extract_functions_from_file(temp_path)
+    assert len(functions) == 0
     os.remove(temp_path)
 
 
@@ -29,6 +43,8 @@ def test_extract_project_description():
     assert "The aim is to build an agent" in utils.extract_project_description()
     assert utils.extract_project_description("invalid.md") == ""
     assert utils.extract_project_description("README_no_description.md") == ""
+    # Test case where there's no Project Description section in the README
+    assert utils.extract_project_description("README_no_project_description.md") == ""
 
 
 def test_read_requirements_txt():
@@ -74,6 +90,15 @@ def test_read_gitignore():
         assert gitignore_patterns == ["*.pyc", ".DS_Store"]
     finally:
         os.remove(temp_path)
+    with tempfile.NamedTemporaryFile(delete=False) as temp:
+        temp.write(b"")
+        temp_path = temp.name
+    try:
+        # Test with an empty .gitignore file
+        gitignore_patterns = utils.read_gitignore(temp_path)
+        assert gitignore_patterns == []
+    finally:
+        os.remove(temp_path)
 
 
 def test_should_use_file():
@@ -108,12 +133,22 @@ def test_build_directory_structure():
             os.path.join(tmpdirname, "subdir", "subfile.txt"), "w", encoding="utf-8"
         ) as file:
             file.write("Hello, world!")
+
+        # Add .gitignore file in the temporary directory
+        with open(
+            os.path.join(tmpdirname, ".gitignore"), "w", encoding="utf-8"
+        ) as file:
+            file.write("subfile.txt")  # Ignore the subfile.txt
+
         structure = utils.build_directory_structure(tmpdirname)
         print(structure)
         assert structure in [
-            "file.txt\nsubdir\n  subfile.txt\n",
-            "subdir\n  subfile.txt\nfile.txt\n",
+            "file.txt\nsubdir\n\tsubfile.txt\n",
+            "subdir\n  subfile.txt\n.gitignore\nfile.txt\n",
         ]
+
+        # Assert that subfile.txt is ignored due to .gitignore
+        assert "subfile.txt" not in structure
 
 
 def test_add_imports():
@@ -146,9 +181,14 @@ def test_format_code():
     """
     Test the format_code function.
     """
-    code = "def test():\n    return 1"
-    expected_result = "def test():\n    return 1\n"
+    code = "def test():\n" "\treturn 1\n"
+    expected_result = "def test():\n" "    return 1\n"
     assert utils.format_code(code) == expected_result
+
+    # Test with unformatted code
+    unformatted_code = "def test(): return 1"
+    formatted_code = "def test():\n" "    return 1\n"
+    assert utils.format_code(unformatted_code) == formatted_code
 
 
 def test_get_python_files():
@@ -170,10 +210,11 @@ def test_read_file_description() -> None:
     Test the read_file_description function from the utils module.
     """
     expected_docstring = "This is a test file. This is the file's docstring."
-    mocked_file_contents = f'"""\n{expected_docstring}\n"""\n'
+    mocked_file_contents = f"\n{expected_docstring}\n"
     with patch("builtins.open", new=mock_open(read_data=mocked_file_contents)):
         output_docstring = utils.read_file_description("test_path.py")
     assert output_docstring == expected_docstring, "The docstrings do not match."
+    mock_open.assert_called_once_with("test_path.py", "r", encoding="utf-8")
 
 
 def test_read_function_description():
@@ -216,29 +257,27 @@ def test_add_docstring_to_function():
     function_name = "test_func"
     docstring = "This is a test function."
     with open(file_path, "w", encoding="utf-8") as file:
-        file.write(f"def {function_name}():\n    pass")
+        file.write(f"def {function_name}():\n\tpass")
     utils.add_docstring_to_function(file_path, function_name, docstring)
     with open(file_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     assert lines[1].strip() == f'"""{docstring}"""'
+    with open(file_path, "r", encoding="utf-8") as file:
+        assert "Parsed module:" in file.read(), "Module was not parsed"
+    with open(file_path, "r", encoding="utf-8") as file:
+        assert "New code:" in file.read(), "New code was not generated"
+    with open(file_path, "r", encoding="utf-8") as file:
+        assert "Formatted code:" in file.read(), "Code was not formatted"
     os.remove(file_path)
 
 
 def test_run_pytest(mocker):
     """Test the function run_pytest"""
-
-    # Arrange
-    # Mock the pytest.main call
     mocker.patch("pytest.main", return_value=None)
-    # Mock the opening and reading of the file
     mocked_open = mocker.patch(
         "builtins.open", mocker.mock_open(read_data=json.dumps({"success": True}))
     )
-
-    # Act
     result = utils.run_pytest()
-
-    # Assert
     pytest.main.assert_called_once_with(
         ["--json-report", "--json-report-file=temp_test_results.json"]
     )

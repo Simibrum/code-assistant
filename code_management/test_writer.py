@@ -124,11 +124,11 @@ def replace_test_in_file(test_file_name, old_test_name, new_test_code):
 
         # Define a regular expression pattern to find the old test function
         # Assumes standard Python test function definitions
-        pattern = rf"def {old_test_name}\(.*?\):.*?^(def |\Z)"
+        pattern = rf"def {old_test_name}\(.*?\):.*?(?=^def |\Z)"
         if re.search(pattern, content, flags=re.DOTALL | re.MULTILINE):
             # Replace the old test function with new test code
             new_content = re.sub(
-                pattern, f"{new_test_code}", content, flags=re.DOTALL | re.MULTILINE
+                pattern, f"{new_test_code}\n\n", content, flags=re.DOTALL | re.MULTILINE
             )
 
             with open(test_file_name, "w", encoding="utf-8") as file:

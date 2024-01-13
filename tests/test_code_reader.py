@@ -4,13 +4,11 @@ Test the functions in code_reader.py.
 import os
 from unittest import mock
 
-
 from code_management import code_reader
 from code_management.code_reader import (
+    FunctionInfo,
     create_code_objects,
     handle_non_test_function_processing,
-    FunctionInfo,
-    ClassInfo,
 )
 from config import PROJECT_DIRECTORY
 
@@ -24,14 +22,22 @@ def test_read_code_file_descriptions(mocker):
     """
     mock_get_python_files = mocker.patch("utils.get_python_files")
     mock_read_file_description = mocker.patch("utils.read_file_description")
-    mock_get_python_files.return_value = ["./code_management/code_reader.py"]
-    mock_read_file_description.return_value = "Test file description"
+    mock_get_python_files.return_value = [
+        "./code_management/code_reader.py",
+        "./code_management/code_writer.py",
+    ]
+    mock_read_file_description.side_effect = [
+        "Test file description",
+        "Test file description 2",
+    ]
     result = code_reader.read_code_file_descriptions("./")
     mock_get_python_files.assert_called_once_with("./")
-    mock_read_file_description.assert_called_once_with(
-        "./code_management/code_reader.py"
-    )
-    assert result == {"./code_management/code_reader.py": "Test file description"}
+    mock_read_file_description.assert_any_call("./code_management/code_reader.py")
+    mock_read_file_description.assert_any_call("./code_management/code_writer.py")
+    assert result == {
+        "./code_management/code_reader.py": "Test file description",
+        "./code_management/code_writer.py": "Test file description 2",
+    }
 
 
 def test_read_function_descriptions():
@@ -168,8 +174,9 @@ def test_handle_class_processing(mocker):
     """Test handle_class_processing function for managing class data."""
 
     from sqlalchemy.orm import Session
-    from code_management.code_reader import handle_class_processing, ClassInfo
+    from code_management.code_reader import handle_class_processing, ClassInfo, ast
 
+    mock_body = ast.FunctionDef()
     mock_session = mocker.MagicMock(spec=Session)
     mock_query = mock_session.query.return_value
     mock_filter_by = mock_query.filter_by.return_value
@@ -178,19 +185,25 @@ def test_handle_class_processing(mocker):
         name="TestClass",
         source="class TestClass:",
         docstring='"""A test class."""',
-        body=[],
+        body=[mock_body],
         start_line=1,
         end_line=2,
     )
     file_path = "test_file.py"
-    contents = 'class TestClass:\n    """A test class."""'
+    contents = "class TestClass:\n" '\t"""A test class."""'
     mock_first.return_value = None
+
+    # Mock handle_function_in_class_processing
+    mocker.patch("code_management.code_reader.handle_function_in_class_processing")
 
     handle_class_processing(mock_session, class_params, file_path, contents)
 
     assert mock_session.add.called
     assert mock_session.commit.called
     assert mock_session.refresh.called
+    code_reader.handle_function_in_class_processing.assert_called_once_with(
+        mock_session, mock_body, file_path, contents, mock_session.add.call_args.args[0]
+    )
 
 
 def test_handle_function_in_class_processing(mocker):
@@ -247,6 +260,13 @@ def test_handle_function_processing(mocker):
         "tests/test_example.py",
     )
     code_management.code_reader.handle_non_test_function_processing.assert_not_called()
+
+    # Test case where function is not a test function
+    function_params.name = "example"
+    handle_function_processing(mock_session, function_params, file_path)
+    code_management.code_reader.handle_non_test_function_processing.assert_called_once_with(
+        mock_session, function_params, file_path
+    )
 
 
 def test_handle_test_function_processing(mocker):
@@ -318,7 +338,11 @@ def test_handle_non_test_function_processing(mocker):
 
 
 def test_extract_classes_and_functions():
-    from code_management.code_reader import extract_classes_and_functions
+    from code_management.code_reader import (
+        extract_classes_and_functions,
+        ClassInfo,
+        FunctionInfo,
+    )
 
     dummy_code = '''
 class DummyClass:
@@ -333,7 +357,11 @@ def dummy_function():
     expected_classes = [
         ClassInfo(
             name="DummyClass",
-            source='class DummyClass:\n    """This is a dummy class."""\n    def dummy_method(self):\n        pass',
+            source=(
+                "class DummyClass:\n    "
+                '"""This is a dummy class."""\n    '
+                "def dummy_method(self):\n        pass"
+            ),
             docstring="This is a dummy class.",
             body=[],
             start_line=2,
@@ -343,7 +371,11 @@ def dummy_function():
     expected_functions = [
         FunctionInfo(
             name="dummy_function",
-            source='def dummy_function():\n    """This is a dummy function."""\n    pass',
+            source=(
+                "def dummy_function():\n    "
+                '"""This is a dummy function."""\n'
+                "    pass"
+            ),
             docstring="This is a dummy function.",
             start_line=7,
             end_line=9,
@@ -355,7 +387,11 @@ def dummy_function():
     assert classes[0].docstring == expected_classes[0].docstring
     assert classes[0].start_line == expected_classes[0].start_line
     assert classes[0].end_line == expected_classes[0].end_line
-    assert functions == expected_functions
+    assert functions[0].name == expected_functions[0].name
+    assert functions[0].source == expected_functions[0].source
+    assert functions[0].docstring == expected_functions[0].docstring
+    assert functions[0].start_line == expected_functions[0].start_line
+    assert functions[0].end_line == expected_functions[0].end_line
 
 
 def test__is_test():

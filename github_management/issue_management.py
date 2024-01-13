@@ -17,7 +17,7 @@ class IssueAlreadyExistsError(Exception):
 def slugify(title, max_length=30):
     """Converts a title to a slug."""
     slug = re.sub(r"[^\w\s-]", "", title)  # Remove non-alphanumeric characters
-    slug = re.sub(r"\s+", "_", slug)  # Replace spaces and hyphens with underscores
+    slug = re.sub(r"[\s-]+", "_", slug)  # Replace spaces and hyphens with underscores
     return slug[:max_length]
 
 

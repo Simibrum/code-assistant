@@ -1,7 +1,6 @@
 """Test the code_database module."""
 import os
-from unittest.mock import create_autospec, Mock
-
+from unittest.mock import Mock, create_autospec
 
 from code_management.code_database import (
     CodeClass,
@@ -18,11 +17,15 @@ def test_setup_db(mocker):
     """Test the setup_db function."""
     mock_create_engine = mocker.patch("code_management.code_database.create_engine")
     mock_sessionmaker = mocker.patch("code_management.code_database.sessionmaker")
+    mock_Base = mocker.patch("code_management.code_database.Base")
     mock_Session = mocker.MagicMock()
     mock_sessionmaker.return_value = mock_Session
     db_path = "sqlite:///test.db"
     setup_db(db_path)
     mock_create_engine.assert_called_once_with("sqlite:///test.db", echo=True)
+    mock_Base.metadata.create_all.assert_called_once_with(
+        mock_create_engine.return_value
+    )
     mock_sessionmaker.assert_called_once_with(bind=mock_create_engine.return_value)
     mock_Session.assert_called_once()
     if os.path.exists("test.db"):
@@ -70,9 +73,11 @@ def test_link_tests(mocker):
     mock_test.name = "test_mock_func"
     mock_test.class_test = False
     mock_test.function_id = None
+    mock_test.class_id = None
 
     mock_class = create_autospec(CodeClass, instance=True)
     mock_class.name = "mock_class"  # Note this addition
+    mock_class.id = 2
 
     session.query(CodeClass).all.return_value = [mock_class]
     session.query(CodeTest).all.return_value = [mock_test]
@@ -81,6 +86,10 @@ def test_link_tests(mocker):
         name="mock_func"
     ).first.return_value = mock_function
 
+    session.query(CodeClass).filter_by(
+        name="mock_class"
+    ).first.return_value = mock_class
+
     with mocker.patch(
         "code_management.code_database.get_class_names", return_value=["mock_class"]
     ):
@@ -88,9 +97,12 @@ def test_link_tests(mocker):
 
     session.query(CodeTest).all.assert_called_once()
     session.query(CodeFunction).filter_by.assert_called_with(name="mock_func")
+    session.query(CodeClass).filter_by.assert_called_with(name="mock_class")
 
     # Assert mock_test.function_id equals the id of the returned function object
     assert mock_test.function_id == mock_function.id
+    # Assert mock_test.class_id equals the id of the returned class object
+    assert mock_test.class_id == mock_class.id
     session.commit.assert_called_once()
 
 
@@ -105,13 +117,11 @@ def test_add_test_to_db(monkeypatch):
     monkeypatch.setattr(
         "code_management.code_database.compute_test_name", mock_compute_test_name
     )
-
     db_session_mock = Mock(spec=Session)
     function_mock = Mock(spec=CodeFunction)
     function_mock.id = 1
     function_mock.class_id = 2
     function_mock.name = "example_function"
-
     test_code = "assert True"
     test_file_name = "test_function.py"
     add_test_to_db(db_session_mock, function_mock, test_code, test_file_name)
@@ -128,12 +138,10 @@ def test_CodeClass___repr__():
     """
     Test the __repr__ method of the CodeClass.
     """
-
     # Creating instance of CodeClass
     code_class_instance = CodeClass()
     code_class_instance.id = 1
     code_class_instance.name = "TestClass"
-
     result = code_class_instance.__repr__()
     expected = "<CodeClass(1, TestClass)>"
     assert result == expected
@@ -147,7 +155,6 @@ def test_CodeFunction___repr__():
     code_function_instance = CodeFunction()
     code_function_instance.id = 1
     code_function_instance.name = "test_function"
-
     result = repr(code_function_instance)
     expected_result = (
         f"<CodeFunction({code_function_instance.id}, {code_function_instance.name})>"

@@ -37,7 +37,9 @@ def test_add_function_to_file():
                             "function_call": {
                                 "arguments": json.dumps(
                                     {
-                                        "function_code": "def add_two_numbers(a,b):\n\t return a+b",
+                                        "function_code": (
+                                            "def add_two_numbers(a,b)\n:" "\treturn a+b"
+                                        ),
                                         "import_statements": "import json",
                                     }
                                 )
@@ -51,6 +53,11 @@ def test_add_function_to_file():
             content = file.read()
         assert "add_two_numbers" in content
         assert "def " in content
+        # Add assertions to check if imports were written to file
+        if "import " in content:
+            assert "json" in content
+        else:
+            assert False, "Imports not written to file"
 
 
 def test_generate_function_docstring(mocker):

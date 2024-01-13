@@ -16,8 +16,7 @@ These test functions ensure the correct behavior and functionality of the `agent
 """
 import ast
 from unittest import mock
-from unittest.mock import MagicMock, patch
-
+from unittest.mock import MagicMock, call, patch
 
 import agent.core
 import llm.llm_interface as llm
@@ -38,14 +37,17 @@ def test_generate_tests():
         "agent.core.llm.generate_test", return_value=("test_code", "imports")
     ), patch("agent.core.utils.add_imports"), patch(
         "agent.core.open", new_callable=MagicMock
-    ):
+    ) as mock_open:
         agent.core.generate_tests()
         agent.core.utils.get_python_files.assert_called_once()
         agent.core.utils.extract_functions_from_file.assert_called()
         agent.core.os.path.exists.assert_called()
         agent.core.llm.generate_test.assert_called()
         agent.core.utils.add_imports.assert_called()
-        agent.core.open.assert_called()
+        mock_open.assert_called_with("tests/test_file2.py", "a", encoding="utf-8")
+        mock_file = mock_open.return_value.__enter__.return_value
+        expected_calls = [call("\n\n" + "test_code" + "\n\n")]
+        mock_file.write.assert_has_calls(expected_calls)
 
 
 def test_generate_module_docstrings(mocker):
@@ -87,13 +89,19 @@ def test_format_modules(mocker):
         "agent.core.utils.get_python_files", return_value=["file1.py", "file2.py"]
     )
     mocker.patch("agent.core.utils.format_code", return_value="formatted_code")
-    mocker.patch("builtins.open", mocker.mock_open())
+    mocker.patch("builtins.open", mocker.mock_open(read_data="unformatted_code"))
     mocker.patch("agent.core.logger")
     agent.core.format_modules()
     agent.core.utils.get_python_files.assert_called_once_with(skip_tests=False)
-    agent.core.utils.format_code.assert_any_call("")
+    agent.core.utils.format_code.assert_any_call("unformatted_code")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file1.py")
     agent.core.logger.info.assert_any_call("Formatting module %s", "file2.py")
+    agent.core.logger.info.assert_any_call(
+        "Writing formatted code to file %s", "file1.py"
+    )
+    agent.core.logger.info.assert_any_call(
+        "Writing formatted code to file %s", "file2.py"
+    )
 
 
 def test_get_task_description(mocker):
@@ -108,6 +116,8 @@ def test_generate_function_for_task():
     with mock.patch("agent.core.llm.generate_code") as mock_generate_code, mock.patch(
         "agent.core.logger.debug"
     ) as mock_logger_debug, mock.patch(
+        "agent.core.logger.info"
+    ) as mock_logger_info, mock.patch(
         "agent.core.utils.add_imports"
     ) as mock_add_imports, mock.patch(
         "builtins.open", new_callable=mock.mock_open
@@ -122,9 +132,12 @@ def test_generate_function_for_task():
         mock_logger_debug.assert_called_once_with(
             "Function code: %s", "def function(): pass"
         )
+        mock_logger_info.assert_called_once_with(
+            "Writing imports to file: %s", "import numpy"
+        )
         mock_add_imports.assert_called_once_with("./file.py", "import numpy")
         mock_file.assert_called_once_with("./file.py", "a", encoding="utf-8")
-        mock_file().write.assert_called_once_with("\ndef function(): pass\n")
+        mock_file().write.assert_called_once_with(("\ndef function(): pass\n"))
 
 
 def test_get_further_information(mocker):
@@ -142,6 +155,7 @@ def test_run_task_from_next_issue(mocker):
     mock_git_handler = mocker.patch("agent.core.GitHandler", autospec=True)
     mock_run_task = mocker.patch("agent.core.run_task", autospec=True)
     mock_generate_tests = mocker.patch("agent.core.generate_tests", autospec=True)
+    mock_logger = mocker.patch("agent.core.logger", autospec=True)
     mock_issue = mock_gh_issues.return_value.get_next_issue.return_value
     mock_issue.number = 123
     agent.core.run_task_from_next_issue()
@@ -151,6 +165,11 @@ def test_run_task_from_next_issue(mocker):
     mock_git_handler.return_value.create_new_branch.assert_called_once()
     mock_run_task.assert_called_once()
     mock_generate_tests.assert_called_once()
+    mock_logger.info.assert_any_call("Running task from next issue.")
+    mock_logger.debug.assert_any_call("Task description: %s")
+    mock_logger.info.assert_any_call("Creating new branch for issue %s", 123)
+    mock_logger.info.assert_any_call("Running task.")
+    mock_logger.info.assert_any_call("Generating tests.")
 
 
 def test_update_readme(mocker):
@@ -175,18 +194,25 @@ def test_update_readme(mocker):
 
 def test_update_todos(mocker):
     """Test the update_todos function."""
-    mock_open = mocker.patch("builtins.open", new_callable=mocker.mock_open)
+    mock_open = mocker.patch(
+        "builtins.open", mocker.mock_open(read_data="dummy readme text")
+    )
     mock_update_readme_todos = mocker.patch(
         "code_management.readme_manager.update_readme_todos"
     )
+    mock_update_readme_todos.return_value = "updated readme text"
     agent.core.update_todos()
-    assert mock_open.call_count == 2
+    mock_open.assert_any_call("README.md", "r", encoding="utf-8")
+    mock_open.assert_any_call("README.md", "w", encoding="utf-8")
+    assert mock_open().read.call_count == 1
+    assert mock_open().write.call_count == 1
+    mock_open().write.assert_called_once_with("updated readme text")
     assert mock_update_readme_todos.call_count == 1
+    mock_update_readme_todos.assert_called_once_with("dummy readme text")
 
 
 def test_generate_test_from_function(mocker):
     """Test the generate_test_from_function function."""
-
     mock_function = mocker.Mock()
     mock_function.function_name = "test_function"
     mock_function.function_string = "def test_function(): pass"
@@ -195,10 +221,8 @@ def test_generate_test_from_function(mocker):
         "llm.llm_interface.generate_test", return_value=("test_code", "imports")
     )
     mocker.patch("functions.logger.info")
-
     test_name = "test_test"
     output = generate_test_from_function(mock_function, test_name)
-
     calls = [mocker.call("Generating test for function %s", "test_function")]
     logger.info.assert_has_calls(calls, any_order=True)
     llm.generate_test.assert_called_once_with(
@@ -207,7 +231,6 @@ def test_generate_test_from_function(mocker):
         test_name=test_name,
     )
     assert output == ("test_code", "imports")
-
     mocker.patch("llm.llm_interface.generate_test", return_value=(None, "imports"))
     output = generate_test_from_function(mock_function, test_name)
     calls = [
@@ -231,7 +254,9 @@ def test_run_task(mocker):
         return_value=("generate_function_for_task", {"param1": "value1"}),
     )
     mocker.patch("agent.core.generate_function_for_task")
+    mocker.patch("agent.core.get_further_information")
     mocker.patch("agent.core.logger")
+
     agent.core.run_task()
     agent.core.process_task.assert_called_once_with("task description")
     agent.core.generate_function_for_task.assert_called_once_with(param1="value1")
@@ -239,6 +264,12 @@ def test_run_task(mocker):
         "Function: %s", "generate_function_for_task"
     )
     agent.core.logger.debug.assert_any_call("Parameters: %s", {"param1": "value1"})
+
+    agent.core.run_task("task description", 0, 3)
+    agent.core.get_further_information.assert_called_once()
+
+    agent.core.run_task("divide_and_process_sub_tasks", 0, 3)
+    agent.core.process_task.assert_called_with("divide_and_process_sub_tasks")
 
 
 def test_populate_db(mocker):

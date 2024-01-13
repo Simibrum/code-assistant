@@ -9,14 +9,12 @@ import json
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
-
 from llm import llm_interface
 
 
 def test_load_json_string():
     """
     Test the load_json_string function.
-
     """
     correct_json = '{"key": "value"}'
     assert llm_interface.load_json_string(correct_json) == {"key": "value"}
@@ -27,8 +25,12 @@ def test_load_json_string():
         pass
     else:
         assert False, "Expected a JSONDecodeError"
-    json_with_newline = '{"key": "value\\nmore value"}'
+    json_with_newline = '{"key": "value\nmore value"}'
     assert llm_interface.load_json_string(json_with_newline) == {
+        "key": "value\nmore value"
+    }
+    triple_escaped_newline = '{"key": "value\\nmore value"}'
+    assert llm_interface.load_json_string(triple_escaped_newline) == {
         "key": "value\nmore value"
     }
 
@@ -60,18 +62,25 @@ def test_generate_from_prompt():
     prepare_prompt_args = {"arg1": "value1", "arg2": "value2"}
     prepare_prompt_func.return_value = "Test prompt"
     with patch("llm.llm_interface.api_request") as mock_api_request:
+        # Test when JSONDecodeError occurs
+        mock_api_request.return_value = {
+            "choices": [
+                {"message": {"function_call": {"arguments": '"malformed json string"'}}}
+            ]
+        }
+        (function_code, imports) = llm_interface.generate_from_prompt(
+            prepare_prompt_func, prepare_prompt_args
+        )
+        prepare_prompt_func.assert_called_once_with(arg1="value1", arg2="value2")
+        assert function_code is None
+        assert imports is None
+
+        # Test when no function_call in response_message
         mock_api_request.return_value = {
             "choices": [
                 {
                     "message": {
-                        "function_call": {
-                            "arguments": json.dumps(
-                                {
-                                    "function_code": 'print("Hello World")',
-                                    "import_statements": "import json",
-                                }
-                            )
-                        }
+                        "content": 'print("Hello World")',
                     }
                 }
             ]
@@ -79,9 +88,33 @@ def test_generate_from_prompt():
         (function_code, imports) = llm_interface.generate_from_prompt(
             prepare_prompt_func, prepare_prompt_args
         )
-        prepare_prompt_func.assert_called_once_with(arg1="value1", arg2="value2")
         assert function_code == 'print("Hello World")'
-        assert imports == ["import json"]
+        assert imports is None
+
+        # Test working version
+        with patch("llm.llm_interface.api_request") as mock_api_request:
+            mock_api_request.return_value = {
+                "choices": [
+                    {
+                        "message": {
+                            "function_call": {
+                                "arguments": json.dumps(
+                                    {
+                                        "function_code": 'print("Hello World")',
+                                        "import_statements": "import json",
+                                    }
+                                )
+                            }
+                        }
+                    }
+                ]
+            }
+            (function_code, imports) = llm_interface.generate_from_prompt(
+                prepare_prompt_func, prepare_prompt_args
+            )
+            prepare_prompt_func.assert_called_once_with(arg1="value1", arg2="value2")
+            assert function_code == 'print("Hello World")'
+            assert imports == ["import json"]
 
 
 def test_generate_code():
@@ -118,9 +151,12 @@ def test_generate_test():
     """
     Test the function generate_test from llm.llm_interface module.
     """
-    function_code = 'def hello_world():\n    print("Hello, world!")'
+    function_code = "def hello_world():\n" '\tprint("Hello, world!")'
     function_file = "./llm/llm_interface.py"
-    with patch("llm.llm_interface.api_request") as mock_api_request:
+    test_name = "test_hello_world"
+    with patch("llm.llm_interface.api_request") as mock_api_request, patch(
+        "llm.llm_interface.prompts.create_test_prompt"
+    ) as mock_create_test_prompt:
         mock_api_request.return_value = {
             "choices": [
                 {
@@ -137,11 +173,17 @@ def test_generate_test():
                 }
             ]
         }
-        (test_code, imports) = llm_interface.generate_test(function_code, function_file)
+        mock_create_test_prompt.return_value = "generate test for hello_world function"
+        (test_code, imports) = llm_interface.generate_test(
+            function_code, function_file, test_name
+        )
     assert isinstance(test_code, str), f"Expected str, got {type(test_code).__name__}"
     assert isinstance(imports, list), f"Expected str, got {type(imports).__name__}"
     assert test_code == 'print("Testing Hello World")'
     assert imports == ["import json"]
+    mock_create_test_prompt.assert_called_once_with(
+        function_code, function_file, test_name
+    )
 
 
 def test_generate_module_docstring():
@@ -172,7 +214,7 @@ def test_generate_function_docstring():
     """
     Test for the function generate_function_docstring.
     """
-    function_code = 'def hello_world():\n    print("Hello, World!")'
+    function_code = "def hello_world():\n" '\tprint("Hello, World!")'
     expected_docstring = 'This function prints "Hello, World!" to the console.'
     with patch("llm.llm_interface.api_request") as mock_api_request:
         mock_api_request.return_value = {
@@ -182,6 +224,13 @@ def test_generate_function_docstring():
         assert (
             docstring == expected_docstring
         ), f"Expected: {expected_docstring}, but got: {docstring}"
+    with patch("utils.get_function_code") as mock_get_function_code:
+        mock_get_function_code.return_value = None
+        docstring = llm_interface.generate_function_docstring(
+            "dummy_path", "dummy_function"
+        )
+        assert docstring is None, "Expected None, but got: {docstring}"
+        mock_get_function_code.assert_called_once_with("dummy_path", "dummy_function")
 
 
 def test_generate_todo_list(mocker):
@@ -207,7 +256,11 @@ def test_generate_summary(mocker):
     mock_prompt = "This is a test prompt."
     mock_response = {"choices": [{"message": {"content": "This is a test summary."}}]}
     mocker.patch("llm.llm_interface.api_request", return_value=mock_response)
+    mocker.patch("llm.llm_interface.prompts.build_messages", return_value=mock_prompt)
     result = llm_interface.generate_summary(mock_prompt)
+    llm_interface.prompts.build_messages.assert_called_once_with(
+        mock_prompt, add_dir=False, add_requirements=False
+    )
     assert result == mock_response["choices"][0]["message"]["content"]
 
 
@@ -249,3 +302,15 @@ def test_review_issues(mocker):
     mocker.patch("llm.llm_interface.logger")
     result = llm_interface.review_issues(open_issues, token_limit)
     assert result == expected_issue_number
+    llm_interface.prompts.create_issue_review_prompt.assert_any_call(
+        open_issues, titles_only=False
+    )
+    llm_interface.prompts.create_issue_review_prompt.assert_any_call(
+        open_issues, titles_only=True
+    )
+    llm_interface.prompts.create_issue_review_prompt.assert_any_call(
+        open_issues[:30], titles_only=True
+    )
+    llm_interface.prompts.create_issue_review_prompt.assert_any_call(
+        open_issues[:10], titles_only=True
+    )

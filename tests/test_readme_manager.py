@@ -38,6 +38,29 @@ def test_parse_readme():
         (isinstance(token, Token) for token in result)
     ), "All tokens should be instances of the Token class."
 
+    # Additional assertions to cover the untested lines
+    # Since there are no untested lines, these are just additional checks
+    first_token = result[0]
+    assert hasattr(first_token, "type"), "Each token should have a type attribute."
+    assert hasattr(first_token, "tag"), "Each token should have a tag attribute."
+    assert hasattr(first_token, "attrs"), "Each token should have an attrs attribute."
+    assert hasattr(first_token, "map"), "Each token should have a map attribute."
+    assert hasattr(
+        first_token, "nesting"
+    ), "Each token should have a nesting attribute."
+    assert hasattr(first_token, "level"), "Each token should have a level attribute."
+    assert hasattr(
+        first_token, "children"
+    ), "Each token should have a children attribute."
+    assert hasattr(
+        first_token, "content"
+    ), "Each token should have a content attribute."
+    assert hasattr(first_token, "markup"), "Each token should have a markup attribute."
+    assert hasattr(first_token, "info"), "Each token should have an info attribute."
+    assert hasattr(first_token, "meta"), "Each token should have a meta attribute."
+    assert hasattr(first_token, "block"), "Each token should have a block attribute."
+    assert hasattr(first_token, "hidden"), "Each token should have a hidden attribute."
+
 
 def test_get_section():
     """
@@ -68,6 +91,13 @@ def test_get_headings_from_md_file():
         temp_file.seek(0)
         headings = readme_manager.get_headings_from_md_file(temp_file.name)
         assert headings == ["Heading 1", "Heading 2", "Heading 3"]
+
+    # Test with a file that contains no headings
+    with tempfile.NamedTemporaryFile(suffix=".md") as temp_file:
+        temp_file.write(b"This is a file with no headings.")
+        temp_file.seek(0)
+        headings = readme_manager.get_headings_from_md_file(temp_file.name)
+        assert headings == []
 
 
 def test_replace_section_in_markdown():
@@ -142,11 +172,18 @@ def test_update_agent_structure():
     Test the function update_agent_structure.
     """
     # Arrange
-    readme_text = "## Agent Structure\nOld Content\n## Another section\nMore content"
+    readme_text = (
+        "## Agent Structure\n" "Old Content\n" "## Another section\n" "More content"
+    )
 
     # Act
     with patch(
         "llm.llm_interface.reduce_module_descriptions", return_value="New Content"
+    ), patch(
+        "utils.build_directory_structure", return_value="Directory Structure"
+    ), patch(
+        "code_reader.read_code_file_descriptions",
+        return_value={"file_path": "description"},
     ):
         new_readme_text = readme_manager.update_agent_structure(readme_text)
         logger.debug("New Readme Text: %s", new_readme_text)
@@ -154,3 +191,6 @@ def test_update_agent_structure():
     # Assert
     assert "# Agent Structure" in new_readme_text
     assert "Old Content" not in new_readme_text
+    assert "New Content" in new_readme_text
+    assert "Directory Structure" in new_readme_text
+    assert "`file_path`: description" in new_readme_text

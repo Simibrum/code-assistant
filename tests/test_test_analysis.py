@@ -1,4 +1,5 @@
 from agent import test_analysis
+from functions import logger
 
 
 def test_parse_node_id():
@@ -14,6 +15,22 @@ def test_parse_node_id():
     expected_output = (
         ("analysis.py", "parse_node_id"),
         ("analysis.py", "parse_node_id"),
+    )
+    assert parse_node_id(node_id) == expected_output
+
+    # Test with a file path that doesn't start with './agent/'
+    node_id = "analysis.py::parse_node_id"
+    expected_output = (
+        ("analysis.py", "parse_node_id"),
+        ("analysis.py", "parse_node_id"),
+    )
+    assert parse_node_id(node_id) == expected_output
+
+    # Test with a function name that doesn't start with 'test_'
+    node_id = "./agent/test_analysis.py::parse_node_id"
+    expected_output = (
+        ("analysis.py", "parse_node_id"),
+        ("test_analysis.py", "parse_node_id"),
     )
     assert parse_node_id(node_id) == expected_output
 
@@ -36,7 +53,15 @@ def test_run_tests_and_analyze_failures(mocker):
     send that information to an LLM for analysis.
     """
     # Mocking the utils.run_pytest function to return a specific result
-    mocker.patch("utils.run_pytest", return_value={"collectors": [], "tests": []})
+    mocker.patch(
+        "utils.run_pytest",
+        return_value={
+            "collectors": [
+                {"outcome": "failed", "nodeid": "node1", "longrepr": "error"}
+            ],
+            "tests": [],
+        },
+    )
 
     # Mocking the logging.shutdown function as it does not need to be tested
     mocker.patch("logging.shutdown")
@@ -47,5 +72,9 @@ def test_run_tests_and_analyze_failures(mocker):
     # Calling the function
     run_tests_and_analyze_failures()
 
-    # There are no asserts in this test as the function does not return anything.
-    # The test is for the function to run without any exceptions.
+    # Asserting the logger.error was called with the expected arguments
+    mocker.patch.object(logger, "error")
+    logger.error.assert_any_call("Collecting tests failed.")
+    logger.error.assert_any_call("Collector failed.")
+    logger.error.assert_any_call("node1")
+    logger.error.assert_any_call("error")

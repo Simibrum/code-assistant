@@ -21,18 +21,37 @@ def test_slugify():
     expected_slug = "This_is_a_very_long_title_that"
     assert slugify(title) == expected_slug
 
+    # New test case to test untested lines
+    title = "Title with - hyphen"
+    expected_slug = "Title_with_hyphen"
+    assert slugify(title) == expected_slug
+    title = "Title with   multiple   spaces"
+    expected_slug = "Title_with_multiple_spaces"
+    assert slugify(title) == expected_slug
+
 
 def test_get_open_issues(mocker):
     """Test if get_open_issues function fetches open issues correctly."""
+
+    # Create mock repository
     mock_repo = mocker.MagicMock()
     mock_repo.get_issues.return_value = ["issue1", "issue2"]
+
+    # Create instance of GitHubIssues with mock repository
     mock_issue_mgmt = GitHubIssues()
     mock_issue_mgmt.repo = mock_repo
+
+    # Call get_open_issues method
     result = mock_issue_mgmt.get_open_issues()
+
+    # Check if the result is as expected
     assert result == [
         "issue1",
         "issue2",
     ], "The get_open_issues function failed to fetch open issues."
+
+    # Check if get_issues method of mock repository was called with correct argument
+    mock_repo.get_issues.assert_called_once_with(state="open")
 
 
 def test_get_all_issues(mocker):
@@ -62,10 +81,24 @@ def test_print_issue_details(mocker):
             self.comments = 10
 
     mock_issue = MockIssue()
-    # expected_output = "Issue Number: 123\nTitle: Test Issue\nBody: This is a test issue body.\nCreated at: 2023-03-23T12:00:00Z\nUpdated at: 2023-03-23T13:00:00Z\nState: open\nComments: 10\n------------\n"
+    expected_output = (
+        "Issue Number: 123\n"
+        "Title: Test Issue\n"
+        "Body: This is a test issue body.\n"
+        "Created at: 2023-03-23T12:00:00Z\n"
+        "Updated at: 2023-03-23T13:00:00Z\n"
+        "State: open\n"
+        "Comments: 10\n------------\n"
+    )
     git_issues = GitHubIssues()
 
+    mocker.patch("builtins.print")
+
     git_issues.print_issue_details(mock_issue)
+
+    assert print.call_args_list == [
+        mocker.call(line) for line in expected_output.split("\n")
+    ]
 
 
 def test_generate_branch_name(mocker):
@@ -94,6 +127,7 @@ def test_print_all_open_issue_details(mocker):
     )
     issue_manager.print_issue_details = mocker.Mock()
     issue_manager.print_all_open_issue_details()
+    issue_manager.get_open_issues.assert_called_once()
     assert issue_manager.print_issue_details.call_count == 1
     issue_manager.print_issue_details.assert_called_with(mock_issue_1)
 
@@ -131,7 +165,8 @@ def test_select_easiest_issue(mocker):
     """
     Test the select_easiest_issue function to ensure it selects an issue and adds the label.
     """
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
+
     from github_management.issue_management import GitHubIssues, llm
 
     # Mock the GitHubIssues class methods
@@ -139,12 +174,9 @@ def test_select_easiest_issue(mocker):
         return_value=["Issue 1", "Issue 2", "Issue 3"]
     )
     GitHubIssues.add_label_to_issue = MagicMock()
-
     issue_management = GitHubIssues()
-
     with patch.object(llm, "review_issues", return_value=2) as mock_review_issues:
         issue_management.select_easiest_issue(3800)
-        # check if the mock function was called with correct parameters
         mock_review_issues.assert_called_once_with(
             ["Issue 1", "Issue 2", "Issue 3"], 3800
         )
@@ -182,6 +214,11 @@ def test_get_next_issue():
 
     assert issue is not None, "Should return an issue when 'next-to-do' issues exist"
 
+    # Test for the scenario where no issues are returned
+    mock_issues.clear()
+    issue = issue_manager.get_next_issue()
+    assert issue is None, "Should return None when no 'next-to-do' issues exist"
+
 
 def test_task_from_issue():
     """Test the task_from_issue function."""
@@ -216,6 +253,11 @@ def test_GitHubIssues___init__(monkeypatch):
     assert github_issues.github == mock_github, "Github instance not correctly set."
     assert github_issues.repo == mock_repo, "Repo object not correctly set."
     mock_github.get_repo.assert_called_once_with(test_repo_name)
+
+    # Test with no token and repo_name
+    github_issues = GitHubIssues(token=None, repo_name=None)
+    assert github_issues.github is None, "Github instance not correctly set."
+    assert github_issues.repo is None, "Repo object not correctly set."
 
 
 def test_GitHubIssues_get_open_issues(mocker):
@@ -255,7 +297,6 @@ def test_GitHubIssues_print_issue_details(mocker):
     mock_issue.comments = 2
     mocker.patch("builtins.print")
     git_issues = GitHubIssues()
-
     git_issues.print_issue_details(mock_issue)
     expected_calls = [
         mocker.call("Issue Number: 123"),
@@ -337,12 +378,12 @@ def test_GitHubIssues_add_label_to_issue(mocker):
 
 def test_GitHubIssues_select_easiest_issue(mocker):
     """Test the select_easiest_issue method for proper label assignment."""
+    from unittest.mock import MagicMock, patch
+
     from github_management.issue_management import GitHubIssues, llm
-    from unittest.mock import patch, MagicMock
 
     GitHubIssues.add_label_to_issue = MagicMock()
     git_issues = GitHubIssues()
-
     git_issues.get_open_issues = mocker.Mock()
     git_issues.get_open_issues.return_value = ["Issue 1", "Issue 2", "Issue 3"]
     with patch.object(llm, "review_issues", return_value=2) as mock_review_issues:
@@ -351,7 +392,6 @@ def test_GitHubIssues_select_easiest_issue(mocker):
         mock_review_issues.assert_called_once_with(
             ["Issue 1", "Issue 2", "Issue 3"], 3800
         )
-
     git_issues.add_label_to_issue.assert_called_once_with(2, "next-to-do")
 
 

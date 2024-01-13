@@ -1,9 +1,9 @@
 """
 Tests for the prompts.
 """
+import sys
 from unittest import mock
 from unittest.mock import MagicMock, patch
-
 
 import llm.prompts as prompts
 
@@ -20,6 +20,7 @@ def test_generate_system_prompt():
     assert result.startswith("You are a helpful coding assistant.")
     assert "Project Description" in result
     assert "Python version is" in result
+    assert f"The Python version is {sys.version}" in result
 
 
 def test_generate_directory_prompt():
@@ -40,10 +41,12 @@ def test_generate_requirements_prompt() -> None:
     """
     with mock.patch(
         "llm.prompts.utils.read_requirements_txt", return_value="requirements_contents"
-    ):
-        assert (
-            prompts.generate_requirements_prompt()
-            == "The installed packages as set out in `requirements.txt` are:\nrequirements_contents"
+    ) as mock_read_requirements:
+        result = prompts.generate_requirements_prompt()
+        mock_read_requirements.assert_called_once()
+        assert result == (
+            "The installed packages as set out in `requirements.txt` are:\n\n"
+            "requirements_contents"
         )
 
 
@@ -65,11 +68,28 @@ def test_create_function_prompt():
     """
     task_description = "summarise the function"
     function_file = "./llm/prompts.py"
-    expected_prompt = "Please write a Python function to summarise the function.The function is to be added to the file ./llm/prompts.py\n\n"
+    expected_prompt = (
+        "Please write a Python function to summarise the function."
+        "The function is to be added to the file ./llm/prompts.py\n\n"
+    )
     actual_prompt = prompts.create_function_prompt(task_description, function_file)
     assert (
         actual_prompt == expected_prompt
     ), f"Expected: {expected_prompt}, but got: {actual_prompt}"
+
+    # Additional assertions to cover untested lines
+    assert (
+        "Please write a Python function to" in actual_prompt
+    ), "Prompt does not start with expected text"
+    assert (
+        "The function is to be added to the file" in actual_prompt
+    ), "Prompt does not contain expected text"
+    assert (
+        function_file in actual_prompt
+    ), "Prompt does not contain the function file path"
+    assert actual_prompt.endswith(
+        "\n"
+    ), "Prompt does not end with expected newline characters"
 
 
 def test_create_module_docstring_prompt():
@@ -126,20 +146,29 @@ def test_create_function_docstring_prompt():
     """
     Test the create_function_docstring_prompt function.
     """
-    function_code = "def add_numbers(a: int, b: int) -> int:\n    return a + b"
-    expected_prompt = "Here is some code for a function:\n\n" + function_code + "\n\n"
+    function_code = "\ndef add_numbers(a: int, b: int) -> int:\n" "return a + b"
+    expected_prompt = "Here is some code for a function:\n" " + function_code + "
     expected_prompt += "Please write a docstring for the above function. "
     expected_prompt += "Do NOT include the function code in the docstring. "
     expected_prompt += "Only return the docstring. "
     expected_prompt += "Limit the total description to less than 500 words. "
     expected_prompt += "Limit lines to a maximum of 90 characters.\n\n"
     expected_prompt += "The docstring should be in the Google docstring format:\n\n"
-    expected_prompt += '"""\n[Short, concise function description]\n\n'
-    expected_prompt += "Args:\n    [param1]: [desc]\n  [param2]:[desc]\n"
-    expected_prompt += "Returns:\n    [Return value desc]\n\n"
-    expected_prompt += '"""\n\n'
+    expected_prompt += (
+        "\n"
+        "[Short, concise function description]\n"
+        "\n"
+        "'\n"
+        '    expected_prompt += "Args:\n'
+        "    [param1]: [desc]\n"
+        "  [param2]:[desc]\n"
+    )
+    expected_prompt += "Returns:\n[Return value desc]\n"
+    expected_prompt += "\n\n"
     actual_prompt = prompts.create_function_docstring_prompt(function_code)
-    assert actual_prompt == expected_prompt
+    assert (
+        actual_prompt == expected_prompt
+    ), f"Expected:\n{expected_prompt}\nBut got:\n{actual_prompt}"
 
 
 def test_create_todo_list_prompt():
@@ -159,8 +188,40 @@ def test_create_task_processing_prompt():
     Test if the create_task_processing_prompt function returns the expected prompt.
     """
     task_description = "The aim is to build an agent that can code itself using an LLM."
-    expected_prompt = "----\nWe now want to process a task description.\n\nWe need to determine whether:\n1. The task is too complex and needs to be broken down into subtasks.\n2. The task is too obscure and we need further information from the user.\n3. The task is manageable and we can generate code for it.\n\nHere is the task description:\n\nThe aim is to build an agent that can code itself using an LLM.\n\nOnly use the functions you have been provided with.\n\n"
-    assert prompts.create_task_processing_prompt(task_description) == expected_prompt
+    expected_prompt = (
+        "----\n"
+        "We now want to process a task description.\n"
+        "\n"
+        "We need to determine whether:\n"
+        "1. The task is too complex and needs to be broken down into subtasks.\n"
+        "2. The task is too obscure and we need further information from the user.\n"
+        "3. The task is manageable and we can generate code for it.\n"
+        "\n"
+        "Here is the task description:\n"
+        "\n"
+        "The aim is to build an agent that can code itself using an LLM.\n"
+        "\n"
+        "Only use the functions you have been provided with.\n"
+        "\n"
+    )
+    generated_prompt = prompts.create_task_processing_prompt(task_description)
+    assert generated_prompt == expected_prompt
+    assert task_description in generated_prompt
+    assert "We now want to process a task description." in generated_prompt
+    assert "We need to determine whether:" in generated_prompt
+    assert (
+        "1. The task is too complex and needs to be broken down into subtasks."
+        in generated_prompt
+    )
+    assert (
+        "2. The task is too obscure and we need further information from the user."
+        in generated_prompt
+    )
+    assert (
+        "3. The task is manageable and we can generate code for it." in generated_prompt
+    )
+    assert "Here is the task description:" in generated_prompt
+    assert "Only use the functions you have been provided with." in generated_prompt
 
 
 def test_create_task_prompt_from_issue(mocker):
@@ -188,8 +249,22 @@ def test_create_reduce_module_descriptions_prompt():
     """
     initial_description = "- module1: This is a test module."
     result = prompts.create_reduce_module_descriptions_prompt(initial_description)
-    expected_output = "Can you reduce each of the module descriptions below to a single sentence?\n\n- module1: This is a test module.\n\nOnly use the functions you have been provided with.\n\nKeep the same format: '- [module_name]: [module_description]'\n\n"
+    expected_output = (
+        "Can you reduce each of the module descriptions below to a single sentence?\n"
+        "\n"
+        "- module1: This is a test module.\n"
+        "\n"
+        "Only use the functions you have been provided with.\n"
+        "\n"
+        "Keep the same format: '- [module_name]: [module_description]'\n"
+        "\n"
+    )
     assert result == expected_output
+    assert "Can you reduce each of the module descriptions" in result
+    assert "below to a single sentence?\n\n" in result
+    assert initial_description in result
+    assert "Only use the functions you have been provided with.\n\n" in result
+    assert "Keep the same format: - [module_name]: [module_description]\n" in result
 
 
 def test_create_issue_review_prompt():

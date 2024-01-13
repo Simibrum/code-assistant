@@ -30,13 +30,44 @@ def test_load_env_vars(tmp_path):
     """
     Test the load_env_vars function from the functions module.
     """
+
+    def reset_env_vars():
+        os.environ.pop("VAR1", None)
+        os.environ.pop("VAR2", None)
+        os.environ.pop("VAR3", None)
+        os.environ.pop("VAR4", None)
+
     env_file = tmp_path / "test.env"
-    env_file.write_text("VAR1=value1\nVAR2=value2\nVAR3=value3\n")
+    env_file.write_text("VAR1=value1\n" "VAR2=value2\n" "VAR3=value3\n")
     functions.load_env_vars(env_file)
     assert os.getenv("VAR1") == "value1"
     assert os.getenv("VAR2") == "value2"
     assert os.getenv("VAR3") == "value3"
     assert os.getenv("VAR4") is None
+
+    # Reset the environment variables
+    reset_env_vars()
+
+    # Test with a line starting with '#'
+    env_file.write_text("VAR1=value1\n" "#VAR2=value2\n" "VAR3=value3\n")
+    functions.load_env_vars(env_file)
+    assert os.getenv("VAR2") is None
+
+    # Reset the environment variables
+    reset_env_vars()
+
+    # Test with a line not containing '='
+    env_file.write_text("VAR1=value1\n" "VAR2value2\n" "VAR3=value3\n")
+    functions.load_env_vars(env_file)
+    assert os.getenv("VAR2") is None
+
+    # Reset the environment variables
+    reset_env_vars()
+
+    # Test with a line containing empty var or value
+    env_file.write_text("VAR1=\n" "VAR2=value2\n" "VAR3=value3\n")
+    functions.load_env_vars(env_file)
+    assert os.getenv("VAR1") is None
 
 
 def test_init_logger():

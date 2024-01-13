@@ -45,3 +45,23 @@ def test_process_task():
             }
             result = process_task("task_description")
             assert result == ("mocked_content", None)
+
+            # Additional assertions to cover untested lines
+            with patch("llm.task_management.logger.debug") as mock_logger:
+                mock_request.return_value = {
+                    "choices": [
+                        {
+                            "message": {
+                                "function_call": {
+                                    "name": "function_to_call",
+                                    "arguments": "arguments_string",
+                                }
+                            }
+                        }
+                    ]
+                }
+                mock_json.side_effect = json.JSONDecodeError("Mocked error", "doc", 0)
+                result = process_task("task_description")
+                mock_logger.assert_any_call(
+                    "JSONDecodeError: %s", "Mocked error: line 1 column 1 (char 0)"
+                )
