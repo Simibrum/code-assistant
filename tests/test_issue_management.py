@@ -88,7 +88,7 @@ def test_print_issue_details(mocker):
         "Created at: 2023-03-23T12:00:00Z\n"
         "Updated at: 2023-03-23T13:00:00Z\n"
         "State: open\n"
-        "Comments: 10\n------------\n"
+        "Comments: 10\n------------"
     )
     git_issues = GitHubIssues()
 

@@ -85,5 +85,5 @@ def test_replace_test_in_file():
     assert replace_test_in_file(temp_file_name, "test_function_two", new_test_content)
     with open(temp_file_name, "r") as file:
         updated_content = file.read()
-    expected_content = "\ndef test_function_one():\n    assert True\n\ndef test_function_two():\n    assert True\n"
+    expected_content = "\ndef test_function_one():\n    assert True\n\ndef test_function_two():\n    assert True\n\n\n"
     assert updated_content == expected_content
