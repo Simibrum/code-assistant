@@ -19,7 +19,7 @@ def get_test_code(test_id):
         CodeTest.id == test_id
     )  # Assuming each test has an ID
     result = session.execute(stmt).scalar_one()
-    return result.test_string
+    return result.code_string
 
 
 def get_function_code(test_id):
@@ -128,7 +128,10 @@ def replace_test_in_file(test_file_name, old_test_name, new_test_code):
         if re.search(pattern, content, flags=re.DOTALL | re.MULTILINE):
             # Replace the old test function with new test code
             new_content = re.sub(
-                pattern, f"{new_test_code}\n\n", content, flags=re.DOTALL | re.MULTILINE
+                pattern,
+                f"{new_test_code}\n\n\n",
+                content,
+                flags=re.DOTALL | re.MULTILINE,
             )
 
             with open(test_file_name, "w", encoding="utf-8") as file:
@@ -241,7 +244,7 @@ def revise_and_test_loop(max_attempts_per_test):
     git_handler.create_temp_test_branch()
 
     for test in failing_tests:
-        logger.info(f"Test {test.test_name} is failing, re-coding...")
+        logger.info(f"Test {test.name} is failing, re-coding...")
         # Reset attempts and success flag
         attempts = 0
         success = False
@@ -252,7 +255,7 @@ def revise_and_test_loop(max_attempts_per_test):
 
             # Write revised test to file
             write_revised_test_to_file(
-                test.test_name, test.file_path, revised_test_code, revised_imports
+                test.name, test.file_path, revised_test_code, revised_imports
             )
 
             # Run revised test
@@ -280,6 +283,9 @@ def revise_and_test_loop(max_attempts_per_test):
         # Commit changes to Git for each test
         # Create a commit message that refers to the test name and number of attempts
         commit_message = f"Revised test {test.identifier} after {attempts} attempts."
+        # Add all files to git
+        git_handler.add_files()
+        # Commit changes
         git_handler.commit_changes(commit_message)
 
     # Check for any remaining failing tests

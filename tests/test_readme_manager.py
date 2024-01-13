@@ -160,7 +160,10 @@ def test_update_readme_todos(mocker):
         token=os.environ["GITHUB_TOKEN"], repo_name="simibrum/code-assistant"
     )
     mock_get_all_issues.assert_called_once()
-    expected_todo_str = "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):\n\n- [ ] Issue 1\n- [X] Issue 2\n"
+    expected_todo_str = (
+        "Loaded from repository [Issues](https://github.com/Simibrum/code-assistant/issues):"
+        "\n\n- [ ] Issue 1\n- [X] Issue 2\n"
+    )
     mock_replace_section_in_markdown.assert_called_once_with(
         "readme_text", "To do", expected_todo_str
     )
@@ -182,7 +185,7 @@ def test_update_agent_structure():
     ), patch(
         "utils.build_directory_structure", return_value="Directory Structure"
     ), patch(
-        "code_reader.read_code_file_descriptions",
+        "code_management.code_reader.read_code_file_descriptions",
         return_value={"file_path": "description"},
     ):
         new_readme_text = readme_manager.update_agent_structure(readme_text)
